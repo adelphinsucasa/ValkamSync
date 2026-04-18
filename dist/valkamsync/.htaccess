@@ -1,0 +1,62 @@
+# ValkamSync — deploy/.htaccess
+# Memoria y tiempo generosos para OCR con Gemini (evitar 504 en HostGator)
+php_value memory_limit 512M
+php_value max_execution_time 300
+php_value upload_max_filesize 10M
+php_value post_max_size 12M
+
+Options -Indexes
+FileETag None
+
+# Bloquear archivos sensibles
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+<FilesMatch "\.(bak|backup|sql|log|ini|sh|tar|gz|zip|db|sqlite|md)$">
+    Require all denied
+</FilesMatch>
+
+# Bloquear directorios internos
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^lib/         - [F,L]
+    RewriteRule ^bin/         - [F,L]
+    RewriteRule ^vendor/      - [F,L]
+    RewriteRule ^data/        - [F,L]
+    RewriteRule ^tmp/         - [F,L]
+</IfModule>
+
+# Security headers
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "camera=(self), microphone=(), geolocation=()"
+</IfModule>
+
+# Forzar HTTPS detrás de Cloudflare
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{HTTPS} off
+    RewriteCond %{HTTP:X-Forwarded-Proto} !https
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # /api/<action>  -> api.php?action=<action>
+    RewriteRule ^api/([a-z0-9_]+)/?$ api.php?action=$1 [L,QSA]
+</IfModule>
+
+# Compresión
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json image/svg+xml
+</IfModule>
+
+# Cache del shell estático
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 7 days"
+    ExpiresByType application/javascript "access plus 7 days"
+    ExpiresByType image/webp "access plus 30 days"
+    ExpiresByType text/html "access plus 0 seconds"
+</IfModule>
+
+ErrorDocument 404 /index.html

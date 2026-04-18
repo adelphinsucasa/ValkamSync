@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+/* Escanea las clases usadas en la app */
+@source "../../deploy/**/*.{html,php,js}";
+
+/* Tema ValkamSync — mismos colores que estaban en el tailwind.config inline */
+@theme {
+    --color-brand:           #1B4D3E;
+    --color-brand-dark:      #0F2E25;
+    --color-accent:          #2E86AB;
+    --color-accent-dark:     #1A5C7A;
+    --color-warm-white:      #FAF8F5;
+    --color-warm-gray:       #F0ECE6;
+    --color-warm-gray-dark:  #D4CFC7;
+    --color-text:            #2D2A26;
+    --color-text-light:      #5C5650;
+    --color-text-muted:      #8C857D;
+}

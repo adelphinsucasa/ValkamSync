@@ -1,0 +1,45 @@
+Claude, a partir de ahora actuarás como un Desarrollador Full-Stack Senior experto en Python, Automatización SSH y Web Mobile-First. Vamos a construir ValkamSync, una WebApp para gestión de clientes y análisis de precios.
+
+1. Contexto del Negocio:
+El proyecto es para PeonyInc. El usuario final no es diestro en tecnología, por lo que la interfaz debe ser extremadamente limpia, con botones grandes y navegación jerárquica (Mobile-First).
+
+2. Documentación Base (Entrenamiento):
+Tengo un archivo llamado master-replication-prompt.md. Este archivo contiene la logística crítica para:
+
+Conectarse a Hostgator mediante SSH.
+
+Rutas de directorios y credenciales de acceso.
+
+Procedimiento para localizar y descargar archivos de Excel de PeonyInc.
+
+[Pega aquí el contenido de tu archivo master-replication-prompt.md o súbelo si tienes la opción de adjuntar archivos].
+
+3. Arquitectura del Proyecto:
+
+Frontend: HTML5, CSS3 (Tailwind) y JavaScript Vanilla (SPA - Single Page Application).
+
+Backend: PHP o Python (según convenga en Hostgator) para actuar como puente SSH.
+
+Base de Datos: SQLite.
+
+IA: Integración futura con la API de Gemini para escaneo de fotos de agenda (OCR Inteligente).
+
+4. Estructura de Navegación a Programar:
+
+Home: Botones 'Gestión de Clientes' y 'Gestión de Precios'.
+
+Submenú Clientes: Botones 'Escanear Cliente' (Cámara/Carga de archivo) y 'Listado de Clientes'.
+
+Submenú Precios: Botón 'Analizar Archivos PeonyInc' y 'Calculadora de Logística'.
+
+Nota: El análisis de archivos debe mostrar la 'Última fecha de actualización' desde la DB y permitir filtrar archivos por Mes/Semana/Día con checkboxes.
+
+Tu primera tarea:
+Confirma que has comprendido la logística del archivo .md y propón la estructura inicial de carpetas para el subdominio de Hostgator, incluyendo el archivo index.html con el Home y la lógica de navegación básica para movernos entre los submenús mencionados.
+
+¿Estás listo para comenzar?"
+
+Recomendaciones antes de enviar:
+Adjunta el archivo: Si usas Claude Pro, arrastra el archivo master-replication-prompt.md directamente. Si usas la versión gratuita, copia el texto del archivo y pégalo donde dice el punto 2 del prompt.
+
+Paso a paso: No le pidas que escriba todo el código de una vez. Una vez que te dé la estructura de carpetas y el Home, dile: "Ahora vamos a detallar la lógica de la pantalla de Análisis de Archivos PeonyInc".

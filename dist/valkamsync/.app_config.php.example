@@ -1,0 +1,38 @@
+<?php
+// ValkamSync — .app_config.php (COPIAR a .app_config.php en el server, chmod 600)
+// NUNCA commitear con valores reales.
+
+// ---------- Base de datos ----------
+// Dev local (per Manual V1.3):
+define('DB_DRIVER', 'sqlite');
+define('DB_PATH',   __DIR__ . '/../data/valkamsync.db');
+
+// Prod (HostGator — descomentar y comentar el bloque sqlite):
+// define('DB_DRIVER', 'mysql');
+// define('DB_HOST',   'localhost');
+// define('DB_NAME',   'gzcapita_valkam');    // coexiste con Valkam app via prefijo vsync_*
+// define('DB_USER',   'gzcapita_vlkapp');    // o un usuario con privilegios SÓLO sobre vsync_*
+// define('DB_PASS',   'CAMBIAR');
+
+// ---------- Parser PDF ----------
+// Ruta a pdftotext. Dejar 'pdftotext' si está en PATH del server.
+define('PDFTOTEXT_BIN', 'pdftotext');
+
+// ---------- Gemini API (escaneo de clientes con IA) ----------
+// Obtener en https://aistudio.google.com/app/apikey
+// Si queda vacío, el escaneo degrada a "captura manual" (UI permite llenar a mano).
+define('GEMINI_API_KEY', '');
+// Modelo principal. Si no existe, el cliente cae automáticamente a 2.0-flash → 2.5-flash-lite.
+// gemini-1.5-* fue DEPRECADO por Google en 2025, no lo uses.
+define('GEMINI_MODEL',   'gemini-2.5-flash');
+
+// ---------- SSH a Hostgator (para el sync Maildir PeonyInc) ----------
+// En prod NO hay SSH desde la app (el sync corre directamente en Hostgator leyendo
+// ~/mail/valkamgm.com/info/cur/ con PHP). Estas constantes son para el import CLI
+// cuando se ejecute desde máquinas remotas.
+define('MAIL_ROOT', getenv('HOME') . '/mail/valkamgm.com/info');
+define('PEONY_FROM', 'info@peonyinc.com');
+
+// ---------- Seguridad ----------
+define('IS_PRODUCTION', false);
+define('HEALTHCHECK_TOKEN', 'CAMBIAR_openssl_rand_hex_32');

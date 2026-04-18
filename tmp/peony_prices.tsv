@@ -1,0 +1,641 @@
+2026-03-25	ALUMINUM	6061 Truck Wheel	1.28	pickup Mi dwest	Joseph Krash Mtls	Joseph Krash	440-735-5555
+2026-03-25	ALUMINUM	380 Al-New	1.12	Newton WI	B & B Metals	Robert Burrows	920-693-8261
+2026-03-25	ALUMINUM	Al Turning-HG-C&D	0.93	fob Midwe st	Metal Conversions	Neil Chalupa	614-392-5787
+2026-03-25	ALUMINUM	All Al Rad-Uncln	0.50	fas Main  Ports	Alamo Metal Recy	Ritesh Patel	956-783-4709
+2026-03-25	ALUMINUM	Al Fine/Grinding	0.19	Chicago I L	NMI Trading	Michael Nedvidek	219-644-8503
+2026-03-25	ALUMINUM	Old Cast 2% Fe	0.92	Apr Jacks on TN	Most	Bob Zuerner	731-506-3922
+2026-03-25	ALUMINUM	Old Sheet 2% Fe	1.03	fas Main  Ports	Pan American Zinc	Josephita Harry	786-414-0625
+2026-03-25	ALUMINUM	Zorba 95%/3% Red	0.69	fas Main  Ports	Vigour Int'l	Jing Wang	718-747-5287
+2026-03-25	COPPER/BRASS	#1 Ins Cu 75%	3.24	Chattanoo ga TN	CLP Mtl Recovery	Matt Molenhouse	423-364-5889
+2026-03-25	COPPER/BRASS	Christmas Wire	0.86	Hillside  NJ	Tekmat Solution	Ken Chen	908-688-4700
+2026-03-25	COPPER/BRASS	DC Motor	0.765	fas Main  Ports	Florida Metal	Yusuf Motiwala	407-935-0371
+2026-03-25	COPPER/BRASS	Electric Motor-Lrg	0.42	Auburn AL	Southeastern Recy	Lora Williams	334-298-2273
+2026-03-25	COPPER/BRASS	Shredder Picking	1.02	fas Main  Ports	Metallon Trading	Matt Ehrlich	925-683-7371
+2026-03-25	COPPER/BRASS	Yellow Brass-Honey	3.14	fas East  Coast	Ni-Met	Karan Parikh	289-291-1111
+2026-03-25	SS/HITEMP/OTHER	17-4/15-5 SS-Usable	0.37	Houston T X	MP&T Intl	Manish Gupta	832-444-9687
+2026-03-25	SS/HITEMP/OTHER	316 SS-Usable	1.50-2.00	N.Attlebo ro MA	Atlantic Stainless	Jerry Cohen	508-695-6262
+2026-03-25	SS/HITEMP/OTHER	Ti 6-4 BW	2.50	San Diego  CA	M3 Metals	Steve Lodge	760-510-9210
+2026-03-25	SS/HITEMP/OTHER	Range Lead-Indoor	0.89	fas US Ra mps	Grace Trading	Joy Li	216-235-7735
+2026-03-25	SS/HITEMP/OTHER	Auto Battery	0.405	fas Main  Ports	AP Global Mgmt	Jae Jang	917-991-2313
+2026-03-25	SS/HITEMP/OTHER	P91 Scrap	850/MT	Houston T X	Texan Minerals	Suresh Babu	+971-504833176
+2026-03-25	SS/HITEMP/OTHER	C.I. Boring	310/GT	Chicago I L	Reserve Alloys	Cal Larkin	574-270-8159
+2026-03-25	SS/HITEMP/OTHER	Heavy Torching Scrap	245/GT	Columbus  OH	Columbus Mtl Recy	Chris Weber	614-478-0808
+2026-03-25	SS/HITEMP/OTHER	PVC Regrind-Window	0.19-0.23	fob Selle r's	SMC Mgmt	Larry Schipper	201-404-0071
+2026-03-25	SS/HITEMP/OTHER	Al/Cu Rad-Cln 1CL	3.12	fas Tampa  FL	Intl Core Supply	Kaupin Patel	727-564-3409
+2026-03-25	SS/HITEMP/OTHER	Irony Al 65% 1CL	0.41	fas Toron to ON	Doublewin Intl	Leon Zhao	416-832-8532
+2026-03-25	SS/HITEMP/OTHER	Cu Transformer 1CL	1.20	fas Houst on TX	NUR Metals	Rizwan Ali	714-745-3621
+2026-03-25	SS/HITEMP/OTHER	Alternator 1CL	1.23	fas Tampa  FL	Intl Core Supply	Kaupin Patel	727-564-3409
+2026-03-25	SS/HITEMP/OTHER	304 SS Solids 1CL	0.62	fas Toron to ON	Doublewin Intl	Leon Zhao	416-832-8532
+2026-03-25	SS/HITEMP/OTHER	17-4 SS Solids 21K	0.40	fob Houst on TX	Scrap Trading Intl	Ginett Torres	713-784-3330
+2026-03-25	SS/HITEMP/OTHER	430 SS Condenser 1CL	0.30	fob Toron to ON	Doublewin Intl	Leon Zhao	416-832-8532
+2026-03-25	SS/HITEMP/OTHER	Ti Tube 80K	2.00	fas Houst on TX	AMS Group/CTG	David Hess	713-426-4777
+2026-03-25	SS/HITEMP/OTHER	Mag Solids AZ31 20K	0.75	fas Houst on TX	Derichebourg Recy	Guy Bernstein	404-579-4773
+2026-03-25	SS/HITEMP/OTHER	Mag Puck AZ31 40K	0.40	fas Houst on TX	Derichebourg Recy	Guy Bernstein	404-579-4773
+2026-03-25	SS/HITEMP/OTHER	Soft Lead 1CL	0.91	fas Tampa  FL	Intl Core Supply	Kaupin Patel	727-564-3409
+2026-03-25	SS/HITEMP/OTHER	Auto Battery 5CL	0.42	fas Houst on TX	NUR Metals	Kazim Ali	714-718-2150
+2026-03-25	SS/HITEMP/OTHER	Auto Fluff 200K	0.05	fob Houst on TX	Derichebourg Recy	Guy Bernstein	404-579-4773
+2026-03-25	SS/HITEMP/OTHER	CAT Excavator 1PC	15,000/PC	fob Colto n CA	Augustine Metals	Lynn Augustine	951-682-8102
+2026-03-25	SS/HITEMP/OTHER	Labounty Shearer 1PC	50,000/PC	fob Colto n CA	Augustine Metals	Lynn Augustine	951-682-8102
+2026-03-26	ALUMINUM	356 Auto Wheel-Dirty	1.34	Austin/HoustonTX	Outlast	Timothy Engels	314-323-5247
+2026-03-26	ALUMINUM	6022 Al-Segregated	0.75	fas Midwest	Mervis Recycling	Brendan Beck	217-431-2184
+2026-03-26	ALUMINUM	6061 Truck Wheel	1.20	fas Main Ports	Outlast	Timothy Engels	314-323-5247
+2026-03-26	ALUMINUM	7050 Solids	0.80	fob Midwest	Mervis Recycling	Brendan Beck	217-431-2184
+2026-03-26	ALUMINUM	7075 Solids	1.45	Detroit MI	Major Metals	Steve Sollish	313-368-6060
+2026-03-26	ALUMINUM	ACSR/Ins Al 67%	1.15	Garland TX	Geomet Recycling	Ivanna Torres	915-352-9982
+2026-03-26	ALUMINUM	ACSR/Ins Al	LME  3M+46/-pr	del UT	Utah Metal Works	Chris Lewon	801-364-5679
+2026-03-26	ALUMINUM	IAW 78%	1.35	Garland TX	Geomet Recycling	Ivanna Torres	915-352-9982
+2026-03-26	ALUMINUM	Al/Cu Rad-Cln	2.78-2.79	fas East Coast	Steelbro Intl	Raj Mittal	516-922-8002
+2026-03-26	ALUMINUM	Al BX Cable	2.74	fas Main Ports	LLW	Justin Wu	401-261-4110
+2026-03-26	ALUMINUM	Al Nespresso Pods	0.35	fas East/West	SMC Mgmt	Larry Schipper	201-404-0071
+2026-03-26	ALUMINUM	Al Bottle Cap	0.30	Ansonia CT	Connecticut Metal	Tom Mele	203-736-0790
+2026-03-26	ALUMINUM	Old Sheet 2%-3% Fe	1.03	fas East Ports	CNA Metals	Andrew Bilodeau	281-494-4940
+2026-03-26	ALUMINUM	E Zorba 80% Al	0.65	Cleveland OH	Secure Recycling	Mario Jurcic	833-633-7328
+2026-03-26	COPPER/BRASS	#2 Cu Chop	5.00	Cleveland OH	Secure Recycling	Mario Jurcic	833-633-7328
+2026-03-26	COPPER/BRASS	#2 Ins Cu 45%	2.20	pickup Seller's	E. Tech Mgmt	Benny Yeung	626-271-0815
+2026-03-26	COPPER/BRASS	#2 Ins Cu 50%	2.32	fas Main Ports	LLW	Justin Wu	401-261-4110
+2026-03-26	COPPER/BRASS	6 & 1 Wire 90%	3.98	pickup MW	Koppers	David Roche	412-227-2411
+2026-03-26	COPPER/BRASS	Beryllium/Cu Tng	4.00	Houston TX	Derichebourg Recy	Guy Bernstein	404-579-4773
+2026-03-26	COPPER/BRASS	Red Brass Solids	4.70	Medina OH	Integrity Metals	Jim Leboeuf	330-416-2433
+2026-03-26	COPPER/BRASS	Brass Shell-Cln	3.55	fas East Coast	CNA Metals	Andrew Bilodeau	281-494-4940
+2026-03-26	COPPER/BRASS	Al/Bronze Solids	4.25	Medina OH	Integrity Metals	Jim Leboeuf	330-416-2433
+2026-03-26	COPPER/BRASS	Computer Wire	1.08	fas Main Ports	Metal Trading	Shasha Pogon	650-288-2999
+2026-03-26	COPPER/BRASS	Cu Clad Wire 30%	0.89	pickup MW	Koppers	David Roche	412-227-2411
+2026-03-26	COPPER/BRASS	Starter w/Al Head	0.74	Houston TX	Global Mtls Group	Vishal Sharma	713-887-6981
+2026-03-26	COPPER/BRASS	Electric Motor-Mxd	0.62	fas East Coast	Steelbro Intl	Raj Mittal	516-922-8002
+2026-03-26	COPPER/BRASS	Sealed Unit	0.52	fas East Coast	SMC Mgmt	Larry Schipper	201-404-0071
+2026-03-26	COPPER/BRASS	Yellow Brass-Honey	3.50	Houston TX	Derichebourg Recy	Guy Bernstein	404-579-4773
+2026-03-26	SS/HITEMP/OTHER	304/316 SS Solids	0.60/1.14	fas East Coast	The Metals Agency	Aldo Jordan	510-219-0307
+2026-03-26	SS/HITEMP/OTHER	309/310 SS Solids	0.88/1.48	Main Ports/Ramps	ABCOM	Bharat Mandloi	+65-96356375
+2026-03-26	SS/HITEMP/OTHER	304/316 SS Tng	0.54/1.02	fas East Coast	The Metals Agency	Aldo Jordan	510-219-0307
+2026-03-26	SS/HITEMP/OTHER	409 SS Solids	0.21	Tullahoma TN	C.F.C. Recycling	Andrew Rice	931-247-8404
+2026-03-26	SS/HITEMP/OTHER	AL6XN SS Foundry	2.38	Main Ports/Ramps	ABCOM	Bharat Mandloi	+65-96356375
+2026-03-26	SS/HITEMP/OTHER	Zurik	0.30-0.55	fas Main Ports	Majestic Corp	Lionel Lai	+61-477232233
+2026-03-26	SS/HITEMP/OTHER	Lead Scrap-Dirty	0.50	Muskogee OK	Wheeler Metals	Tim Wheeler	918-682-1083
+2026-03-26	SS/HITEMP/OTHER	Lead Shot-Cln	0.55	Muskogee OK	Wheeler Metals	Tim Wheeler	918-682-1083
+2026-03-26	SS/HITEMP/OTHER	Absolyte Battery	0.28	fas CA/WA Ports	Canwest Recycling	Ben Shah	778-982-8150
+2026-03-26	SS/HITEMP/OTHER	Gold Memory	23.00	Holbrook NY	Encore Refining	Don Galindo	631-319-1910
+2026-03-26	SS/HITEMP/OTHER	CeramicCPU DLP Chips	42.37	Baltimore MD	Owl Metals	Marcus Long	410-282-0068
+2026-03-26	SS/HITEMP/OTHER	IC Chip	30.00	pickup Seller's	E. Tech Mgmt	Benny Yeung	626-271-0815
+2026-03-26	SS/HITEMP/OTHER	Telecom Board	6.00-10.00	Holbrook NY	Encore Refining	Don Galindo	631-319-1910
+2026-03-26	SS/HITEMP/OTHER	Trim Boards	0.52-0.63	fas Main Ports	Majestic Corp	Lionel Lai	+61-477232233
+2026-03-26	SS/HITEMP/OTHER	CD/DVD Rm w/Board	0.10	Baltimore MD	Owl Metals	Marcus Long	410-282-0068
+2026-03-26	SS/HITEMP/OTHER	#1 Cast Iron	350/MT	fas Main Ports	Canwest Recycling	Ben Shah	778-982-8150
+2026-03-26	SS/HITEMP/OTHER	PET Bottle-Bale	0.10	fob Midwest	Target Trading	David Sager	404-983-0570
+2026-03-27	ALUMINUM	3003 Clip-New-Bare	1.82	fob Midwest	Target Trading	David Sager	404-983-0570
+2026-03-27	ALUMINUM	356 Auto Wheel-Dirty	1.31	Yoe PA	Regen Recycling	Adam Krupp	514-405-5550
+2026-03-27	ALUMINUM	6063 Extrusion 2%Fe	1.19	Troy MO	Most	John Morgan	636-295-4036
+2026-03-27	ALUMINUM	Al Dross-All Types	0.10-0.60	Concord ON	Rochester Aluminum	Simon/Jose	905-669-1222
+2026-03-27	ALUMINUM	Al Engine	0.35	Columbus OH	G-Cor Automotive	Austin Greenblott	800-486-1636
+2026-03-27	ALUMINUM	Irony Al 50%+	0.73/Al	Concord ON	Rochester Aluminum	Simon/Jose	905-669-1222
+2026-03-27	COPPER/BRASS	Cu Mud/Dust	1.55	fob Midwest	Target Trading	David Sager	404-983-0570
+2026-03-27	COPPER/BRASS	Cu Dreck	0.50/Cu	fob Shipper's	Sustainable Mgmt	Michael Friedman	502-526-4458
+2026-03-27	COPPER/BRASS	Electric Motor-Sml	0.62/0.60	fas East/West	RAB Wealth	Binish Kalani	214-985-1696
+2026-03-27	COPPER/BRASS	Electric Motor-Mxd	0.60/0.58	fas East/West	RAB Wealth	Binish Kalani	214-985-1696
+2026-03-27	SS/HITEMP/OTHER	Ti 6-4 BW	2.50	San Diego CA	M3 Metals	Steve Lodge	760-510-9210
+2026-03-27	SS/HITEMP/OTHER	Tin Oxide	LLMEx60%	fob Shipper's	Sustainable Mgmt	Michael Friedman	502-526-4458
+2026-03-27	SS/HITEMP/OTHER	O2 Sensor	3.50	Columbus OH	G-Cor Automotive	Austin Greenblott	800-486-1636
+2026-03-27	SS/HITEMP/OTHER	Hard Drive-Complete	1.00	North York ON	Usaca Resources	Kevin Lim	718-663-1168
+2026-03-27	SS/HITEMP/OTHER	#1 Auto Cast	340/GT	Zion IL	Cleveland Corp	Bob Kujawinski	847-872-7200
+2026-03-27	SS/HITEMP/OTHER	C.I. Boring	310/GT	Chicago IL	Reserve Alloys	Cal Larkin	574-270-8159
+2026-03-27	SS/HITEMP/OTHER	Stove Cast	250/GT	Zion IL	Cleveland Corp	Bob Kujawinski	847-872-7200
+2026-03-30	ALUMINUM	356 Auto Wheel-Dirty	1.29	Huntington IN	Transmetco	Ryan Gledhill	260-224-5817
+2026-03-30	ALUMINUM	6022 Al-Segregated	0.75	fas Midwest	Mervis Recycling	Brendan Beck	217-431-2184
+2026-03-30	ALUMINUM	7050 Solids	0.80	fob Midwest	Mervis Recycling	Brendan Beck	217-431-2184
+2026-03-30	ALUMINUM	7075 Solids	1.45	Detroit MI	Major Metals	Steve Sollish	313-368-6060
+2026-03-30	ALUMINUM	Painted Siding-Cln	1.25	Austin TX	Outlast	Timothy Engels	314-323-5247
+2026-03-30	ALUMINUM	CATV-Bare/Black	0.65/0.60	fas Main Ports	LLW	Justin Wu	401-261-4110
+2026-03-30	ALUMINUM	Al/Cu Heat Sink	1.51	fas Main Ports	Metal Trading	Shasha Pogon	650-288-2999
+2026-03-30	ALUMINUM	Al Foil-Coated	0.22-0.54	Ansonia CT	Connecticut Metal	Tom Mele	203-736-0790
+2026-03-30	ALUMINUM	Irony Al 50%+	0.33	fas Main Ports	Alamo Metal Recy	Ritesh Patel	956-783-4709
+2026-03-30	ALUMINUM	Shredded Al	0.72	fas Main Ports	Vigour Int'l	Jing Wang	718-747-5287
+2026-03-30	ALUMINUM	Mixed Cast-New	1.12	Newton WI	B & B Metals	Robert Burrows	920-693-8261
+2026-03-30	ALUMINUM	Old Cast 2% Fe	0.92	Apr Jackson TN	Most	Bob Zuerner	731-506-3922
+2026-03-30	ALUMINUM	Zorba 95%/3% Red	0.69	fas Main Ports	Vigour Int'l	Jing Wang	718-747-5287
+2026-03-30	COPPER/BRASS	#2 Ins Cu 50%	2.50	pickup Seller's	E. Tech Mgmt	Benny Yeung	626-271-0815
+2026-03-30	COPPER/BRASS	Silver Plated Brass	6.00	pickup Seller's	Noble Metal Svcs	Dan Healey	866-695-4806
+2026-03-30	COPPER/BRASS	Beryllium/Cu Solid	7.00	Houston TX	Derichebourg Recy	Guy Bernstein	404-579-4773
+2026-03-30	COPPER/BRASS	Busbar-Ag Plated	5.50	Cleveland OH	Secure Recycling	Mario Jurcic	833-633-7328
+2026-03-30	COPPER/BRASS	Brass Shell-Cln	3.57	fas East Coast	CNA Metals	Andrew Bilodeau	281-494-4940
+2026-03-30	COPPER/BRASS	Ribbon Wire	1.71	Hillside NJ	Tekmat Solution	Ken Chen	908-688-4700
+2026-03-30	COPPER/BRASS	ASR Wire	1.10	Cleveland OH	Secure Recycling	Mario Jurcic	833-633-7328
+2026-03-30	COPPER/BRASS	Steel BX Cable	1.00	fas Main Ports	LLW	Justin Wu	401-261-4110
+2026-03-30	COPPER/BRASS	Christmas Wire	0.88	fas Main Ports	Metal Trading	Shasha Pogon	650-288-2999
+2026-03-30	COPPER/BRASS	Cu Transformer-Lrg	1.10	Detroit MI	Eastside Metal	Andy Need	586-291-6069
+2026-03-30	COPPER/BRASS	Cu Transformer Core	0.90	pickup Seller's	E. Tech Mgmt	Benny Yeung	626-271-0815
+2026-03-30	COPPER/BRASS	Cu Transformer-Med	1.03	Detroit MI	Eastside Metal	Andy Need	586-291-6069
+2026-03-30	COPPER/BRASS	Alternator	1.13	fas East Coast	Steelbro Intl	Raj Mittal	516-922-8002
+2026-03-30	COPPER/BRASS	Electric Motor-Sml	0.71	fas Main Ports	Florida Metal	Yusuf Motiwala	407-935-0371
+2026-03-30	COPPER/BRASS	Electric Motor-Mxd	0.62	fas East Coast	Steelbro Intl	Raj Mittal	516-922-8002
+2026-03-30	COPPER/BRASS	Electric Motor-Lrg	0.42	Auburn AL	Southeastern Recy	Lora Williams	334-298-2273
+2026-03-30	COPPER/BRASS	Electronic Ballast	0.41	fas Main Ports	Florida Metal	Yusuf Motiwala	407-935-0371
+2026-03-30	SS/HITEMP/OTHER	17-4/15-5 SS-Usable	0.35	Houston TX	MP&T Intl	Manish Gupta	832-444-9687
+2026-03-30	SS/HITEMP/OTHER	304/316 SS Solids	0.60/1.14	fas East Coast	The Metals Agency	Aldo Jordan	510-219-0307
+2026-03-30	SS/HITEMP/OTHER	304/316 SS Tng	0.54/1.02	fas East Coast	The Metals Agency	Aldo Jordan	510-219-0307
+2026-03-30	SS/HITEMP/OTHER	Moly Electrode	20.00	pickup Midwest	N.G.R.	Brian Howard	419-452-8005
+2026-03-30	SS/HITEMP/OTHER	Moly Scrap	13.00-19.25	pickup Midwest	N.G.R.	Brian Howard	419-452-8005
+2026-03-30	SS/HITEMP/OTHER	Nitronic 33 Solids	0.22	Houston TX	MP&T Intl	Manish Gupta	832-444-9687
+2026-03-30	SS/HITEMP/OTHER	NiMh Battery	0.65	Fox Lake WI	GlobalTech	Joe Clark	800-770-2330
+2026-03-30	SS/HITEMP/OTHER	Auto Battery	0.405	fas Main Ports	AP Global Mgmt	Jae Jang	917-991-2313
+2026-03-30	SS/HITEMP/OTHER	Steel Cased Battery	0.405	fas Main Ports	AP Global Mgmt	Jae Jang	917-991-2313
+2026-03-30	SS/HITEMP/OTHER	Cellphone Board	13.00-15.00	Holbrook NY	Encore Refining	Don Galindo	631-319-1910
+2026-03-30	SS/HITEMP/OTHER	Finger Board	5.25	Holbrook NY	Encore Refining	Don Galindo	631-319-1910
+2026-03-30	SS/HITEMP/OTHER	P91 Scrap	0.45	fob Sellers	Texan Minerals	Suresh Babu	+971-504833176
+2026-03-30	SS/HITEMP/OTHER	Heavy Torching Scrap	245/GT	Columbus OH	Columbus Mtl Recy	Chris Weber	614-478-0808
+2026-03-30	SS/HITEMP/OTHER	C12A Grade Scrap	750/MT	Houston TX	Texan Minerals	Suresh Babu	+971-504833176
+2026-03-30	SS/HITEMP/OTHER	PET Seat Belt	0.08	fas East/West	SMC Mgmt	Larry Schipper	201-404-0071
+2026-03-31	ALUMINUM	356 Auto Wheel-Dirty	1.31	Yoe  PA	Regen Recycling	Adam Krupp	514-405-5550
+2026-03-31	ALUMINUM	380/6061 Puck	0.98	fob  Midwest	Target Trading	David Sager	404-983-0570
+2026-03-31	ALUMINUM	6063 Extrusion 2%Fe	1.21	Tro y MO	Most	John Morgan	636-295-4036
+2026-03-31	ALUMINUM	Al Turning-Mxd	0.86	fas  Main Ports	Metallon Trading	Matt Ehrlich	925-683-7317
+2026-03-31	ALUMINUM	ACSR 68%	1.25	Mon treal PQ	AIM Co	Cassandra Guedes	514-216-6327
+2026-03-31	ALUMINUM	Al BX Cable	2.75	fas  Main Ports	Liberty Mtls Recy	Wing Lai	470-338-2073
+2026-03-31	ALUMINUM	Al/Cu Rad-Cln	2.82	Cha ttanooga TN	CLP Mtl Recovery	Matt Molenhouse	423-364-5889
+2026-03-31	ALUMINUM	Al/Cu Rad End	1.80	fas  Main Ports	Liberty Mtls Recy	Wing Lai	470-338-2073
+2026-03-31	ALUMINUM	Al Engine	0.35	Col umbus OH	G-Cor Automotive	Austin Greenblott	800-486-1636
+2026-03-31	ALUMINUM	Gas Meter	0.55	Col umbus OH	G-Cor Automotive	Austin Greenblott	800-486-1636
+2026-03-31	ALUMINUM	UBC	1.16	fob  Midwest	Target Trading	David Sager	404-983-0570
+2026-03-31	COPPER/BRASS	#1 Ins Cu 75%	3.24	Cha ttanooga TN	CLP Mtl Recovery	Matt Molenhouse	423-364-5889
+2026-03-31	COPPER/BRASS	Silver Plated Brass	6.00	pic kup Seller's	Ultimate Elec Recy	Daniel Schafer	813-503-1195
+2026-03-31	COPPER/BRASS	6 & 1 Wire 90%	3.95	pic kup MW	Koppers	David Roche	412-227-2411
+2026-03-31	COPPER/BRASS	CAT5/CAT6 Wire	1.76	Cha ttanooga TN	CLP Mtl Recovery	Matt Molenhouse	423-364-5889
+2026-03-31	COPPER/BRASS	Christmas Wire	0.90	fas  Main Ports	Leadpark Ent US	Edmund Ip	347-970-3003
+2026-03-31	COPPER/BRASS	Cu Ash/Sweep	0.14	fob  Shipper's	Sustainable Mgmt	Michael Friedman	502-526-4458
+2026-03-31	COPPER/BRASS	Cu Sludge	1.50/Cu	fas  Main Ports	Kristi Corp	Jeyapal Babu	908-487-4552
+2026-03-31	COPPER/BRASS	Cu Concentrate	0.50+	fas  Main Ports	Kristi Corp	Jeyapal Babu	908-487-4552
+2026-03-31	COPPER/BRASS	Cu/Brass Slag	1.00	fob  Shipper's	Sustainable Mgmt	Michael Friedman	502-526-4458
+2026-03-31	COPPER/BRASS	Electric Motor-EV	0.42	pic kup Seller's	Cyclic Materials	Patrick Nee	646-469-4168
+2026-03-31	COPPER/BRASS	Electric Motor-Mxd	0.61	fas  East Coast	Dynasel Impex	Paige Sheley	336-989-3433
+2026-03-31	COPPER/BRASS	Sealed Unit	0.56	fas  East Coast	Dynasel Impex	Paige Sheley	336-989-3433
+2026-03-31	SS/HITEMP/OTHER	409 SS Solids	0.21	Tul lahoma TN	C.F.C. Recycling	Andrew Rice	931-247-8404
+2026-03-31	SS/HITEMP/OTHER	446 SS Solids	640/MT	fas  East Ports	Anytime Metals	Julia Davison	647-517-2652
+2026-03-31	SS/HITEMP/OTHER	904L Foundry	2.25	fas  Main Ports	ABCOM	Bharat Mandloi	+65-96356375
+2026-03-31	SS/HITEMP/OTHER	Zeron 100 Foundry	1.78	fas  Main Ports	ABCOM	Bharat Mandloi	+65-96356375
+2026-03-31	SS/HITEMP/OTHER	Ti 6-4 BW	4.00	Los  Angeles CA	Grandis Titanium	Vasily Semeninta	949-459-2621
+2026-03-31	SS/HITEMP/OTHER	Absolyte Battery	0.28	fas  CA/WA Ports	Canwest Recycling	Ben Shah	778-982-8150
+2026-03-31	SS/HITEMP/OTHER	Auto Battery	0.4050	fas  Main Ports	Rap-Co	Steve Fromer	213-713-8097
+2026-03-31	SS/HITEMP/OTHER	Steel Cased Battery	0.4050	fas  Main Ports	AP Global Mgmt	Jae Jang	917-991-2313
+2026-03-31	SS/HITEMP/OTHER	Battery-EV	0.65	Fox  Lake WI	GlobalTech	Joe Clark	800-770-2330
+2026-03-31	SS/HITEMP/OTHER	Ind Cell Battery	0.32	pic kup Seller's	M3 Resources	Gary Bailin	954-288-9620
+2026-03-31	SS/HITEMP/OTHER	Cellphone Battery	0.35	Lak ewood, NJ	SAMR	Albert Boufarah	732-300-8144
+2026-03-31	SS/HITEMP/OTHER	Ind/Standby Battery	0.32	pic kup Seller's	M3 Resources	Gary Bailin	954-288-9620
+2026-03-31	SS/HITEMP/OTHER	NiMh Battery	0.65	Fox  Lake WI	GlobalTech	Joe Clark	800-770-2330
+2026-03-31	SS/HITEMP/OTHER	Range Lead-Indoor	0.89	fas  US Ramps	Grace Trading	Joy Li	216-235-7735
+2026-03-31	SS/HITEMP/OTHER	Solar Panel	0.20	Nor th York ON	Usaca Resources	Kevin Lim	718-663-1168
+2026-03-31	SS/HITEMP/OTHER	Cellphone Scrap	7.00	pic kup Seller's	Ultimate Elec Recy	Daniel Schafer	813-503-1195
+2026-03-31	SS/HITEMP/OTHER	C.I. Boring	310/GT	Chi cago IL	Reserve Alloys	Cal Larkin	574-270-8159
+2026-03-31	SS/HITEMP/OTHER	C.I. Rotor/Drum	355/GT	Spr ingfield MA	Joseph Freedman	JR Scappini	413-276-4022
+2026-03-31	SS/HITEMP/OTHER	Mn Steel-Prepared	400/MT	fob  East Coast	Anytime Metals	Julia Davison	647-517-2652
+2026-03-31	SS/HITEMP/OTHER	Steel Turning	230/GT	Spr ingfield MA	Joseph Freedman	JR Scappini	413-276-4022
+2026-04-01	ALUMINUM	356 Auto Wheel-Dirty	1.29	Huntington IN	Transmetco	Ryan Gledhill	260-224-5817
+2026-04-01	ALUMINUM	7050 Solids	0.80	fob Midwest	Mervis Recycling	Brendan Beck	217-431-2184
+2026-04-01	ALUMINUM	Al Turning-HG-C&D	0.93	fob Midwest	Metal Conversions	Neil Chalupa	614-392-5787
+2026-04-01	ALUMINUM	Al Foil-Yogurt Lid	0.45	fas Main Ports	Alamo Metal Recy	Ritesh Patel	956-783-4709
+2026-04-01	ALUMINUM	Al Foil w/Graphite	0.07	Main Ports/Ramp	SMC Mgmt	Larry Schipper	201-404-0071
+2026-04-01	ALUMINUM	Old Cast 2% Fe	0.98	Apr Jackson TN	Most	Bob Zuerner	731-506-3922
+2026-04-01	ALUMINUM	Old Sheet 2% Fe	1.10	fas Main Ports	Pan American Zinc	Josephita Harry	786-414-0625
+2026-04-01	ALUMINUM	Zorba 95%/3% Red	0.69	fas Main Ports	Vigour Int'l	Jing Wang	718-747-5287
+2026-04-01	COPPER/BRASS	#2 Cu Chop	5.00	Cleveland OH	Secure Recycling	Mario Jurcic	833-633-7328
+2026-04-01	COPPER/BRASS	Silver Plated Brass	6.00	pickup Seller's	Noble Metal Svcs	Dan Healey	866-695-4806
+2026-04-01	COPPER/BRASS	Brass Shell-Cln	3.56	fas East Coast	CNA Metals	Andrew Bilodeau	281-494-4940
+2026-04-01	COPPER/BRASS	Jelly Cable-Stripped	3.55	Hillside NJ	Tekmat Solution	Ken Chen	908-688-4700
+2026-04-01	COPPER/BRASS	Electric Motor-Lrg	0.42	Auburn AL	Southeastern Recy	Lora Williams	334-298-2273
+2026-04-01	COPPER/BRASS	Yellow Brass-Honey	3.20	fas East Coast	Ni-Met	Karan Parikh	289-291-1111
+2026-04-01	SS/HITEMP/OTHER	17-4/15-5 SS-Usable	0.37	Houston TX	MP&T Intl	Manish Gupta	832-444-9687
+2026-04-01	SS/HITEMP/OTHER	Ti 6-4 BW	2.50	San Diego CA	M3 Metals	Steve Lodge	760-510-9210
+2026-04-01	SS/HITEMP/OTHER	Lead Shot-Cln	0.55	Muskogee OK	Wheeler Metals	Tim Wheeler	918-682-1083
+2026-04-01	SS/HITEMP/OTHER	Steel Cased Battery	0.32	GraniteFalls NC	C CON Metals USA	Seth Fanberg	828-313-2266
+2026-04-01	SS/HITEMP/OTHER	Heavy Torching Scrap	245/GT	Columbus OH	Columbus Mtl Recy	Chris Weber	614-478-0808
+2026-04-01	SS/HITEMP/OTHER	PET Bottle-Bale	0.10	fob Midwest	Target Trading	David Sager	404-983-0570
+2026-04-01	SS/HITEMP/OTHER	EC Wire 50K	2.10	fob Houston TX	NUR Metals	Kazim Ali	714-718-2150
+2026-04-01	SS/HITEMP/OTHER	AC Compressor 4CL	0.72	fas Tampa FL	Intl Core Supply	Kaupin Patel	727-564-3409
+2026-04-01	SS/HITEMP/OTHER	Irony Al 65% 1CL	0.41	fas Toronto ON	Doublewin Intl	Leon Zhao	416-832-8532
+2026-04-01	SS/HITEMP/OTHER	Cu Transformer 1CL	1.20	fas Houston TX	NUR Metals	Rizwan Ali	714-745-3621
+2026-04-01	SS/HITEMP/OTHER	304 SS Solids 1CL	0.62	fas Toronto ON	Doublewin Intl	Leon Zhao	416-832-8532
+2026-04-01	SS/HITEMP/OTHER	17-4 SS Solids 21K	0.40	fob Houston TX	Scrap Trading Intl	Ginett Torres	713-784-3330
+2026-04-01	SS/HITEMP/OTHER	430 SS Condenser 1CL	0.30	fob Toronto ON	Doublewin Intl	Leon Zhao	416-832-8532
+2026-04-01	SS/HITEMP/OTHER	Ti Tube 80K	2.00	fas Houston TX	AMS Group/CTG	David Hess	713-426-4777
+2026-04-01	SS/HITEMP/OTHER	Mag Puck AZ31 40K	0.40	fas Houston TX	Derichebourg Recy	Guy Bernstein	404-579-4773
+2026-04-01	SS/HITEMP/OTHER	Mag Ingot AZ91 50K	1.50	pickup Seller's	Kristi Corp	Jeyapal Babu	908-487-4552
+2026-04-01	SS/HITEMP/OTHER	Mag Solids AZ31 20K	0.75	fas Houston TX	Derichebourg Recy	Guy Bernstein	404-579-4773
+2026-04-01	SS/HITEMP/OTHER	Soft Lead 1CL	0.91	fas Tampa FL	Intl Core Supply	Kaupin Patel	727-564-3409
+2026-04-01	SS/HITEMP/OTHER	Auto Battery 5CL	0.42	fas Houston TX	NUR Metals	Kazim Ali	714-718-2150
+2026-04-01	SS/HITEMP/OTHER	Auto Fluff 200K	0.05	fob Houston TX	Derichebourg Recy	Guy Bernstein	404-579-4773
+2026-04-02	ALUMINUM	356 Auto Wheel-Dirty	1.34	Yoe PA	Regen Recycling	Adam Krupp	514-405-5550
+2026-04-02	ALUMINUM	6061 Truck Wheel	1.30	pickup Midwest	Joseph Krash Mtls	Joseph Krash	440-735-5555
+2026-04-02	ALUMINUM	6063 Extrusion 2%Fe	1.21	Troy MO	Most	John Morgan	636-295-4036
+2026-04-02	ALUMINUM	Al BX Cable	2.77	fas Main Ports	LLW	Justin Wu	401-261-4110
+2026-04-02	ALUMINUM	Painted Siding-Cln	1.27	Austin TX	Outlast	Timothy Engels	314-323-5247
+2026-04-02	ALUMINUM	AC Compressor	0.56	Houston TX	Global Mtls Group	Vishal Sharma	713-887-6981
+2026-04-02	ALUMINUM	Irony Al 65%-70%	0.41	fas Main Ports	Guram Trading	Gurmo Sandhu	604-377-1249
+2026-04-02	ALUMINUM	Old Cast 2% Fe	1.10	Newton WI	B & B Metals	Robert Burrows	920-693-8261
+2026-04-02	ALUMINUM	Old Sheet 2% Fe	1.08	fas Main Ports	Metallon Trading	Matt Ehrlich	925-683-7317
+2026-04-02	ALUMINUM	Shredded Al	0.75	fas Main Ports	Metal Trading	Shasha Pogon	650-288-2999
+2026-04-02	COPPER/BRASS	#1 Ins Cu 75%	3.24	Chattanooga TN	CLP Mtl Recovery	Matt Molenhouse	423-364-5889
+2026-04-02	COPPER/BRASS	#2 Cu-Birch/Cliff	5.40	pickup Seller's	E. Tech Mgmt	Benny Yeung	626-271-0815
+2026-04-02	COPPER/BRASS	#2 Ins Cu 40%	1.83	fas Main Ports	LLW	Justin Wu	401-261-4110
+2026-04-02	COPPER/BRASS	6 & 1 Wire 90%	3.95	pickup MW	Koppers	David Roche	412-227-2411
+2026-04-02	COPPER/BRASS	Beryllium/Cu Tng	4.00	Houston TX	Derichebourg Recy	Guy Bernstein	404-579-4773
+2026-04-02	COPPER/BRASS	Degaussing Wire	1.90	Lakewood NJ	SAMR	Albert Boufarah	732-300-8144
+2026-04-02	COPPER/BRASS	CAT5/CAT6 Wire	1.76	Chattanooga TN	CLP Mtl Recovery	Matt Molenhouse	423-364-5889
+2026-04-02	COPPER/BRASS	Cu Clad Wire 30%	0.88	pickup MW	Koppers	David Roche	412-227-2411
+2026-04-02	COPPER/BRASS	Cu Transformer Core	0.90	pickup Seller's	E. Tech Mgmt	Benny Yeung	626-271-0815
+2026-04-02	COPPER/BRASS	Alternator	1.16	fas East Coast	Steelbro Intl	Raj Mittal	516-922-8002
+2026-04-02	COPPER/BRASS	Starter w/Al Head	0.74	Houston TX	Global Mtls Group	Vishal Sharma	713-887-6981
+2026-04-02	COPPER/BRASS	AC Motor-HVAC	0.78	fas Main Ports	Florida Metal	Yusuf Motiwala	407-935-0371
+2026-04-02	COPPER/BRASS	Electric Motor-Sml	0.63	fas East Coast	Dynasel Impex	Paige Sheley	336-989-3433
+2026-04-02	COPPER/BRASS	Electric Motor-Mxd	0.67	fas East Coast	Steelbro Intl	Raj Mittal	516-922-8002
+2026-04-02	COPPER/BRASS	Ribbon Wire	1.59	fas Main Ports	Metal Trading	Shasha Pogon	650-288-2999
+2026-04-02	COPPER/BRASS	Sealed Unit	0.56	fas East Coast	Dynasel Impex	Paige Sheley	336-989-3433
+2026-04-02	COPPER/BRASS	Cu Ballast	0.52	fas Main Ports	Florida Metal	Yusuf Motiwala	407-935-0371
+2026-04-02	COPPER/BRASS	Shredder Picking	1.02	fas Main Ports	Metallon Trading	Matt Ehrlich	925-683-7317
+2026-04-02	COPPER/BRASS	Yellow Brass-Honey	3.50	Houston TX	Derichebourg Recy	Guy Bernstein	404-579-4773
+2026-04-02	SS/HITEMP/OTHER	Moly Electrode	20.00	pickup Midwest	N.G.R.	Brian Howard	419-452-8005
+2026-04-02	SS/HITEMP/OTHER	Auto Battery	0.405	fas Main Ports	AP Global Mgmt	Jae Jang	917-991-2313
+2026-04-02	SS/HITEMP/OTHER	Steel Cased Battery	0.405	fas Main Ports	AP Global Mgmt	Jae Jang	917-991-2313
+2026-04-02	SS/HITEMP/OTHER	Gold Memory	50.00	Lakewood NJ	SAMR	Albert Boufarah	732-300-8144
+2026-04-02	SS/HITEMP/OTHER	P91 Scrap	850/MT	Houston TX	Texan Minerals	Suresh Babu	+971-504833176
+2026-04-02	SS/HITEMP/OTHER	#1 Auto Cast	340/GT	Zion IL	Cleveland Corp	Bob Kujawinski	847-872-7200
+2026-04-02	SS/HITEMP/OTHER	C.I. Rotor/Drum	355/GT	Springfield MA	Joseph Freedman	JR Scappini	413-276-4022
+2026-04-02	SS/HITEMP/OTHER	C12A Grade Scrap	750/MT	Houston TX	Texan Minerals	Suresh Babu	+971-504833176
+2026-04-02	SS/HITEMP/OTHER	Stove Cast	250/GT	Zion IL	Cleveland Corp	Bob Kujawinski	847-872-7200
+2026-04-02	SS/HITEMP/OTHER	Steel Turning	230/GT	Springfield MA	Joseph Freedman	JR Scappini	413-276-4022
+2026-04-02	SS/HITEMP/OTHER	C.I. Counterweight	200/MT	fas Main Ports	Guram Trading	Gurmo Sandhu	604-377-1249
+2026-04-06	ALUMINUM	380 Cast-Cln/New	1.02/1.14	Ashville A L	Hikae Alum Proc	John Horne	423-507- 4903
+2026-04-06	ALUMINUM	6022 Al-Segregated	0.75	fas Midwes t	Mervis Recycling	Brendan Beck	217-431- 2184
+2026-04-06	ALUMINUM	6061 Puck	0.968	fob Midwes t	Target Trading	David Sager	404-983- 0570
+2026-04-06	ALUMINUM	7050 Solids	0.80	fob Midwes t	Mervis Recycling	Brendan Beck	217-431- 2184
+2026-04-06	ALUMINUM	Al Turning-HG-C&D	0.93	fob Midwes t	Metal Conversions	Neil Chalupa	614-392- 5787
+2026-04-06	ALUMINUM	IAW 78%	1.50	Garland TX	Geomet Recycling	Ivanna Torres	915-352- 9982
+2026-04-06	ALUMINUM	ACSR 68%	1.25	Montreal P Q	AIM Co	Cassandra Guedes	514-216- 6327
+2026-04-06	ALUMINUM	ACSR/Ins Al 67%	1.18	Garland TX	Geomet Recycling	Ivanna Torres	915-352- 9982
+2026-04-06	ALUMINUM	Al Engine	0.45	Ashville A L	Hikae Alum Proc	John Horne	423-507- 4903
+2026-04-06	COPPER/BRASS	Cu Mud/Dust	1.55	fob Midwes t	Target Trading	David Sager	404-983- 0570
+2026-04-06	COPPER/BRASS	Cu Ash/Sweep	0.14	fob Shippe r's	Sustainable Mgmt	Michael Friedman	502-526- 4458
+2026-04-06	COPPER/BRASS	Electric Motor-Sml	0.62/0.60	fas East/W est	RAB Wealth	Binish Kalani	214-985- 1696
+2026-04-06	COPPER/BRASS	Electric Motor-Mxd	0.60/0.58	fas East/W est	RAB Wealth	Binish Kalani	214-985- 1696
+2026-04-06	SS/HITEMP/OTHER	Ti 6-4 BW	2.50	San Diego  CA	M3 Metals	Steve Lodge	760-510- 9210
+2026-04-06	SS/HITEMP/OTHER	Range Lead-Indoor	0.91	fas US Ram ps	Grace Trading	Joy Li	216-235- 7735
+2026-04-06	SS/HITEMP/OTHER	Tin Oxide	LLMEx60%	fob Shippe r's	Sustainable Mgmt	Michael Friedman	502-526- 4458
+2026-04-06	SS/HITEMP/OTHER	SSD Hard Drive	15.00	North York  ON	Usaca Resources	Kevin Lim	718-663- 1168
+2026-04-06	SS/HITEMP/OTHER	CD/DVD Rm w/Board	0.10	Baltimore  MD	Owl Metals	Marcus Long	410-282- 0068
+2026-04-06	SS/HITEMP/OTHER	C.I. Boring	310/GT	Chicago IL	Reserve Alloys	Cal Larkin	574-270- 8159
+2026-04-07	ALUMINUM	6061 Truck Wheel	1.30	pickup Midwes t	Joseph Krash Mtls	Joseph Krash	440-735-5555
+2026-04-07	ALUMINUM	356 Auto Wheel-Dirty	1.38	Huntington IN	Transmetco	Ryan Gledhill	260-224-5817
+2026-04-07	ALUMINUM	7075 Solids	1.45	Detroit MI	Major Metals	Steve Sollish	313-368-6060
+2026-04-07	ALUMINUM	8000 Foil-New	1.01	Ansonia CT	Connecticut Metal	Tom Mele	203-736-0790
+2026-04-07	ALUMINUM	Painted Siding-Cln	1.27	Austin TX	Outlast	Timothy Engels	314-323-5247
+2026-04-07	ALUMINUM	Al/Cu Rad-Cln	2.80	fas East Coas t	Steelbro Intl	Raj Mittal	516-922-8002
+2026-04-07	ALUMINUM	Al/Cu Heat Sink	1.51	fas Main Port s	Metal Trading	Shasha Pogon	650-288-2999
+2026-04-07	ALUMINUM	Al/Cu Transformer	0.80	Hillside NJ	Tekmat Solution	Ken Chen	908-688-4700
+2026-04-07	ALUMINUM	Irony Al 50%+	0.73/Al	Concord ON	Rochester Aluminum	Simon/Jose	905-669-1222
+2026-04-07	ALUMINUM	Shredded Al	0.72	fas Main Port s	Vigour Int'l	Jing Wang	718-747-5287
+2026-04-07	ALUMINUM	Old Cast 2% Fe	0.98	Apr Jackson T N	Most	Bob Zuerner	731-506-3922
+2026-04-07	ALUMINUM	Old Sheet-T/T w/CCIC	1.03	fas East Coas t	AME/Yechiu	Kris Loke	626-281-3000
+2026-04-07	ALUMINUM	Zorba 95%/3% Red	0.69	fas Main Port s	Vigour Int'l	Jing Wang	718-747-5287
+2026-04-07	COPPER/BRASS	Silver Plated Brass	6.00	pickup Seller 's	Noble Metal Svcs	Dan Healey	866-695-4806
+2026-04-07	COPPER/BRASS	Busbar-Ag Plated	5.50	Cleveland OH	Secure Recycling	Mario Jurcic	833-633-7328
+2026-04-07	COPPER/BRASS	ASR Wire	1.10	Cleveland OH	Secure Recycling	Mario Jurcic	833-633-7328
+2026-04-07	COPPER/BRASS	Computer Wire	1.08	fas Main Port s	Metal Trading	Shasha Pogon	650-288-2999
+2026-04-07	COPPER/BRASS	Cu Clad Wire 30%	0.91	pickup MW	Koppers	David Roche	412-227-2411
+2026-04-07	COPPER/BRASS	Christmas Wire	0.86	Hillside NJ	Tekmat Solution	Ken Chen	908-688-4700
+2026-04-07	COPPER/BRASS	Cu Transformer-Lrg	1.10	Detroit MI	Eastside Metal	Andy Need	586-291-6069
+2026-04-07	COPPER/BRASS	Cu Transformer-Sml	1.01	fas Main Port s	LLW	Justin Wu	401-261-4110
+2026-04-07	COPPER/BRASS	Cu Transformer-Med	1.03	Detroit MI	Eastside Metal	Andy Need	586-291-6069
+2026-04-07	COPPER/BRASS	Alternator	1.18	fas East Coas t	Steelbro Intl	Raj Mittal	516-922-8002
+2026-04-07	COPPER/BRASS	Electric Motor-Mxd	0.65	fas East Coas t	Dynasel Impex	Paige Sheley	336-989-3433
+2026-04-07	COPPER/BRASS	Electric Motor-Lrg	0.42	Auburn AL	Southeastern Recy	Lora Williams	334-298-2273
+2026-04-07	COPPER/BRASS	Sealed Unit	0.56	fas East Coas t	Dynasel Impex	Paige Sheley	336-989-3433
+2026-04-07	COPPER/BRASS	Yellow Brass-Honey	3.50	Houston TX	Derichebourg Recy	Guy Bernstein	404-579-4773
+2026-04-07	SS/HITEMP/OTHER	17-4/15-5 SS-Usable	0.37	Houston TX	MP&T Intl	Manish Gupta	832-444-9687
+2026-04-07	SS/HITEMP/OTHER	304 SS Solids-20'	0.61	fas East Coas t	RM Metals	Chait Desai	908-222-1500
+2026-04-07	SS/HITEMP/OTHER	316 SS Solids-20'	1.20	fas East Coas t	RM Metals	Chait Desai	908-222-1500
+2026-04-07	SS/HITEMP/OTHER	Nitronic 33 Solids	0.22	Houston TX	MP&T Intl	Manish Gupta	832-444-9687
+2026-04-07	SS/HITEMP/OTHER	Lead Scrap-Dirty	0.50	Muskogee OK	Wheeler Metals	Tim Wheeler	918-682-1083
+2026-04-07	SS/HITEMP/OTHER	Auto Battery	0.32	GraniteFalls  NC	C CON Metals USA	Seth Fanberg	828-313-2266
+2026-04-07	SS/HITEMP/OTHER	Lead Shot-Cln	0.55	Muskogee OK	Wheeler Metals	Tim Wheeler	918-682-1083
+2026-04-07	SS/HITEMP/OTHER	Ind Cell Battery	0.32	GraniteFalls  NC	C CON Metals USA	Seth Fanberg	828-313-2266
+2026-04-07	SS/HITEMP/OTHER	Gold Memory	37.50	del Midwest	Sadoff E-Recycling	Zack Morris	618-578-2282
+2026-04-07	SS/HITEMP/OTHER	Hard Drive Board	16.75	del Midwest	Sadoff E-Recycling	Zack Morris	618-578-2282
+2026-04-07	SS/HITEMP/OTHER	#1 Auto Cast	340/GT	Zion IL	Cleveland Corp	Bob Kujawinski	847-872-7200
+2026-04-07	SS/HITEMP/OTHER	Heavy Torching Scrap	245/GT	Columbus OH	Columbus Mtl Recy	Chris Weber	614-478-0808
+2026-04-07	SS/HITEMP/OTHER	Stove Cast	250/GT	Zion IL	Cleveland Corp	Bob Kujawinski	847-872-7200
+2026-04-07	SS/HITEMP/OTHER	PET Bottle-Bale	0.10	fob Midwest	Target Trading	David Sager	404-983-0570
+2026-04-08	ALUMINUM	6063 Extrusion 2%Fe	1.25	Troy MO	Most	John  Morgan	636-295-4036
+2026-04-08	ALUMINUM	356 Auto Wheel-Dirty	1.34	Yoe PA	Regen Recycling	Adam  Krupp	514-405-5550
+2026-04-08	ALUMINUM	380 Al-New	1.24	Newton WI	B & B Metals	Rober t Burrows	920-693-8261
+2026-04-08	ALUMINUM	6022 Al-Segregated	0.75	fas Midwest	Mervis Recycling	Brend an Beck	217-431-2184
+2026-04-08	ALUMINUM	ACSR/Ins Al	LME  3M+45/-pr	del UT	Utah Metal Works	Chris  Lewon	801-364-5679
+2026-04-08	ALUMINUM	ACSR 68%	1.25	Montreal PQ	AIM Co	Cassa ndra Guedes	514-216-6327
+2026-04-08	ALUMINUM	Al Foil-Yogurt Lid	0.45	fas Main Ports	Alamo Metal Recy	Rites h Patel	956-783-4709
+2026-04-08	COPPER/BRASS	#1 Ins Cu 75%	3.73	Chattanooga TN	CLP Mtl Recovery	Matt  Molenhouse	423-364-5889
+2026-04-08	COPPER/BRASS	Brass Shell-Cln	3.60	fas East Coast	CNA Metals	Andre w Bilodeau	281-494-4940
+2026-04-08	COPPER/BRASS	Degaussing Wire	1.90	Lakewood NJ	SAMR	Alber t Boufarah	732-300-8144
+2026-04-08	COPPER/BRASS	Starter w/Al/Fe Head	0.90/0.86	fas East Coast	ALA Intl	A. Go dil	281-650-0258
+2026-04-08	COPPER/BRASS	Electric Motor-Sml	0.705	fas Main Ports	Florida Metal	Yusuf  Motiwala	407-935-0371
+2026-04-08	COPPER/BRASS	Shredder Picking	1.02	fas Main Ports	Metallon Trading	Matt  Ehrlich	925-683-7317
+2026-04-08	COPPER/BRASS	Yellow Brass-Honey	3.245	fas East Coast	Ni-Met	Karan  Parikh	289-291-1111
+2026-04-08	SS/HITEMP/OTHER	Moly Electrode	20.00	pickup Midwest	N.G.R.	Brian  Howard	419-452-8005
+2026-04-08	SS/HITEMP/OTHER	Ti 6-4 BW	2.50	San Diego CA	M3 Metals	Steve  Lodge	760-510-9210
+2026-04-08	SS/HITEMP/OTHER	Range Lead-Indoor	0.91	fas US Ramps	Grace Trading	Joy L i	216-235-7735
+2026-04-08	SS/HITEMP/OTHER	Battery Plate-Rail	0.485	fas Main Ports	Fornax Intl	Raksh it Parekh	973-494-0962
+2026-04-08	SS/HITEMP/OTHER	Auto Battery	0.405	fas Main Ports	AP Global Mgmt	Jae J ang	917-991-2313
+2026-04-08	SS/HITEMP/OTHER	P91 Scrap	0.45	fob Sellers	Texan Minerals	Sures h Babu	+971-504833176
+2026-04-08	SS/HITEMP/OTHER	C.I. Boring	310/GT	Chicago IL	Reserve Alloys	Cal L arkin	574-270-8159
+2026-04-08	SS/HITEMP/OTHER	Steel Turning	230/GT	Springfield MA	Joseph Freedman	JR Sc appini	413-276-4022
+2026-04-08	SS/HITEMP/OTHER	Al/Cu Rad-Cln 1CL	3.11	fas Tampa FL	Intl Core Supply	Kaupi n Patel	727-564-3409
+2026-04-08	SS/HITEMP/OTHER	EC Wire 50K	2.20	fob Houston TX	NUR Metals	Kazim  Ali	714-718-2150
+2026-04-08	SS/HITEMP/OTHER	Irony Al 65% 1CL	0.41	fas Toronto ON	Doublewin Intl	Leon  Zhao	416-832-8532
+2026-04-08	SS/HITEMP/OTHER	Sealed Unit 2CL	0.58	fas Tampa FL	Intl Core Supply	Kaupi n Patel	727-564-3409
+2026-04-08	SS/HITEMP/OTHER	304 SS Solids 1CL	0.62	fas Toronto ON	Doublewin Intl	Leon  Zhao	416-832-8532
+2026-04-08	SS/HITEMP/OTHER	430 SS Condenser 1CL	0.30	fob Toronto ON	Doublewin Intl	Leon  Zhao	416-832-8532
+2026-04-08	SS/HITEMP/OTHER	Ti Tube 80K	2.00	fas Houston TX	AMS Group/CTG	David  Hess	713-426-4777
+2026-04-08	SS/HITEMP/OTHER	Mag Solids AZ31 20K	0.75	fas Houston TX	Derichebourg Recy	Guy B ernstein	404-579-4773
+2026-04-08	SS/HITEMP/OTHER	Mag Puck AZ31 40K	0.40	fas Houston TX	Derichebourg Recy	Guy B ernstein	404-579-4773
+2026-04-08	SS/HITEMP/OTHER	Auto Battery 5CL	0.42	fas Houston TX	NUR Metals	Kazim  Ali	714-718-2150
+2026-04-08	SS/HITEMP/OTHER	Auto Fluff 200K	0.05	fob Houston TX	Derichebourg Recy	Guy B ernstein	404-579-4773
+2026-04-08	SS/HITEMP/OTHER	CAT Excavator 1PC	15,000/PC	fob Colton CA	Augustine Metals	Lynn  Augustine	951-682-8102
+2026-04-08	SS/HITEMP/OTHER	Labounty Shearer 1PC	50,000/PC	fob Colton CA	Augustine Metals	Lynn  Augustine	951-682-8102
+2026-04-09	ALUMINUM	380 Pucks	1.10	Ashville AL	Hikae Alum Proc	John Horne	423-507-4903
+2026-04-09	ALUMINUM	6061 Truck Wheel	1.35	pickup Midwest	Joseph Krash Mtls	Joseph Krash	440-735-5555
+2026-04-09	ALUMINUM	Painted Siding	1.15	fob Midwest	Target Trading	David Sager	404-983-0570
+2026-04-09	ALUMINUM	Al BX Cable	2.82	fas Main Ports	LLW	Justin Wu	401-261-4110
+2026-04-09	ALUMINUM	Al/Cu Rad End	1.75	fas Main Ports	Liberty Mtls Recy	Wing Lai	470-338-2073
+2026-04-09	ALUMINUM	Al/Cu Heat Sink	1.51	fas Main Ports	Metal Trading	Shasha Pogon	650-288-2999
+2026-04-09	ALUMINUM	Al Suture Foil	0.30	fas East/West	SMC Mgmt	Larry Schipp er	201-404-0071
+2026-04-09	ALUMINUM	Al Engine	0.45	Ashville AL	Hikae Alum Proc	John Horne	423-507-4903
+2026-04-09	ALUMINUM	Alucobond	0.24	fas East Coast	SMC Mgmt	Larry Schipp er	201-404-0071
+2026-04-09	ALUMINUM	Al UBC/Foil Package	0.50	fas Main Ports	Kristi Corp	Jeyapal Babu	908-487-4552
+2026-04-09	ALUMINUM	Shredded Al	0.72	fas Main Ports	Vigour Int'l	Jing Wang	718-747-5287
+2026-04-09	ALUMINUM	E Zorba	0.75	fas Main Ports	Leadpark Ent US	Edmund Ip	347-970-3003
+2026-04-09	ALUMINUM	Zorba 95%/3% Red	0.69	fas Main Ports	Vigour Int'l	Jing Wang	718-747-5287
+2026-04-09	COPPER/BRASS	#2 Ins Cu 35%	1.70	pickup Seller's	E. Tech Mgmt	Benny Yeung	626-271-0815
+2026-04-09	COPPER/BRASS	Beryllium/Cu Tng	4.00	Houston TX	Derichebourg Recy	Guy Bernstei n	404-579-4773
+2026-04-09	COPPER/BRASS	Silver Plated Brass	7.00	Houston TX	Derichebourg Recy	Guy Bernstei n	404-579-4773
+2026-04-09	COPPER/BRASS	Brass Breakage 75%	2.25	fas Main Ports	LLW	Justin Wu	401-261-4110
+2026-04-09	COPPER/BRASS	Jelly Cable-Stripped	3.50	fas Main Ports	Leadpark Ent US	Edmund Ip	347-970-3003
+2026-04-09	COPPER/BRASS	Helix Closed Eye	1.60	fas Main Ports	Liberty Mtls Recy	Wing Lai	470-338-2073
+2026-04-09	COPPER/BRASS	Christmas Wire	0.87	fas Main Ports	Metal Trading	Shasha Pogon	650-288-2999
+2026-04-09	COPPER/BRASS	Cu Mud/Dust	1.60	fob Midwest	Target Trading	David Sager	404-983-0570
+2026-04-09	COPPER/BRASS	Cu Transformer-Lrg	1.14	Detroit MI	Eastside Metal	Andy Need	586-291-6069
+2026-04-09	COPPER/BRASS	Cu Transformer Core	0.90	pickup Seller's	E. Tech Mgmt	Benny Yeung	626-271-0815
+2026-04-09	COPPER/BRASS	Cu Transformer-Med	1.07	Detroit MI	Eastside Metal	Andy Need	586-291-6069
+2026-04-09	COPPER/BRASS	Cu Concentrate	0.50+	fas Main Ports	Kristi Corp	Jeyapal Babu	908-487-4552
+2026-04-09	COPPER/BRASS	Electric Motor-Mxd	0.60/0.58	fas East/West	RAB Wealth	Binish Kalan i	214-985-1696
+2026-04-09	COPPER/BRASS	Sealed Unit	0.50/0.49	fas East/West	RAB Wealth	Binish Kalan i	214-985-1696
+2026-04-09	SS/HITEMP/OTHER	446 SS Solids	640/MT	fas East Ports	Anytime Metals	Julia Daviso n	647-517-2652
+2026-04-09	SS/HITEMP/OTHER	Zurik	0.30-0.55	fas Main Ports	Majestic Corp	Lionel Lai	+61-477232233
+2026-04-09	SS/HITEMP/OTHER	Lead Scrap-Dirty	0.50	Muskogee OK	Wheeler Metals	Tim Wheeler	918-682-1083
+2026-04-09	SS/HITEMP/OTHER	Battery-EV	0.65	Fox Lake WI	GlobalTech	Joe Clark	800-770-2330
+2026-04-09	SS/HITEMP/OTHER	Lead Shot-Cln	0.55	Muskogee OK	Wheeler Metals	Tim Wheeler	918-682-1083
+2026-04-09	SS/HITEMP/OTHER	Ind Cell Battery	0.32	GraniteFalls NC	C CON Metals USA	Seth Fanberg	828-313-2266
+2026-04-09	SS/HITEMP/OTHER	Steel Cased Battery	0.32	GraniteFalls NC	C CON Metals USA	Seth Fanberg	828-313-2266
+2026-04-09	SS/HITEMP/OTHER	Cellphone Board	13.00-15.00	Holbrook NY	Encore Refining	Don Galindo	631-319-1910
+2026-04-09	SS/HITEMP/OTHER	Finger Board	5.25	Holbrook NY	Encore Refining	Don Galindo	631-319-1910
+2026-04-09	SS/HITEMP/OTHER	Trim Boards	0.52-0.63	fas Main Ports	Majestic Corp	Lionel Lai	+61-477232233
+2026-04-09	SS/HITEMP/OTHER	Si Sheet CRGO M3/M4	0.32/0.22	fas East Ports	Florida Metal	Moe Motiwala	407-935-0371
+2026-04-09	SS/HITEMP/OTHER	Mn Steel-Prepared	400/MT	fob East Coast	Anytime Metals	Julia Daviso n	647-517-2652
+2026-04-09	SS/HITEMP/OTHER	Si Sheet CRGO M5/M6	0.20/0.15	fas East Ports	Florida Metal	Moe Motiwala	407-935-0371
+2026-04-09	SS/HITEMP/OTHER	Disc/Rotor/Drum	350/MT	fas Main Ports	Canwest Recycling	Ben Shah	778-982-8150
+2026-04-10	ALUMINUM	356 Auto Wheel-Cln	1.42	fas East Coast	ALA Intl	A. Godil	281-650-0258
+2026-04-10	ALUMINUM	356 Auto Wheel-Dirty	1.38	Huntington IN	Transmetco	Ryan Gledhill	260-224-5817
+2026-04-10	ALUMINUM	7075 Solids	1.45	Detroit MI	Major Metals	Steve Sollish	313-368-6060
+2026-04-10	ALUMINUM	Al Turning-HG-C&D	0.98	fob Midwest	Metal Conversions	Neil Chalupa	614-392-5787
+2026-04-10	ALUMINUM	Al Puck-HG/Mxd	1.11/1.00	fas Main Ports	Metallon Trading	Matt Ehrlich	925-683-7317
+2026-04-10	ALUMINUM	AC Compressor	0.73	fas East Coast	Dynasel Impex	Paige Sheley	336-989-3433
+2026-04-10	ALUMINUM	Al Cast Breakage 50%	0.65	Newton WI	B & B Metals	Robert Burrows	920-693-8261
+2026-04-10	ALUMINUM	Irony Al 75%+	0.50	fas Main Ports	Alamo Metal Recy	Ritesh Patel	956-783-4709
+2026-04-10	ALUMINUM	Al Cast 2% Fe	1.16	fas East Ports	Quadrant Metals	SaurabhDhandharia	502-999-2617
+2026-04-10	ALUMINUM	Old Cast 2% Fe	1.00	Apr Jackson TN	Most	Bob Zuerner	731-506-3922
+2026-04-10	ALUMINUM	Old Sheet-T/T w/CCIC	1.03	fas East Coast	AME/Yechiu	Kris Loke	626-281-3000
+2026-04-10	COPPER/BRASS	#1 Ins Cu 75%	3.73	Chattanooga TN	CLP Mtl Recovery	Matt Molenhouse	423-364-5889
+2026-04-10	COPPER/BRASS	#2 Cu Chop	5.00	Cleveland OH	Secure Recycling	Mario Jurcic	833-633-7328
+2026-04-10	COPPER/BRASS	6 & 1 Wire 90%	4.08	pickup MW	Koppers	David Roche	412-227-2411
+2026-04-10	COPPER/BRASS	Brass Shell-Cln	3.60	fas East Coast	CNA Metals	Andrew Bilodeau	281-494-4940
+2026-04-10	COPPER/BRASS	CAT5/CAT6 Wire	2.07	Chattanooga TN	CLP Mtl Recovery	Matt Molenhouse	423-364-5889
+2026-04-10	COPPER/BRASS	Computer Wire	1.00	Cleveland OH	Secure Recycling	Mario Jurcic	833-633-7328
+2026-04-10	COPPER/BRASS	Cu Clad Wire 30%	0.91	pickup MW	Koppers	David Roche	412-227-2411
+2026-04-10	COPPER/BRASS	Fuse Box	1.00	Hillside NJ	Tekmat Solution	Ken Chen	908-688-4700
+2026-04-10	COPPER/BRASS	Alternator	1.18	fas East Coast	Steelbro Intl	Raj Mittal	516-922-8002
+2026-04-10	COPPER/BRASS	Electric Motor-Sml	0.68	fas East Coast	Dynasel Impex	Paige Sheley	336-989-3433
+2026-04-10	COPPER/BRASS	Electric Motor-Mxd	0.68	fas East Coast	Steelbro Intl	Raj Mittal	516-922-8002
+2026-04-10	COPPER/BRASS	Electric Motor-Lrg	0.42	Auburn AL	Southeastern Recy	Lora Williams	334-298-2273
+2026-04-10	COPPER/BRASS	Electronic Ballast	0.46	fas East Coast	ALA Intl	A. Godil	281-650-0258
+2026-04-10	COPPER/BRASS	Shredder Picking	1.02	fas Main Ports	Metallon Trading	Matt Ehrlich	925-683-7317
+2026-04-10	SS/HITEMP/OTHER	17-4/15-5 SS-Usable	0.37	Houston TX	MP&T Intl	Manish Gupta	832-444-9687
+2026-04-10	SS/HITEMP/OTHER	304/316 SS Solids	0.60/1.11	fas East Coast	CNA Metals	Andrew Bilodeau	281-494-4940
+2026-04-10	SS/HITEMP/OTHER	409 SS Solids	0.21	Tullahoma TN	C.F.C. Recycling	Andrew Rice	931-247-8404
+2026-04-10	SS/HITEMP/OTHER	Nitronic 33 Solids	0.22	Houston TX	MP&T Intl	Manish Gupta	832-444-9687
+2026-04-10	SS/HITEMP/OTHER	Ti 6-4 BW	2.50	San Diego CA	M3 Metals	Steve Lodge	760-510-9210
+2026-04-10	SS/HITEMP/OTHER	Soft Lead-Cln	0.75	fas Main Ports	Fornax Intl	Rakshit Parekh	973-494-0962
+2026-04-10	SS/HITEMP/OTHER	Graphic Cards	5.00	North York ON	Usaca Resources	Kevin Lim	718-663-1168
+2026-04-10	SS/HITEMP/OTHER	P91 Scrap	850/MT	Houston TX	Texan Minerals	Suresh Babu	+971-504833176
+2026-04-10	SS/HITEMP/OTHER	#1 Auto Cast	340/GT	Zion IL	Cleveland Corp	Bob Kujawinski	847-872-7200
+2026-04-10	SS/HITEMP/OTHER	C12A Grade Scrap	750/MT	Houston TX	Texan Minerals	Suresh Babu	+971-504833176
+2026-04-10	SS/HITEMP/OTHER	Stove Cast	250/GT	Zion IL	Cleveland Corp	Bob Kujawinski	847-872-7200
+2026-04-10	SS/HITEMP/OTHER	Heavy Torching Scrap	245/GT	Columbus OH	Columbus Mtl Recy	Chris Weber	614-478-0808
+2026-04-10	SS/HITEMP/OTHER	PET Bottle-Bale	0.10	fob Midwest	Target Trading	David Sager	404-983-0570
+2026-04-10	SS/HITEMP/OTHER	PET Seat Belt	0.08	fas East/West	SMC Mgmt	Larry Schipper	201-404-0071
+2026-04-13	ALUMINUM	356 Auto Wheel-Dirty	1.31	Yoe PA	Regen Recycling	Adam Krupp	514-405-5550
+2026-04-13	ALUMINUM	6061 Truck Wheel	1.26	fas Main  Ports	Outlast	Timothy Engels	314-323-5247
+2026-04-13	ALUMINUM	380 Cast-Cln/New	1.02/1.14	Ashville  AL	Hikae Alum Proc	John Horne	423-507-4903
+2026-04-13	ALUMINUM	3003 Clip-New-Bare	1.89	fob Midwe st	Target Trading	David Sager	404-983-0570
+2026-04-13	ALUMINUM	6022 Al-Segregated	0.75	fas Midwe st	Mervis Recycling	Brendan Beck	217-431-2184
+2026-04-13	ALUMINUM	6063 Extrusion 2%Fe	1.25	Troy MO	Most	John Morgan	636-295-4036
+2026-04-13	ALUMINUM	7050 Solids	0.80	fob Midwe st	Mervis Recycling	Brendan Beck	217-431-2184
+2026-04-13	ALUMINUM	ACSR 68%	1.25	Montreal  PQ	AIM Co	Cassandra Guedes	514-216-6327
+2026-04-13	ALUMINUM	Painted Siding-Cln	1.29	Austin TX	Outlast	Timothy Engels	314-323-5247
+2026-04-13	ALUMINUM	Al/Cu Helix Open Eye	0.80	fas Main  Ports	LLW	Justin Wu	401-261-4110
+2026-04-13	ALUMINUM	Al Keurig Foil	0.63/0.61	fas East/ West	SMC Mgmt	Larry Schipper	201-404-0071
+2026-04-13	ALUMINUM	Al Engine	0.45	Ashville  AL	Hikae Alum Proc	John Horne	423-507-4903
+2026-04-13	ALUMINUM	Irony Al 65%-70%	0.41	fas Main  Ports	Guram Trading	Gurmo Sandhu	604-377-1249
+2026-04-13	ALUMINUM	Shredded Al	0.72	fas Main  Ports	Vigour Int'l	Jing Wang	718-747-5287
+2026-04-13	ALUMINUM	Zorba	0.80	fas East  Coast	Kristi Corp	Jeyapal Babu	908-487-4552
+2026-04-13	ALUMINUM	Zorba 95%/3% Red	0.69	fas Main  Ports	Vigour Int'l	Jing Wang	718-747-5287
+2026-04-13	COPPER/BRASS	Silver Plated Brass	6.00	pickup Se ller's	Ultimate Elec Recy	Daniel Schafer	813-503-1195
+2026-04-13	COPPER/BRASS	Beryllium/Cu Solid	7.00	Houston T X	Derichebourg Recy	Guy Bernstein	404-579-4773
+2026-04-13	COPPER/BRASS	Harness Wire	2.51	fas Main  Ports	LLW	Justin Wu	401-261-4110
+2026-04-13	COPPER/BRASS	Degaussing Wire	1.90	Lakewood  NJ	SAMR	Albert Boufarah	732-300-8144
+2026-04-13	COPPER/BRASS	Cu Mud/Dust	1.60	fob Midwe st	Target Trading	David Sager	404-983-0570
+2026-04-13	COPPER/BRASS	Cu Sludge	1.50/Cu	fas Main  Ports	Kristi Corp	Jeyapal Babu	908-487-4552
+2026-04-13	COPPER/BRASS	Cu Transformer-Lrg	1.31	fas Main  Ports	Florida Metal	Yusuf Motiwala	407-935-0371
+2026-04-13	COPPER/BRASS	Cu/Brass Slag	1.00	fob Shipp er's	Sustainable Mgmt	Michael Friedman	502-526-4458
+2026-04-13	COPPER/BRASS	Electric Motor-EV	0.42	pickup Se ller's	Cyclic Materials	Patrick Nee	646-469-4168
+2026-04-13	COPPER/BRASS	DC Motor	0.765	fas Main  Ports	Florida Metal	Yusuf Motiwala	407-935-0371
+2026-04-13	COPPER/BRASS	Electric Motor-Lrg	0.52	fas Main  Ports	Guram Trading	Gurmo Sandhu	604-377-1249
+2026-04-13	COPPER/BRASS	Sealed Unit	0.52	fas East  Coast	SMC Mgmt	Larry Schipper	201-404-0071
+2026-04-13	COPPER/BRASS	Yellow Brass-Honey	3.34	fas East  Coast	Ni-Met	Karan Parikh	289-291-1111
+2026-04-13	SS/HITEMP/OTHER	304 SS Solids-20'	0.61	fas East  Coast	RM Metals	Chait Desai	908-222-1500
+2026-04-13	SS/HITEMP/OTHER	316 SS Solids-20'	1.20	fas East  Coast	RM Metals	Chait Desai	908-222-1500
+2026-04-13	SS/HITEMP/OTHER	Zurik	0.30-0.55	fas Main  Ports	Majestic Corp	Lionel Lai	+61-477232233
+2026-04-13	SS/HITEMP/OTHER	Moly Electrode	20.00	pickup Mi dwest	N.G.R.	Brian Howard	419-452-8005
+2026-04-13	SS/HITEMP/OTHER	Ti 6-4 Usable	6.00	Kennewick  WA	N. American Alloys	Steve Meredith	509-586-8848
+2026-04-13	SS/HITEMP/OTHER	Auto Battery	0.405	fas Main  Ports	AP Global Mgmt	Jae Jang	917-991-2313
+2026-04-13	SS/HITEMP/OTHER	Ind Cell Battery	0.32	pickup Se ller's	M3 Resources	Gary Bailin	954-288-9620
+2026-04-13	SS/HITEMP/OTHER	Steel Cased Battery	0.405	fas Main  Ports	AP Global Mgmt	Jae Jang	917-991-2313
+2026-04-13	SS/HITEMP/OTHER	Ind/Standby Battery	0.32	pickup Se ller's	M3 Resources	Gary Bailin	954-288-9620
+2026-04-13	SS/HITEMP/OTHER	Absolyte Battery	0.38	fas CA/WA  Ports	Canwest Recycling	Ben Shah	778-982-8150
+2026-04-13	SS/HITEMP/OTHER	Tin Oxide	LLMEx60%	fob Shipp er's	Sustainable Mgmt	Michael Friedman	502-526-4458
+2026-04-13	SS/HITEMP/OTHER	Gold Memory	50.00	pickup Se ller's	Ultimate Elec Recy	Daniel Schafer	813-503-1195
+2026-04-13	SS/HITEMP/OTHER	Hard Drive Board	14.00	Lakewood  NJ	SAMR	Albert Boufarah	732-300-8144
+2026-04-13	SS/HITEMP/OTHER	Trim Boards	0.52-0.63	fas Main  Ports	Majestic Corp	Lionel Lai	+61-477232233
+2026-04-13	SS/HITEMP/OTHER	#1 Cast Iron	300/MT	fas Main  Ports	Canwest Recycling	Ben Shah	778-982-8150
+2026-04-13	SS/HITEMP/OTHER	C.I. Rotor/Drum	355/GT	Springfie ld MA	Joseph Freedman	JR Scappini	413-276-4022
+2026-04-13	SS/HITEMP/OTHER	C.I. Boring	310/GT	Chicago I L	Reserve Alloys	Cal Larkin	574-270-8159
+2026-04-13	SS/HITEMP/OTHER	Steel Turning	230/GT	Springfie ld MA	Joseph Freedman	JR Scappini	413-276-4022
+2026-04-14	ALUMINUM	356 Auto Wheel-Dirty	1.38	Huntington IN	Transmetco	Ryan Gledhill	260-224-5817
+2026-04-14	ALUMINUM	6061 Truck Wheel	1.35	pickup Midwest	Joseph Krash Mtls	Joseph Krash	440-735-5555
+2026-04-14	ALUMINUM	1100 Enameled Core	0.60	fas Main Ports	Alamo Metal Recy	Ritesh Patel	956-783-4709
+2026-04-14	ALUMINUM	Al BX Cable	2.75	fas Main Ports	Liberty Mtls Recy	Wing Lai	470-338-2073
+2026-04-14	ALUMINUM	Telic-HG-Bld/Mxd	1.04/0.86	fas Main Ports	Metallon Trading	Matt Ehrlich	925-683-7317
+2026-04-14	ALUMINUM	Al/Cu URD Cable	90%LMESpot	fas East Coast	ALA Intl	A. Godil	281-650-0258
+2026-04-14	ALUMINUM	Al Fan	0.40	fas Main Ports	Leadpark Ent US	Edmund Ip	347-970-3003
+2026-04-14	ALUMINUM	Al Bottle Cap	0.22	fas Main Ports	Alamo Metal Recy	Ritesh Patel	956-783-4709
+2026-04-14	ALUMINUM	Al Fine/Grinding	0.19	Chicago IL	NMI Trading	Michael Nedvidek	219-644-8503
+2026-04-14	ALUMINUM	AC Compressor	0.73	fas East Coast	Dynasel Impex	Paige Sheley	336-989-3433
+2026-04-14	ALUMINUM	Al Shell-Spent	0.11	Sterling IL	NMI Trading	Michael Nedvidek	219-644-8503
+2026-04-14	ALUMINUM	Old Sheet-T/T w/CCIC	1.04	fas East Coast	AME/Yechiu	Kris Loke	626-281-3000
+2026-04-14	ALUMINUM	Shredded Al	0.75	fas Main Ports	Metal Trading	Shasha Pogon	650-288-2999
+2026-04-14	COPPER/BRASS	#1 Ins Cu 75%	3.83	Chattanooga TN	CLP Mtl Recovery	Matt Molenhouse	423-364-5889
+2026-04-14	COPPER/BRASS	#2 Ins Cu 50%	2.40	Chattanooga TN	CLP Mtl Recovery	Matt Molenhouse	423-364-5889
+2026-04-14	COPPER/BRASS	2 & 1 Wire-6A/8A	3.49/3.05	pickup MW	Koppers	David Roche	412-227-2411
+2026-04-14	COPPER/BRASS	Brass Shell-Cln	3.815	fas East Coast	CNA Metals	Andrew Bilodeau	281-494-4940
+2026-04-14	COPPER/BRASS	Helix Open Eye 55%+	2.60	fas Main Ports	Liberty Mtls Recy	Wing Lai	470-338-2073
+2026-04-14	COPPER/BRASS	Computer Wire	1.08	fas Main Ports	Metal Trading	Shasha Pogon	650-288-2999
+2026-04-14	COPPER/BRASS	Christmas Wire	0.90	fas Main Ports	Leadpark Ent US	Edmund Ip	347-970-3003
+2026-04-14	COPPER/BRASS	Cu Clad Wire 30%	0.95	pickup MW	Koppers	David Roche	412-227-2411
+2026-04-14	COPPER/BRASS	Cu Transformer-Lrg	1.17	Detroit MI	Eastside Metal	Andy Need	586-291-6069
+2026-04-14	COPPER/BRASS	Cu Transformer-Med	1.10	Detroit MI	Eastside Metal	Andy Need	586-291-6069
+2026-04-14	COPPER/BRASS	Alternator	1.17	fas East Coast	ALA Intl	A. Godil	281-650-0258
+2026-04-14	COPPER/BRASS	Electric Motor-Sml	0.62/0.60	fas East/West	RAB Wealth	Binish Kalani	214-985-1696
+2026-04-14	COPPER/BRASS	Electric Motor-Mxd	0.65	fas East Coast	Dynasel Impex	Paige Sheley	336-989-3433
+2026-04-14	COPPER/BRASS	Sealed Unit	0.50/0.49	fas East/West	RAB Wealth	Binish Kalani	214-985-1696
+2026-04-14	COPPER/BRASS	Shredder Picking	1.02	fas Main Ports	Metallon Trading	Matt Ehrlich	925-683-7317
+2026-04-14	SS/HITEMP/OTHER	17-4/15-5 SS-Usable	0.38	Houston TX	MP&T Intl	Manish Gupta	832-444-9687
+2026-04-14	SS/HITEMP/OTHER	446 SS Solids	640/MT	fas East Ports	Anytime Metals	Julia Davison	647-517-2652
+2026-04-14	SS/HITEMP/OTHER	Nitronic 33 Solids	0.23	Houston TX	MP&T Intl	Manish Gupta	832-444-9687
+2026-04-14	SS/HITEMP/OTHER	Ti 6-4 BW	4.10	Los Angeles CA	Grandis Titanium	Vasily Semeninta	949-459-2621
+2026-04-14	SS/HITEMP/OTHER	Ti Turning-Mxd	0.65	Los Angeles CA	Grandis Titanium	Vasily Semeninta	949-459-2621
+2026-04-14	SS/HITEMP/OTHER	H13 Tool Steel	0.38	fas East Ports	CNA Metals	Andrew Bilodeau	281-494-4940
+2026-04-14	SS/HITEMP/OTHER	Lead Scrap-Dirty	0.50	Muskogee OK	Wheeler Metals	Tim Wheeler	918-682-1083
+2026-04-14	SS/HITEMP/OTHER	Li-Ion Black Mass	70%LMENi+Co	del Midwest	GlobalTech	Joe Clark	800-770-2330
+2026-04-14	SS/HITEMP/OTHER	Lead Shot-Cln	0.55	Muskogee OK	Wheeler Metals	Tim Wheeler	918-682-1083
+2026-04-14	SS/HITEMP/OTHER	NiMh Battery	0.65	Fox Lake WI	GlobalTech	Joe Clark	800-770-2330
+2026-04-14	SS/HITEMP/OTHER	Telecom Board	6.00-10.00	Holbrook NY	Encore Refining	Don Galindo	631-319-1910
+2026-04-14	SS/HITEMP/OTHER	CPU-Pinless	7.00	North York ON	Usaca Resources	Kevin Lim	718-663-1168
+2026-04-14	SS/HITEMP/OTHER	Finger Board	5.25	Holbrook NY	Encore Refining	Don Galindo	631-319-1910
+2026-04-14	SS/HITEMP/OTHER	Hard Drive-Punched	0.90	North York ON	Usaca Resources	Kevin Lim	718-663-1168
+2026-04-14	SS/HITEMP/OTHER	Si Sheet CRGO M3/M4	0.32/0.22	fas East Ports	Florida Metal	Moe Motiwala	407-935-0371
+2026-04-14	SS/HITEMP/OTHER	Si Sheet CRGO M5/M6	0.20/0.15	fas East Ports	Florida Metal	Moe Motiwala	407-935-0371
+2026-04-14	SS/HITEMP/OTHER	#1 Auto Cast	340/GT	Zion IL	Cleveland Corp	Bob Kujawinski	847-872-7200
+2026-04-14	SS/HITEMP/OTHER	Mn Steel-Prepared	400/MT	fob East Coast	Anytime Metals	Julia Davison	647-517-2652
+2026-04-14	SS/HITEMP/OTHER	Stove Cast	250/GT	Zion IL	Cleveland Corp	Bob Kujawinski	847-872-7200
+2026-04-14	SS/HITEMP/OTHER	PET Bottle-Bale	0.10	fob Midwest	Target Trading	David Sager	404-983-0570
+2026-04-15	ALUMINUM	356 Auto Wheel-Dirty	1.38	Huntington IN	Transmetco	Ryan  Gledhill	260-224-5817
+2026-04-15	ALUMINUM	6063 Extrusion 2%Fe	1.27	Troy MO	Most	John  Morgan	636-295-4036
+2026-04-15	ALUMINUM	Al Turning-HG-C&D	0.98	fob Midwest	Metal Conversions	Neil  Chalupa	614-392-5787
+2026-04-15	ALUMINUM	ACSR 68%	1.25	Montreal PQ	AIM Co	Cassa ndra Guedes	514-216-6327
+2026-04-15	ALUMINUM	ACSR/Ins Al 67%	1.40	Garland TX	Geomet Recycling	Ivann a Torres	915-352-9982
+2026-04-15	ALUMINUM	Zorba 95%/3% Red	0.69	fas Main Ports	Vigour Int'l	Jing  Wang	718-747-5287
+2026-04-15	COPPER/BRASS	ASR Wire	1.10	Cleveland OH	Secure Recycling	Mario  Jurcic	833-633-7328
+2026-04-15	COPPER/BRASS	Cu Mud/Dust	1.60	fob Midwest	Target Trading	David  Sager	404-983-0570
+2026-04-15	COPPER/BRASS	Cu Ash/Sweep	0.14	fob Shipper's	Sustainable Mgmt	Micha el Friedman	502-526-4458
+2026-04-15	COPPER/BRASS	Alternator	1.07	Houston TX	Global Mtls Group	Visha l Sharma	713-887-6981
+2026-04-15	COPPER/BRASS	Electric Motor-Lrg	0.42	Auburn AL	Southeastern Recy	Lora  Williams	334-298-2273
+2026-04-15	COPPER/BRASS	Yellow Brass-Honey	3.34	fas East Coast	Ni-Met	Karan  Parikh	289-291-1111
+2026-04-15	SS/HITEMP/OTHER	409 SS Solids	0.21	Tullahoma TN	C.F.C. Recycling	Andre w Rice	931-247-8404
+2026-04-15	SS/HITEMP/OTHER	Ti 6-4 BW	2.50	San Diego CA	M3 Metals	Steve  Lodge	760-510-9210
+2026-04-15	SS/HITEMP/OTHER	P91 Scrap	0.45	fob Sellers	Texan Minerals	Sures h Babu	+971-504833176
+2026-04-15	SS/HITEMP/OTHER	C.I. Rotor/Drum	355/GT	Springfield MA	Joseph Freedman	JR Sc appini	413-276-4022
+2026-04-15	SS/HITEMP/OTHER	C.I. Boring	310/GT	Chicago IL	Reserve Alloys	Cal L arkin	574-270-8159
+2026-04-15	SS/HITEMP/OTHER	Heavy Torching Scrap	245/GT	Columbus OH	Columbus Mtl Recy	Chris  Weber	614-478-0808
+2026-04-15	SS/HITEMP/OTHER	EC Wire 50K	2.20	fob Houston TX	NUR Metals	Kazim  Ali	714-718-2150
+2026-04-15	SS/HITEMP/OTHER	AC Compressor 4CL	0.80	fas Tampa FL	Intl Core Supply	Kaupi n Patel	727-564-3409
+2026-04-15	SS/HITEMP/OTHER	Irony Al 65% 1CL	0.41	fas Toronto ON	Doublewin Intl	Leon  Zhao	416-832-8532
+2026-04-15	SS/HITEMP/OTHER	Harness Wire 1CL	2.70	fas Tampa FL	Intl Core Supply	Kaupi n Patel	727-564-3409
+2026-04-15	SS/HITEMP/OTHER	304 SS Solids 1CL	0.62	fas Toronto ON	Doublewin Intl	Leon  Zhao	416-832-8532
+2026-04-15	SS/HITEMP/OTHER	430 SS Condenser 1CL	0.30	fob Toronto ON	Doublewin Intl	Leon  Zhao	416-832-8532
+2026-04-15	SS/HITEMP/OTHER	Mag Puck AZ31 40K	0.40	fas Houston TX	Derichebourg Recy	Guy B ernstein	404-579-4773
+2026-04-15	SS/HITEMP/OTHER	Mag Solids AZ31 20K	0.75	fas Houston TX	Derichebourg Recy	Guy B ernstein	404-579-4773
+2026-04-15	SS/HITEMP/OTHER	Ti Tube 80K	2.00	fas Houston TX	AMS Group/CTG	David  Hess	713-426-4777
+2026-04-15	SS/HITEMP/OTHER	Soft Lead 1CL	0.91	fas Tampa FL	Intl Core Supply	Kaupi n Patel	727-564-3409
+2026-04-15	SS/HITEMP/OTHER	Auto Battery 5CL	0.42	fas Houston TX	NUR Metals	Kazim  Ali	714-718-2150
+2026-04-15	SS/HITEMP/OTHER	Auto Fluff 200K	0.05	fob Houston TX	Derichebourg Recy	Guy B ernstein	404-579-4773
+2026-04-15	SS/HITEMP/OTHER	CAT Excavator 1PC	15,000/PC	fob Colton CA	Augustine Metals	Lynn  Augustine	951-682-8102
+2026-04-15	SS/HITEMP/OTHER	Labounty Shearer 1PC	50,000/PC	fob Colton CA	Augustine Metals	Lynn  Augustine	951-682-8102
+2026-04-16	ALUMINUM	356 Auto Wheel-Shred	0.90	fas East Coast	Kristi Corp	Jeyapal  Babu	908-487-4552
+2026-04-16	ALUMINUM	356 Auto Wheel-Dirty	1.31	Yoe PA	Regen Recycling	Adam Kru pp	514-405-5550
+2026-04-16	ALUMINUM	380 Pucks	1.10	Ashville AL	Hikae Alum Proc	John Hor ne	423-507-4903
+2026-04-16	ALUMINUM	6022 Al-Segregated	0.75	fas Midwest	Mervis Recycling	Brendan  Beck	217-431-2184
+2026-04-16	ALUMINUM	7050 Solids	0.80	fob Midwest	Mervis Recycling	Brendan  Beck	217-431-2184
+2026-04-16	ALUMINUM	Painted Siding-Cln	1.31	Austin TX	Outlast	Timothy  Engels	314-323-5247
+2026-04-16	ALUMINUM	Al/Cu Rad End	1.75	fas Main Ports	Liberty Mtls Recy	Wing Lai	470-338-2073
+2026-04-16	ALUMINUM	Al/Cu Heat Sink	1.51	fas Main Ports	Metal Trading	Shasha P ogon	650-288-2999
+2026-04-16	ALUMINUM	Al Fan	0.45	Hillside NJ	Tekmat Solution	Ken Chen	908-688-4700
+2026-04-16	ALUMINUM	Al Nespresso Pods	0.35	fas East/West	SMC Mgmt	Larry Sc hipper	201-404-0071
+2026-04-16	ALUMINUM	Insulin Bottle Cap	0.06	Ansonia CT	Connecticut Metal	Tom Mele	203-736-0790
+2026-04-16	ALUMINUM	Al Engine	0.45	Ashville AL	Hikae Alum Proc	John Hor ne	423-507-4903
+2026-04-16	ALUMINUM	Alucobond	0.24	fas East Coast	SMC Mgmt	Larry Sc hipper	201-404-0071
+2026-04-16	ALUMINUM	Irony Al 75%+	0.50	fas Main Ports	Alamo Metal Recy	Ritesh P atel	956-783-4709
+2026-04-16	COPPER/BRASS	Beryllium/Cu Tng	4.00	Houston TX	Derichebourg Recy	Guy Bern stein	404-579-4773
+2026-04-16	COPPER/BRASS	Ribbon Wire	1.71	Hillside NJ	Tekmat Solution	Ken Chen	908-688-4700
+2026-04-16	COPPER/BRASS	Helix Closed Eye	1.60	fas Main Ports	Liberty Mtls Recy	Wing Lai	470-338-2073
+2026-04-16	COPPER/BRASS	Christmas Wire	0.87	fas Main Ports	Metal Trading	Shasha P ogon	650-288-2999
+2026-04-16	COPPER/BRASS	Cu Concentrate	0.50+	fas Main Ports	Kristi Corp	Jeyapal  Babu	908-487-4552
+2026-04-16	COPPER/BRASS	AC Motor-HVAC	0.78	fas Main Ports	Florida Metal	Yusuf Mo tiwala	407-935-0371
+2026-04-16	COPPER/BRASS	Electric Motor-Mxd	0.60/0.58	fas East/West	RAB Wealth	Binish K alani	214-985-1696
+2026-04-16	COPPER/BRASS	Electric Motor-Lrg	0.52	fas Main Ports	Guram Trading	Gurmo Sa ndhu	604-377-1249
+2026-04-16	COPPER/BRASS	Sealed Unit	0.50/0.49	fas East/West	RAB Wealth	Binish K alani	214-985-1696
+2026-04-16	COPPER/BRASS	Shredder Picking	1.025	fas Main Ports	Metallon Trading	Matt Ehr lich	925-683-7317
+2026-04-16	COPPER/BRASS	Yellow Brass-Honey	3.50	Houston TX	Derichebourg Recy	Guy Bern stein	404-579-4773
+2026-04-16	SS/HITEMP/OTHER	446 SS Solids	640/MT	fas East Ports	Anytime Metals	Julia Da vison	647-517-2652
+2026-04-16	SS/HITEMP/OTHER	904L Foundry	2.25	fas Main Ports	ABCOM	Bharat M andloi	+65-96356375
+2026-04-16	SS/HITEMP/OTHER	Zurik	0.30-0.55	fas Main Ports	Majestic Corp	Lionel L ai	+61-477232233
+2026-04-16	SS/HITEMP/OTHER	Moly Electrode	20.00	pickup Midwest	N.G.R.	Brian Ho ward	419-452-8005
+2026-04-16	SS/HITEMP/OTHER	Auto Battery	0.405	fas Main Ports	AP Global Mgmt	Jae Jang	917-991-2313
+2026-04-16	SS/HITEMP/OTHER	Steel Cased Battery	0.405	fas Main Ports	AP Global Mgmt	Jae Jang	917-991-2313
+2026-04-16	SS/HITEMP/OTHER	DDR4 Memory	30.00	North York ON	Usaca Resources	Kevin Li m	718-663-1168
+2026-04-16	SS/HITEMP/OTHER	Trim Boards	0.52-0.63	fas Main Ports	Majestic Corp	Lionel L ai	+61-477232233
+2026-04-16	SS/HITEMP/OTHER	#1 Auto Cast	340/GT	Zion IL	Cleveland Corp	Bob Kuja winski	847-872-7200
+2026-04-16	SS/HITEMP/OTHER	Mn Steel-Prepared	400/MT	fob East Coast	Anytime Metals	Julia Da vison	647-517-2652
+2026-04-16	SS/HITEMP/OTHER	Stove Cast	250/GT	Zion IL	Cleveland Corp	Bob Kuja winski	847-872-7200
+2026-04-16	SS/HITEMP/OTHER	PET Bottle-Bale	0.10	fob Midwest	Target Trading	David Sa ger	404-983-0570
+2026-04-17	ALUMINUM	356 Auto Wheel-Dirty	1.40	Huntington IN	Transmetco	Ryan Gledhill	260-224-5817
+2026-04-17	ALUMINUM	380 Al-New	1.27	Newton WI	B & B Metals	Robert Burrows	920-693-8261
+2026-04-17	ALUMINUM	6061 Truck Wheel	1.45	pickup Midwest	Joseph Krash Mtls	Joseph Krash	440-735-5555
+2026-04-17	ALUMINUM	6063 Extrusion 2%Fe	1.27	Troy MO	Most	John Morgan	636-295-4036
+2026-04-17	ALUMINUM	7075 Solids	1.45	Detroit MI	Major Metals	Steve Sollish	313-368-6060
+2026-04-17	ALUMINUM	Gas Meter	0.55	Columbus OH	G-Cor Automotive	Austin Greenblott	800-486-1636
+2026-04-17	ALUMINUM	Al Engine	0.35	Houston TX	Global Mtls Group	Vishal Sharma	713-887-6981
+2026-04-17	ALUMINUM	Shredded Al	0.72	fas Main Ports	Vigour Int'l	Jing Wang	718-747-5287
+2026-04-17	ALUMINUM	Mixed Cast-New	1.18	Newton WI	B & B Metals	Robert Burrows	920-693-8261
+2026-04-17	ALUMINUM	Old Sheet-T/T w/CCIC	1.04	fas East Coast	AME/Yechiu	Kris Loke	626-281-3000
+2026-04-17	ALUMINUM	Zorba 95%/3% Red	0.69	fas Main Ports	Vigour Int'l	Jing Wang	718-747-5287
+2026-04-17	COPPER/BRASS	#2 Cu Chop	5.00	Cleveland OH	Secure Recycling	Mario Jurcic	833-633-7328
+2026-04-17	COPPER/BRASS	6 & 1 Wire 90%	4.24	pickup MW	Koppers	David Roche	412-227-2411
+2026-04-17	COPPER/BRASS	CAT5 Wire	1.90	fas Main Ports	Leadpark Ent US	Edmund Ip	347-970-3003
+2026-04-17	COPPER/BRASS	Cu Clad Wire 30%	0.95	pickup MW	Koppers	David Roche	412-227-2411
+2026-04-17	COPPER/BRASS	Cu Transformer-Lrg	1.20	Detroit MI	Eastside Metal	Andy Need	586-291-6069
+2026-04-17	COPPER/BRASS	Cu Transformer-Med	1.13	Detroit MI	Eastside Metal	Andy Need	586-291-6069
+2026-04-17	COPPER/BRASS	Cu Dreck	0.50/Cu	fob Shipper's	Sustainable Mgmt	Michael Friedman	502-526-4458
+2026-04-17	COPPER/BRASS	Electric Motor-Mxd	0.60	Houston TX	Global Mtls Group	Vishal Sharma	713-887-6981
+2026-04-17	COPPER/BRASS	Yellow Brass-Honey	3.47	fas East Coast	Ni-Met	Karan Parikh	289-291-1111
+2026-04-17	SS/HITEMP/OTHER	304 SS Solids-20'	0.62	fas East Coast	RM Metals	Chait Desai	908-222-1500
+2026-04-17	SS/HITEMP/OTHER	17-4/15-5 SS-Usable	0.38	Houston TX	MP&T Intl	Manish Gupta	832-444-9687
+2026-04-17	SS/HITEMP/OTHER	316 SS Solids-20'	1.18	fas East Coast	RM Metals	Chait Desai	908-222-1500
+2026-04-17	SS/HITEMP/OTHER	409 SS Solids	0.21	Tullahoma TN	C.F.C. Recycling	Andrew Rice	931-247-8404
+2026-04-17	SS/HITEMP/OTHER	Ti 6-2-4-2 BW	4.30	Los Angeles CA	Grandis Titanium	Vasily Semeninta	949-459-2621
+2026-04-17	SS/HITEMP/OTHER	Nitronic 33 Solids	0.23	Houston TX	MP&T Intl	Manish Gupta	832-444-9687
+2026-04-17	SS/HITEMP/OTHER	Ti Turning-Mxd	0.65	Los Angeles CA	Grandis Titanium	Vasily Semeninta	949-459-2621
+2026-04-17	SS/HITEMP/OTHER	Lead Scrap-Dirty	0.50	Muskogee OK	Wheeler Metals	Tim Wheeler	918-682-1083
+2026-04-17	SS/HITEMP/OTHER	Lead Shot-Cln	0.55	Muskogee OK	Wheeler Metals	Tim Wheeler	918-682-1083
+2026-04-17	SS/HITEMP/OTHER	Battery-EV	0.65	Fox Lake WI	GlobalTech	Joe Clark	800-770-2330
+2026-04-17	SS/HITEMP/OTHER	Tin Oxide	LLMEx60%	fob Shipper's	Sustainable Mgmt	Michael Friedman	502-526-4458
+2026-04-17	SS/HITEMP/OTHER	Si Sheet CRGO M3/M4	0.32/0.22	fas East Ports	Florida Metal	Moe Motiwala	407-935-0371
+2026-04-17	SS/HITEMP/OTHER	P91 Scrap	850/MT	Houston TX	Texan Minerals	Suresh Babu	+971-504833176
+2026-04-17	SS/HITEMP/OTHER	Si Sheet CRGO M5/M6	0.20/0.15	fas East Ports	Florida Metal	Moe Motiwala	407-935-0371
+2026-04-17	SS/HITEMP/OTHER	C.I. Rotor/Drum	355/GT	Springfield MA	Joseph Freedman	JR Scappini	413-276-4022
+2026-04-17	SS/HITEMP/OTHER	C.I. Boring	310/GT	Chicago IL	Reserve Alloys	Cal Larkin	574-270-8159
+2026-04-17	SS/HITEMP/OTHER	C.I. Counterweight	300/MT	fas Main Ports	Canwest Recycling	Ben Shah	778-982-8150
+2026-04-17	SS/HITEMP/OTHER	C12A Grade Scrap	750/MT	Houston TX	Texan Minerals	Suresh Babu	+971-504833176
+2026-04-17	SS/HITEMP/OTHER	Steel Turning	230/GT	Springfield MA	Joseph Freedman	JR Scappini	413-276-4022
+2026-04-17	SS/HITEMP/OTHER	PVC Regrind-Window	0.19-0.23	fob Seller's	SMC Mgmt	Larry Schipper	201-404-0071

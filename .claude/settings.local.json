@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(chmod 600 ~/.ssh/id_rsa_Jose)",
+      "Bash(chmod 600 ~/.ssh/config)",
+      "Bash(ssh-keygen -l -f ~/.ssh/id_rsa_Jose)",
+      "Bash(icacls *)",
+      "Bash(pdftotext -layout 20260417CBE.pdf -)",
+      "Bash(pdftotext -table 20260417CBE.pdf -)",
+      "Bash(pdftotext -raw 20260417CBE.pdf -)",
+      "Bash(awk '/<script id=\"peony-bootstrap-data\"/{flag=1; next} /<\\\\/script>/ && flag{exit} flag' index.html)",
+      "Bash(powershell -NoProfile -Command ' *)",
+      "Bash(powershell *)",
+      "Bash(mkdir -p bin src/css)",
+      "Bash(curl -sL --max-time 60 -o bin/tailwindcss.exe https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-windows-x64.exe)",
+      "Bash(./bin/tailwindcss.exe --help)",
+      "Bash(mkdir -p deploy/css)",
+      "Bash(./bin/tailwindcss.exe -i src/css/input.css -o deploy/css/style.css --minify)"
+    ]
+  }
+}
