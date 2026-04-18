@@ -1,0 +1,94 @@
+# ============================================
+# ValkamSync - .gitignore
+# ============================================
+
+# --- Sistema operativo ---
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+$RECYCLE.BIN/
+
+# --- Editores / IDEs ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+.history/
+
+# --- Claude Code (ajustes locales del usuario) ---
+.claude/settings.local.json
+.claude/cache/
+.claude/logs/
+
+# --- Secretos y configuración local ---
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+!ClavePublicaHostgator.txt
+
+# Config real de PHP (mantener solo el .example)
+deploy/.app_config.php
+!deploy/.app_config.php.example
+
+# --- Dependencias ---
+/vendor/
+composer.phar
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json.bak
+
+# --- Binarios de herramientas (Tailwind CLI, etc.) ---
+bin/*.exe
+bin/tailwindcss
+bin/tailwindcss-*
+
+# --- Logs ---
+*.log
+logs/
+error_log
+
+# --- Bases de datos locales ---
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.db-shm
+*.db-wal
+
+# --- Archivos temporales del proyecto ---
+/tmp/
+*.tmp
+*.bak
+*.old
+*.orig
+
+# --- Artefactos de build (mantener dist/ si se publica) ---
+# Descomentar si no quieres versionar los ZIPs generados:
+# dist/*.zip
+# dist/**/data/*.db
+
+# --- Subidas de usuario (runtime) ---
+deploy/data/*.db
+deploy/data/uploads/
+dist/**/data/*.db
+dist/**/data/uploads/
+
+# --- PDFs y datos procesados en runtime ---
+tmp/peony_pdfs/
+tmp/*.pdf
+tmp/*.json
+tmp/*.tsv
+
+# --- Varios ---
+*.pid
+*.seed
+*.cache
+.phpunit.result.cache
