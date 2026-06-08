@@ -1,12 +1,12 @@
 # ValkamSync_Notion
 
-# 📊 ValkamSync — Blueprint del Sistema (v3 · Post-F7+F8)
+# 📊 ValkamSync — Blueprint del Sistema (v4 · Post-F8 · Repo limpio)
 
 > **Para:** Jose Valenzuela · equipo de desarrollo
 **De:** Jose Valenzuela
-**Fecha:** 5 de junio de 2026
-**Estado:** v3 — F7 (LME Spot) + F8 (gráfico interactivo) en producción. Doble key Gemini activa.
-**Versión anterior:** v2 · 2 de junio de 2026 (roadmap inicial F1–F6 completado)
+**Fecha:** 8 de junio de 2026
+**Estado:** v4 — F1-F8 todos completados y en producción. Repo commiteado (commit `3db7e40`). Próxima feature: por definir.
+**Versión anterior:** v3 · 5 de junio de 2026 (F7 LME Spot + F8 gráfico tendencia interactivo)
 >
 
 ---

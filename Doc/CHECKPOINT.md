@@ -385,6 +385,10 @@ F7 ✅ LME Spot Scraping        → ALPHA VANTAGE ACTIVO Y FUNCIONANDO (2026-06-
        - 26/26 fórmulas históricas resueltas (0 pendientes)
        - Próximos imports: resolve automático post-import vía lme_resolve_formula_prices()
        - Key: ALPHAVANTAGE_API_KEY en .app_config.php del servidor (25 req/día gratis)
+F8 ✅ Gráfico tendencia interactivo → COMPLETADO Y EN PRODUCCIÓN (2026-06-05)
+       - 5 temporalidades: 1S / 1M / 3M / 1Y / Todo
+       - Rango libre desde/hasta integrado con filtro existente
+       - SVG puro, sin librerías externas
 
 ═══════════════════════════════════════════════════════════════
 GEMINI CONTINGENCIA DE KEY — DEPLOYADO 2026-06-05
@@ -406,10 +410,10 @@ PARA COMENZAR LA PRÓXIMA SESIÓN:
 
 | Campo | Valor |
 |-------|-------|
-| **Fecha última actualización** | 2026-06-04 |
-| **Versión** | v14 — Gráfico tendencia interactivo: 5 temporalidades + rango desde/hasta |
-| **Estado del repo** | Todo en producción. Cambios F7 sin commitear en local. |
-| **Último commit** | `836cf6f` — F7 y bug fixes deployados pero sin git commit aún |
+| **Fecha última actualización** | 2026-06-08 |
+| **Versión** | v15 — F1-F8 todos en producción y commiteados |
+| **Estado del repo** | Todo en producción y en git. Repo limpio. |
+| **Último commit** | `3db7e40` — feat: F1-F8 completo (auth, EDA, LME spot, analítica, gráfico tendencia) |
 | **Rama activa** | `main` |
 | **Desarrollador** | Jose |
 
@@ -419,7 +423,8 @@ PARA COMENZAR LA PRÓXIMA SESIÓN:
 
 | Archivo | Fecha | Descripción del estado |
 |---------|-------|----------------------|
-| `CHECKPOINT.md` (este) | 2026-06-05 | v14 — F7 operativo (Alpha Vantage, 26/26 resueltos), F8 gráfico tendencia, doble key Gemini. Manual v3. |
+| `CHECKPOINT.md` (este) | 2026-06-08 | v15 — F1-F8 todos en producción. Commit `3db7e40`. Repo limpio. |
+| *(respaldo v14)* | 2026-06-05 | v14 — F7 operativo (Alpha Vantage, 26/26 resueltos), F8 gráfico tendencia, doble key Gemini. Manual v3. |
 | *(respaldo v9)* | 2026-06-03 | v9 — F7 LME Scraping implementado. Credenciales configuradas. Deploy completo |
 | *(respaldo v8)* | 2026-06-02 | v8 — F7 LME Scraping definido. Prompt de nueva sesión guardado |
 | *(respaldo v7)* | 2026-06-02 | v7 — F6 (manual v2) completo. Roadmap inicial F1–F6 100% completado |
