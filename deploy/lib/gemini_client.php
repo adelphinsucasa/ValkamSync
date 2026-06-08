@@ -60,8 +60,11 @@ final class GeminiClient
      * Extrae campos de cliente desde imagen (base64) + mime.
      *
      * Estrategia de reintentos en dos niveles:
-     *   1. Modelo deprecado (404/400) → siguiente modelo, misma key.
-     *   2. Sobrecarga/cuota (503/429/500) → misma posición de modelo, siguiente key.
+     *   Externo (modelo): si un modelo está deprecado (404/400) o todas sus keys están
+     *     sobrecargadas, pasa al siguiente modelo de MODEL_FALLBACKS.
+     *   Interno (key): si la key devuelve 503/429/500, pasa a la siguiente key antes de
+     *     abandonar el modelo. Así gemini-2.5-flash/key#2 se prueba antes de bajar a
+     *     gemini-2.0-flash, que puede no estar sobrecargado en absoluto.
      *
      * @return array{phone:?string, company:?string, buyer:?string, material:?string, price_raw:?string, scan_date:?string, notes:?string, confidence:?string}
      */
@@ -75,25 +78,27 @@ final class GeminiClient
         }
 
         $lastError = null;
-        foreach ($this->apiKeys as $kIdx => $key) {
-            foreach ($models as $model) {
+        foreach ($models as $model) {
+            foreach ($this->apiKeys as $kIdx => $key) {
                 try {
                     return $this->callModel($model, $key, $imageBase64, $mime);
                 } catch (RuntimeException $e) {
                     $lastError = $e;
                     $msg       = $e->getMessage();
 
-                    if ($this->isDeprecatedModel($msg) && $model !== end($models)) {
+                    if ($this->isDeprecatedModel($msg)) {
                         if (function_exists('vs_log')) vs_log('[gemini] model "' . $model . '" no disponible → siguiente modelo');
-                        continue;
+                        break; // abandona keys de este modelo, pasa al siguiente modelo
                     }
-                    if ($this->isOverloaded($msg) && isset($this->apiKeys[$kIdx + 1])) {
-                        if (function_exists('vs_log')) vs_log('[gemini] 503/429 key#' . ($kIdx + 1) . ' → fallback key#' . ($kIdx + 2));
-                        break; // abandona modelos, salta a siguiente key
+                    if ($this->isOverloaded($msg)) {
+                        $nextLabel = isset($this->apiKeys[$kIdx + 1]) ? 'key#' . ($kIdx + 2) : 'siguiente modelo';
+                        if (function_exists('vs_log')) vs_log('[gemini] ' . $model . ' key#' . ($kIdx + 1) . ' sobrecargada → ' . $nextLabel);
+                        continue; // prueba la siguiente key con el mismo modelo
                     }
-                    throw $e;
+                    throw $e; // error no recuperable (401, 400, bad_json, etc.)
                 }
             }
+            // Todas las keys agotadas para este modelo → el loop externo pasa al siguiente
         }
         throw $lastError ?: new RuntimeException('gemini_all_keys_exhausted');
     }
@@ -104,8 +109,11 @@ final class GeminiClient
      * Gemini 2.5 acepta PDFs nativamente vía inline_data.
      *
      * Estrategia de reintentos en dos niveles:
-     *   1. Modelo deprecado (404) → siguiente modelo, misma key.
-     *   2. Sobrecarga/cuota (503/429/500) → misma posición de modelo, siguiente key.
+     *   Externo (modelo): si un modelo está deprecado o todas sus keys están sobrecargadas,
+     *     pasa al siguiente modelo. gemini-2.0-flash puede estar disponible cuando
+     *     gemini-2.5-flash está saturado.
+     *   Interno (key): si la key devuelve 503/429/500, prueba la siguiente key antes de
+     *     cambiar de modelo. Maximiza el uso de las keys disponibles por modelo.
      *
      * @return array{rows: array<int,array<string,?string>>, backend: string, warnings: array}
      */
@@ -119,25 +127,27 @@ final class GeminiClient
         }
 
         $lastError = null;
-        foreach ($this->apiKeys as $kIdx => $key) {
-            foreach ($models as $model) {
+        foreach ($models as $model) {
+            foreach ($this->apiKeys as $kIdx => $key) {
                 try {
                     return $this->callPdfModel($model, $key, $pdfBase64);
                 } catch (RuntimeException $e) {
                     $lastError = $e;
                     $msg       = $e->getMessage();
 
-                    if ($this->isDeprecatedModel($msg) && $model !== end($models)) {
+                    if ($this->isDeprecatedModel($msg)) {
                         if (function_exists('vs_log')) vs_log('[gemini-pdf] model "' . $model . '" no disponible → siguiente modelo');
-                        continue;
+                        break; // abandona keys de este modelo, pasa al siguiente modelo
                     }
-                    if ($this->isOverloaded($msg) && isset($this->apiKeys[$kIdx + 1])) {
-                        if (function_exists('vs_log')) vs_log('[gemini-pdf] 503/429 key#' . ($kIdx + 1) . ' → fallback key#' . ($kIdx + 2));
-                        break; // abandona modelos, salta a siguiente key
+                    if ($this->isOverloaded($msg)) {
+                        $nextLabel = isset($this->apiKeys[$kIdx + 1]) ? 'key#' . ($kIdx + 2) : 'siguiente modelo';
+                        if (function_exists('vs_log')) vs_log('[gemini-pdf] ' . $model . ' key#' . ($kIdx + 1) . ' sobrecargada → ' . $nextLabel);
+                        continue; // prueba la siguiente key con el mismo modelo
                     }
-                    throw $e;
+                    throw $e; // error no recuperable (401, 400, bad_json, etc.)
                 }
             }
+            // Todas las keys agotadas para este modelo → el loop externo pasa al siguiente
         }
         throw $lastError ?: new RuntimeException('gemini_all_keys_exhausted');
     }
@@ -170,7 +180,7 @@ final class GeminiClient
             ]],
             'generationConfig' => [
                 'temperature'        => 0.05,
-                'maxOutputTokens'    => 8192,  // ~70 filas × ~110 tokens/fila + overhead
+                'maxOutputTokens'    => 16384, // ~70 filas × ~150 tokens/fila + overhead prompt; 8192 era insuficiente
                 'response_mime_type' => 'application/json',
                 'thinkingConfig'     => ['thinkingBudget' => 0],
             ],

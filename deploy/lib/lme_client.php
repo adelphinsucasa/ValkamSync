@@ -18,20 +18,28 @@ declare(strict_types=1);
  *   3. precio_final = valor_mínimo × (pct / 100).
  *   4. Persistir precio_final + la matriz completa en columnas de auditoría.
  *
- * Jerarquía de fuentes:
- *   1. Cache DB (vsync_lme_cache) — consulta primero para evitar llamadas repetidas.
- *   2. NASDAQ Data Link (data.nasdaq.com) — datos diarios LME, 4 puntos. FUENTE PRIMARIA.
- *   3. Alpha Vantage (alphavantage.co) — promedio mensual, 1 precio usado como proxy. FALLBACK.
- *   4. Error — ambas fuentes fallaron; se registra en lme_error, lme_resolved = -1.
+ * Jerarquía de fuentes (cascada automática ante fallos):
+ *   0. Cache DB (vsync_lme_cache) — consulta primero; si existe, evita llamadas a la red.
+ *   1. Alpha Vantage (alphavantage.co) — PRIORIDAD 1. Promedio mensual IMF. Probada en prod.
+ *   2. Metal Radar  (metalradar.io)   — PRIORIDAD 2. Datos diarios LME. Activar al renovar key.
+ *   3. NASDAQ Data Link               — PRIORIDAD 3. Último recurso. Datos diarios 4 puntos.
+ *   4. Error — las 3 fuentes fallaron; se registra en lme_error, lme_resolved = -1.
+ *
+ * Comportamiento ante fallo:
+ *   Cada fuente se intenta solo si la anterior falló (HTTP error, key vacía/inválida,
+ *   límite de requests, respuesta vacía). Los fallos se registran en error_log.
+ *   Si la key de una fuente está vacía, se omite silenciosamente sin log de error.
  *
  * Manejo de días no hábiles (fines de semana, feriados LME):
- *   NASDAQ no devuelve datos para días sin cotización. Se busca hacia atrás hasta 7 días
- *   para encontrar el último día hábil. El campo trade_date en vsync_lme_cache registra
- *   la fecha real de cotización usada (puede diferir de price_date del PDF).
+ *   Se busca hacia atrás hasta 7 días para encontrar el último día hábil.
+ *   El campo trade_date en vsync_lme_cache registra la fecha real de cotización
+ *   usada (puede diferir de price_date del PDF).
  *
- * Credenciales (.app_config.php del servidor):
- *   define('NASDAQ_API_KEY',       '...');  ← primaria  (25 req/día gratis)
- *   define('ALPHAVANTAGE_API_KEY', '...');  ← fallback  (25 req/día gratis)
+ * Credenciales (.app_config.php del servidor — ver .app_config.php.example):
+ *   define('ALPHAVANTAGE_API_KEY',  '...');  ← P1 (25 req/día gratis)
+ *   define('METALRADAR_EMAIL',      '...');  ← P2 — usuario Metal Radar
+ *   define('METALRADAR_PASSWORD',   '...');  ← P2 — contraseña Metal Radar
+ *   define('NASDAQ_API_KEY',        '...');  ← P3 (50 req/día gratis)
  */
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -53,11 +61,20 @@ const LME_NASDAQ_DATASETS = [
     'LME-CU' => 'LME/PR_CU',
 ];
 
-/** Clave interna → función Alpha Vantage (fallback mensual) */
+/** Clave interna → función Alpha Vantage (P1 — promedio mensual IMF) */
 const LME_AV_FUNCTIONS = [
     'LME-AL' => 'ALUMINUM',
     'LME-CU' => 'COPPER',
 ];
+
+/** Clave interna → símbolo Metal Radar (P2 — datos diarios, auth email/password) */
+const LME_METALRADAR_SYMBOLS = [
+    'LME-AL' => 'ALUMINUM',
+    'LME-CU' => 'COPPER',
+];
+
+/** URL base de la API Metal Radar — verificar con la documentación al renovar acceso */
+const METALRADAR_API_BASE = 'https://metalradar.io/api/v1';
 
 /**
  * Etiquetas de los 4 puntos de la matriz LME.
@@ -322,6 +339,119 @@ function lme_fetch_alphavantage(string $lmeKey, string $date): ?float
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// FUENTE P2: METAL RADAR (datos diarios, activa al renovar key)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Obtiene la matriz LME de Metal Radar para un metal y fecha.
+ * Si la fecha no tiene cotización, busca hacia atrás hasta 7 días calendario.
+ *
+ * Usa HTTP Basic Auth con METALRADAR_EMAIL y METALRADAR_PASSWORD.
+ * Si las credenciales no están configuradas se retorna null en silencio.
+ * Si el servidor responde 401/403 se loguea advertencia y retorna null.
+ *
+ * NOTA: verificar el endpoint exacto en la documentación de metalradar.io
+ * al renovar el acceso — el path /api/v1/lme/prices puede variar entre planes.
+ *
+ * @param  string     $lmeKey 'LME-CU' o 'LME-AL'
+ * @param  string     $date   'YYYY-MM-DD' — fecha del PDF
+ * @return array|null         Matriz con campos cash_buyer … three_months_seller, trade_date, source
+ */
+function lme_fetch_metalradar_matrix(string $lmeKey, string $date): ?array
+{
+    static $cache = [];
+    $cKey = $lmeKey . '|' . $date;
+    if (array_key_exists($cKey, $cache)) return $cache[$cKey];
+    $cache[$cKey] = null;
+
+    if (!function_exists('curl_init')) return null;
+    if (!defined('METALRADAR_EMAIL')    || (string) METALRADAR_EMAIL    === ''
+     || !defined('METALRADAR_PASSWORD') || (string) METALRADAR_PASSWORD === '') {
+        return null;   // credenciales no configuradas — silencioso
+    }
+
+    $symbol = LME_METALRADAR_SYMBOLS[$lmeKey] ?? null;
+    if (!$symbol) return null;
+
+    $ts = strtotime($date);
+    for ($i = 0; $i <= 7; $i++) {
+        $candidate = date('Y-m-d', $ts - $i * 86400);
+
+        // NOTA: ajustar URL si la documentación de metalradar.io indica otro path
+        $url = METALRADAR_API_BASE . '/lme/prices'
+             . '?metal=' . rawurlencode($symbol)
+             . '&date='  . rawurlencode($candidate);
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 12);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($ch, CURLOPT_USERPWD,
+            rawurlencode((string) METALRADAR_EMAIL) . ':' . rawurlencode((string) METALRADAR_PASSWORD)
+        );
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Accept: application/json',
+            'User-Agent: ValkamSync/1.0 (+https://petit.valkamgm.com)',
+        ]);
+        $resp = curl_exec($ch);
+        $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($code === 401 || $code === 403) {
+            error_log("LME MetalRadar: key inválida o vencida (HTTP $code) — activar fallback");
+            return null;   // key mala: no tiene sentido reintentar con otra fecha
+        }
+        if ($code === 429) {
+            error_log("LME MetalRadar: límite de requests alcanzado (HTTP 429)");
+            return null;
+        }
+        if ($code !== 200 || !$resp) {
+            // Puede ser día sin cotización — seguir buscando hacia atrás
+            continue;
+        }
+
+        $body = json_decode((string) $resp, true);
+        if (!is_array($body)) continue;
+
+        // Metal Radar puede responder con distintos niveles de detalle según el plan
+        $data = $body['data'] ?? $body;
+
+        // Intentar leer los 4 puntos; si solo hay spot, usarlo como proxy para los demás
+        $cb = isset($data['cash_buyer'])   ? (float) $data['cash_buyer']   :
+             (isset($data['cash'])         ? (float) $data['cash']         :
+             (isset($data['price'])        ? (float) $data['price']        : null));
+
+        if ($cb === null || $cb <= 0) continue;   // fecha sin datos → buscar día anterior
+
+        $cs = isset($data['cash_seller'])  && $data['cash_seller']  > 0 ? (float) $data['cash_seller']  : $cb;
+        $tb = isset($data['3m_buyer'])     && $data['3m_buyer']     > 0 ? (float) $data['3m_buyer']     :
+             (isset($data['forward'])      && $data['forward']      > 0 ? (float) $data['forward']      : $cb);
+        $ts2 = isset($data['3m_seller'])   && $data['3m_seller']    > 0 ? (float) $data['3m_seller']    : $tb;
+
+        $tradeDate = (string) ($data['date'] ?? $candidate);
+
+        $matrix = [
+            'cash_buyer'          => $cb,
+            'cash_seller'         => $cs,
+            'three_months_buyer'  => $tb,
+            'three_months_seller' => $ts2,
+            'trade_date'          => $tradeDate,
+            'source'              => 'metalradar',
+        ];
+
+        if ($i > 0) {
+            error_log("LME MetalRadar: $lmeKey sin cotización en $date → usando $candidate ($i días atrás)");
+        }
+        $cache[$cKey] = $matrix;
+        return $matrix;
+    }
+
+    error_log("LME MetalRadar: $lmeKey sin datos en $date ni en los 7 días anteriores");
+    return null;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // CAPA DE OBTENCIÓN CON CACHE DB
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -382,14 +512,9 @@ function lme_get_matrix(PDO $pdo, string $metal, string $date): ?array
         error_log('LME cache read: ' . $e->getMessage());
     }
 
-    // 2. NASDAQ Data Link — fuente primaria (4 puntos diarios, con lookback de 7 días)
-    $matrix = lme_fetch_nasdaq_matrix($lmeKey, $date);
-    if ($matrix !== null) {
-        _lme_cache_save($pdo, $lmeKey, $date, $matrix);
-        return $matrix;
-    }
+    // ── Cascada de fuentes externas (P1 → P2 → P3) ──────────────────────────
 
-    // 3. Alpha Vantage — fallback (promedio mensual único usado como proxy de los 4 puntos)
+    // 2. Alpha Vantage — P1 (promedio mensual IMF; probada en prod 26/26 fórmulas)
     $avPrice = lme_fetch_alphavantage($lmeKey, $date);
     if ($avPrice !== null && $avPrice > 0) {
         $matrix = [
@@ -400,6 +525,20 @@ function lme_get_matrix(PDO $pdo, string $metal, string $date): ?array
             'trade_date'          => $date,
             'source'              => 'alphavantage',
         ];
+        _lme_cache_save($pdo, $lmeKey, $date, $matrix);
+        return $matrix;
+    }
+
+    // 3. Metal Radar — P2 (datos diarios; activar cuando se renueve METALRADAR_API_KEY)
+    $matrix = lme_fetch_metalradar_matrix($lmeKey, $date);
+    if ($matrix !== null) {
+        _lme_cache_save($pdo, $lmeKey, $date, $matrix);
+        return $matrix;
+    }
+
+    // 4. NASDAQ Data Link — P3 (último recurso; datos diarios 4 puntos)
+    $matrix = lme_fetch_nasdaq_matrix($lmeKey, $date);
+    if ($matrix !== null) {
         _lme_cache_save($pdo, $lmeKey, $date, $matrix);
         return $matrix;
     }
@@ -586,7 +725,7 @@ function lme_resolve_formula_prices(PDO $pdo, int $fileId, string $fileDate): ar
         $matrix = $matrixCache[$cacheKey];
 
         if ($matrix === null) {
-            $errMsg = "Sin datos LME para $cat en $fileDate (fuentes NASDAQ y AV agotadas)";
+            $errMsg = "Sin datos LME para $cat en $fileDate (todas las fuentes agotadas: AV, MetalRadar, NASDAQ)";
             error_log("LME resolve: row={$r['id']} $errMsg");
             try { $updErr->execute([$errMsg, (int) $r['id']]); } catch (Throwable $e) {}
             $errors++;

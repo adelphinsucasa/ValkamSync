@@ -65,27 +65,55 @@ final class PeonyParser
 
         // Fallback 2: Gemini PDF (cuando pdftotext no está disponible)
         if (class_exists('GeminiClient')) {
-            try {
-                $ai = new GeminiClient();
-                if ($ai->isAvailable()) {
-                    if (function_exists('vs_log')) vs_log('[PeonyParser] pdftotext unavailable → Gemini PDF fallback');
-                    $pdfData = file_get_contents($pdfPath);
-                    if ($pdfData !== false) {
-                        $result = $ai->extractPeonyPdf(base64_encode($pdfData));
-                        $this->lastBackend = 'gemini-pdf';
-                        $result['warnings'] = array_merge(
-                            $warnings,
-                            ['Backend: Gemini (pdftotext no disponible en servidor).']
-                        );
-                        return $result;
+            $ai = new GeminiClient();
+            if ($ai->isAvailable()) {
+                if (function_exists('vs_log')) vs_log('[PeonyParser] pdftotext unavailable → Gemini PDF fallback');
+                $pdfData = file_get_contents($pdfPath);
+                if ($pdfData !== false) {
+                    $pdfBase64     = base64_encode($pdfData);
+                    $lastGeminiErr = null;
+                    $maxAttempts   = 2;
+
+                    for ($attempt = 1; $attempt <= $maxAttempts; $attempt++) {
+                        try {
+                            $result = $ai->extractPeonyPdf($pdfBase64);
+                            $this->lastBackend = 'gemini-pdf';
+                            $result['warnings'] = array_merge(
+                                $warnings,
+                                ['Backend: Gemini (pdftotext no disponible en servidor).']
+                            );
+                            return $result;
+                        } catch (RuntimeException $e) {
+                            $lastGeminiErr = $e;
+                            $msg = $e->getMessage();
+                            // 503/429 = modelo saturado — esperar 5s y reintentar una vez
+                            if ($attempt < $maxAttempts
+                                && (stripos($msg, 'gemini_http_503') !== false
+                                    || stripos($msg, 'gemini_http_429') !== false
+                                    || stripos($msg, 'gemini_all_keys_exhausted') !== false)
+                            ) {
+                                if (function_exists('vs_log')) vs_log('[PeonyParser] Gemini sobrecargado — reintento ' . $attempt . '/' . $maxAttempts . ' en 5s');
+                                sleep(5);
+                                continue;
+                            }
+                            break;
+                        }
                     }
+
+                    // Todos los intentos fallaron — lanzar error con mensaje claro
+                    $errMsg  = $lastGeminiErr ? $lastGeminiErr->getMessage() : 'unknown';
+                    $isKeyBad    = stripos($errMsg, '401') !== false
+                                || stripos($errMsg, 'api_key') !== false
+                                || stripos($errMsg, 'gemini_unavailable') !== false;
+                    $isTruncated = stripos($errMsg, 'gemini_pdf_truncated') !== false;
+                    if (function_exists('vs_log')) vs_log('[PeonyParser] Gemini falló tras ' . $maxAttempts . ' intentos: ' . $errMsg);
+                    throw new RuntimeException(
+                        'pdftotext unavailable y Gemini PDF falló: ' . $errMsg .
+                        ($isKeyBad    ? '. Configura GEMINI_API_KEY en .app_config.php.'
+                        : ($isTruncated ? '. El PDF tiene demasiadas filas para el límite de tokens configurado.'
+                        :                '. El modelo está saturado — reintenta en unos minutos.'))
+                    );
                 }
-            } catch (Throwable $e) {
-                if (function_exists('vs_log')) vs_log('[PeonyParser] gemini fallback failed: ' . $e->getMessage());
-                throw new RuntimeException(
-                    'pdftotext unavailable y Gemini PDF falló: ' . $e->getMessage() .
-                    '. Configura GEMINI_API_KEY en .app_config.php.'
-                );
             }
         }
 

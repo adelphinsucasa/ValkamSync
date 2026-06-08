@@ -39,20 +39,30 @@ define('GEMINI_MODEL',     'gemini-2.5-flash');
 define('MAIL_ROOT', dirname(__DIR__) . '/mail/valkamgm.com/info');
 define('PEONY_FROM', 'info@peonyinc.com');
 
-// ---------- LME Prices — Matriz de 4 puntos (F7+) ----------
+// ---------- LME Prices — Matriz de 4 puntos (F7+) — Sistema Multi-API con Fallback ----------
 //
-// FUENTE PRIMARIA: NASDAQ Data Link (data.nasdaq.com)
-//   Datos diarios LME: Cash Buyer, Cash Seller, 3 Months Buyer, 3 Months Seller.
-//   Obtener clave gratuita en: https://data.nasdaq.com/sign-up
-//   Limite: 50 req/día gratis. Dataset: LME/PR_CU y LME/PR_AL.
-//   Si está configurado, tiene prioridad sobre Alpha Vantage.
-define('NASDAQ_API_KEY', '');  // pegar la API key de data.nasdaq.com
-
-// FUENTE FALLBACK: Alpha Vantage (alphavantage.co)
-//   Promedio mensual LME (IMF Primary Commodity Prices). Menos preciso que NASDAQ
-//   pero útil cuando NASDAQ no está configurado o falla. 25 req/día gratis.
-//   Con NASDAQ activo, Alpha Vantage solo se usa si NASDAQ falla completamente.
+// El sistema intenta las fuentes en orden de prioridad.
+// Si una falla (HTTP error, key inválida, límite de requests), pasa automáticamente a la siguiente.
+// El caché DB (vsync_lme_cache) siempre se consulta primero y se guarda al obtener datos nuevos.
+//
+// PRIORIDAD 1 — Alpha Vantage (alphavantage.co) ← FUENTE ACTIVA Y PROBADA
+//   Promedio mensual LME (IMF Primary Commodity Prices, USD/MT). 25 req/día gratis.
+//   Probada en producción: 26/26 fórmulas históricas resueltas (abr-jun 2026).
+//   Registrarse gratis en: https://www.alphavantage.co/support/#api-key
 define('ALPHAVANTAGE_API_KEY', '');  // pegar la API key de alphavantage.co
+
+// PRIORIDAD 2 — Metal Radar (metalradar.io) ← CREDENCIALES VENCIDAS, ACTIVAR AL RENOVAR
+//   Datos diarios LME. Usa autenticación por email + contraseña (HTTP Basic Auth).
+//   Dejar vacíos si la cuenta no está activa (el sistema los saltará en silencio).
+//   Renovar / contratar en: https://metalradar.io
+define('METALRADAR_EMAIL',    '');   // email de la cuenta Metal Radar
+define('METALRADAR_PASSWORD', '');   // contraseña de la cuenta Metal Radar
+
+// PRIORIDAD 3 — NASDAQ Data Link (data.nasdaq.com) ← ÚLTIMO RECURSO
+//   Datos diarios LME: Cash Buyer, Cash Seller, 3 Months Buyer, 3 Months Seller.
+//   Clave gratuita (50 req/día) en: https://data.nasdaq.com/sign-up
+//   Solo se consulta si Alpha Vantage y Metal Radar fallan o no están configurados.
+define('NASDAQ_API_KEY',       '');  // pegar la API key de data.nasdaq.com
 
 // ---------- Seguridad ----------
 define('IS_PRODUCTION', false);
