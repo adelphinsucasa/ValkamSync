@@ -18,13 +18,17 @@ define('DB_PATH',   __DIR__ . '/../data/valkamsync.db');
 // Ruta a pdftotext. Dejar 'pdftotext' si está en PATH del server.
 define('PDFTOTEXT_BIN', 'pdftotext');
 
-// ---------- Gemini API (escaneo de clientes con IA) ----------
+// ---------- Gemini API (escaneo de clientes con IA + parser PDF fallback) ----------
 // Obtener en https://aistudio.google.com/app/apikey
 // Si queda vacío, el escaneo degrada a "captura manual" (UI permite llenar a mano).
-define('GEMINI_API_KEY', '');
+define('GEMINI_API_KEY',   '');   // Key primaria (cuenta principal)
+// Key de contingencia: se usa automáticamente cuando la primaria devuelve 503/429/500.
+// Crear con una segunda cuenta de Google para tener cuota independiente.
+// Dejar vacío si no se tiene segunda cuenta.
+define('GEMINI_API_KEY_2', '');   // Key de fallback (segunda cuenta)
 // Modelo principal. Si no existe, el cliente cae automáticamente a 2.0-flash → 2.5-flash-lite.
 // gemini-1.5-* fue DEPRECADO por Google en 2025, no lo uses.
-define('GEMINI_MODEL',   'gemini-2.5-flash');
+define('GEMINI_MODEL',     'gemini-2.5-flash');
 
 // ---------- SSH a Hostgator (para el sync Maildir PeonyInc) ----------
 // En prod NO hay SSH desde la app (el sync corre directamente en Hostgator leyendo
@@ -34,6 +38,12 @@ define('GEMINI_MODEL',   'gemini-2.5-flash');
 // están VACÍOS. Derivar desde __DIR__ (padre de este archivo = home de la cuenta cPanel).
 define('MAIL_ROOT', dirname(__DIR__) . '/mail/valkamgm.com/info');
 define('PEONY_FROM', 'info@peonyinc.com');
+
+// ---------- Alpha Vantage (LME Spot Prices — F7) ----------
+// Fuente: IMF Primary Commodity Prices vía Alpha Vantage (datos LME oficiales, USD/MT).
+// Obtener clave gratuita (25 req/día) en: https://www.alphavantage.co/support/#api-key
+// Sin clave, la resolución LME se omite (precios fórmula quedan en EDA como formula_price).
+define('ALPHAVANTAGE_API_KEY', '');  // pegar la API key de alphavantage.co
 
 // ---------- Seguridad ----------
 define('IS_PRODUCTION', false);

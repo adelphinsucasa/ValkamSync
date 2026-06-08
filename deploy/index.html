@@ -44,6 +44,13 @@
             @page { margin: 12mm; }
         }
 </style>
+    <!-- Auth guard — redirect inmediato si no hay señal de sesión activa -->
+    <script>
+        if (!localStorage.getItem('vsync_auth') && !sessionStorage.getItem('vsync_auth')) {
+            document.documentElement.style.visibility = 'hidden';
+            location.replace('/login.html');
+        }
+    </script>
 </head>
 <body class="bg-warm-white text-text min-h-screen flex flex-col">
 
@@ -65,6 +72,36 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m-6 4h6m-6 4h4M5 5h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z"/>
                 </svg>
             </button>
+            <!-- Botón de usuario / sesión -->
+            <div class="relative" id="settings-wrap">
+                <button id="btn-settings"
+                        class="w-10 h-10 rounded-full hover:bg-brand-dark active:bg-brand-dark flex items-center justify-center"
+                        aria-label="Sesión" title="Sesión">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A9 9 0 1118.88 6.196M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                </button>
+                <!-- Dropdown -->
+                <div id="settings-menu"
+                     class="hidden absolute right-0 top-12 w-48 bg-white rounded-xl shadow-xl border border-warm-gray-dark z-50 overflow-hidden"
+                     style="min-width:170px">
+                    <button onclick="openPinModal()"
+                            class="w-full text-left px-4 py-3 text-sm font-medium text-text hover:bg-warm-gray flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z"/>
+                        </svg>
+                        Cambiar PIN
+                    </button>
+                    <div class="border-t border-warm-gray"></div>
+                    <button onclick="doLogout()"
+                            class="w-full text-left px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"/>
+                        </svg>
+                        Cerrar sesión
+                    </button>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -2818,8 +2855,10 @@
 
                 const s = {
                     tab: 'prices',        // 'prices' | 'trends' | 'files'
-                    filter: 'month',      // 'day' | 'week' | 'month' | 'all'
+                    filter: 'month',      // 'day' | 'week' | 'month' | 'all' | 'range'
                     date: '',
+                    dateFrom: '',
+                    dateTo: '',
                     category: '',
                     search: '',
                     offset: 0,
@@ -2915,7 +2954,9 @@
                     try {
                         const qs = new URLSearchParams({
                             action: 'peony_prices',
-                            filter: s.filter, date: s.date, category: s.category,
+                            filter: s.filter, date: s.date,
+                            date_from: s.dateFrom, date_to: s.dateTo,
+                            category: s.category,
                             q: s.search, offset: s.offset, limit: s.limit,
                         });
                         const r = await jsonGet(`${API}?${qs}`);
@@ -2927,6 +2968,11 @@
                 }
                 function matchFilter(rowDate) {
                     if (s.filter === 'all') return true;
+                    if (s.filter === 'range') {
+                        const ok1 = !s.dateFrom || rowDate >= s.dateFrom;
+                        const ok2 = !s.dateTo   || rowDate <= s.dateTo;
+                        return ok1 && ok2;
+                    }
                     const ref = s.date || dashboard?.counts?.date_max || new Date().toISOString().slice(0,10);
                     if (s.filter === 'day')   return rowDate === ref;
                     if (s.filter === 'month') return rowDate.slice(0,7) === ref.slice(0,7);
@@ -3002,7 +3048,7 @@
                 async function loadFiles() {
                     if (backendMode === 'json') return filesFromBootstrap();
                     try {
-                        const qs = new URLSearchParams({ action: 'peony_files', filter: s.filter, date: s.date, limit: 200 });
+                        const qs = new URLSearchParams({ action: 'peony_files', filter: s.filter, date: s.date, date_from: s.dateFrom, date_to: s.dateTo, limit: 200 });
                         const r = await jsonGet(`${API}?${qs}`);
                         if (r?.ok) return r;
                         throw new Error();
@@ -3102,6 +3148,7 @@
 
                 function renderFilters() {
                     const cats = ['', 'ALUMINUM', 'COPPER/BRASS', 'SS/HITEMP/OTHER'];
+                    const isRange = s.filter === 'range';
                     return `
                         <div class="bg-white rounded-2xl border border-warm-gray-dark/50 p-3 sm:p-4 space-y-3">
                             <div>
@@ -3111,14 +3158,28 @@
                                     ${chip('week','Semana', s.filter==='week')}
                                     ${chip('month','Mes', s.filter==='month')}
                                     ${chip('all','Todo', s.filter==='all')}
+                                    ${chip('range','Rango', isRange)}
                                 </div>
                             </div>
                             <div id="peony-search-row" class="flex flex-col sm:flex-row gap-2 sm:items-end ${s.tab === 'files' ? 'hidden' : ''}">
+                                ${isRange ? `
+                                <label class="flex-1">
+                                    <span class="block text-xs uppercase tracking-wide text-text-muted mb-1">Desde</span>
+                                    <input type="date" id="peony-date-from" value="${esc(s.dateFrom)}"
+                                        class="w-full px-3 py-2 rounded-xl border border-warm-gray-dark/50 bg-white text-sm focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"/>
+                                </label>
+                                <label class="flex-1">
+                                    <span class="block text-xs uppercase tracking-wide text-text-muted mb-1">Hasta</span>
+                                    <input type="date" id="peony-date-to" value="${esc(s.dateTo)}"
+                                        class="w-full px-3 py-2 rounded-xl border border-warm-gray-dark/50 bg-white text-sm focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"/>
+                                </label>
+                                ` : `
                                 <label class="flex-1">
                                     <span class="block text-xs uppercase tracking-wide text-text-muted mb-1">Fecha ref.</span>
                                     <input type="date" id="peony-date" value="${esc(s.date || dashboard?.counts?.date_max || '')}" max="${esc(dashboard?.counts?.date_max || '')}"
                                         class="w-full px-3 py-2 rounded-xl border border-warm-gray-dark/50 bg-white text-sm focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"/>
                                 </label>
+                                `}
                                 <label class="flex-1">
                                     <span class="block text-xs uppercase tracking-wide text-text-muted mb-1">Categoría</span>
                                     <select id="peony-cat" class="w-full px-3 py-2 rounded-xl border border-warm-gray-dark/50 bg-white text-sm focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20">
@@ -3127,7 +3188,7 @@
                                 </label>
                                 <label class="flex-1">
                                     <span class="block text-xs uppercase tracking-wide text-text-muted mb-1">Buscar</span>
-                                    <input type="search" id="peony-q" value="${esc(s.search)}" placeholder="Material / compañía / buyer…"
+                                    <input type="search" id="peony-q" value="${esc(s.search)}" placeholder="Material / compañía / buyer…" autocomplete="off"
                                         class="w-full px-3 py-2 rounded-xl border border-warm-gray-dark/50 bg-white text-sm focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"/>
                                 </label>
                             </div>
@@ -3144,6 +3205,15 @@
                     const [label, cls] = map[status] || ['?','bg-warm-gray text-text-muted border-warm-gray-dark'];
                     return `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${cls}">${label}</span>`;
                 }
+                function categoryChip(cat) {
+                    const map = {
+                        'ALUMINUM':       'bg-blue-100 text-blue-800 border-blue-200',
+                        'COPPER/BRASS':   'bg-amber-100 text-amber-700 border-amber-200',
+                        'SS/HITEMP/OTHER':'bg-slate-100 text-slate-600 border-slate-200',
+                    };
+                    const cls = map[cat] || 'bg-warm-gray text-text-muted border-warm-gray-dark/50';
+                    return `<span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold border ${cls}">${esc(cat || '—')}</span>`;
+                }
 
                 function renderPricesTable(data) {
                     if (!data.prices?.length) return emptyBox('No hay precios para los filtros seleccionados.');
@@ -3151,9 +3221,11 @@
                         <div class="bg-white rounded-xl border border-warm-gray-dark/40 p-3 grid grid-cols-[1fr_auto] sm:grid-cols-[2fr_80px_1.2fr_1.3fr_1.1fr_110px] gap-2 items-center">
                             <div class="min-w-0 order-1">
                                 <div class="font-semibold text-text truncate" title="${esc(r.material)}">${esc(r.material)}</div>
-                                <div class="text-xs text-text-muted">${esc(r.category)} · ${esc(r.file_date)}</div>
+                                <div class="flex items-center gap-1.5 flex-wrap mt-0.5">${categoryChip(r.category)}<span class="text-xs text-text-muted">${esc(r.file_date)}</span></div>
                             </div>
-                            <div class="order-2 text-right sm:text-left font-mono font-semibold text-brand-dark">${esc(r.price_raw)}</div>
+                            <div class="order-2 text-right sm:text-left font-mono font-semibold text-brand-dark">
+                                ${r.lme_resolved ? `<span title="Precio resuelto vía LME Spot (${r.lme_price ? '$'+Number(r.lme_price).toFixed(0)+'/MT' : ''})" class="inline-block text-[9px] font-semibold bg-blue-100 text-blue-700 rounded px-1 mr-1 align-middle">LME</span>` : ''}${esc(r.price_raw)}${r.lme_resolved && r.price_num ? `<span class="text-xs text-blue-600 font-normal ml-1">≈ $${Number(r.price_num).toFixed(4)}/MT</span>` : ''}
+                            </div>
                             <div class="order-4 sm:order-3 text-xs text-text-light truncate" title="${esc(r.delivery_basis)}">${esc(r.delivery_basis || '—')}</div>
                             <div class="order-5 sm:order-4 text-sm text-text truncate" title="${esc(r.company)}">${esc(r.company || '—')}</div>
                             <div class="order-6 sm:order-5 text-xs text-text-light truncate">${esc(r.buyer || '—')}</div>
@@ -3188,7 +3260,7 @@
                                 <button data-material="${esc(r.material)}" class="cli-card w-full text-left bg-white rounded-xl border border-warm-gray-dark/40 p-3 hover:shadow-md hover:border-brand/30 transition flex items-center gap-3">
                                     <div class="flex-1 min-w-0">
                                         <div class="font-semibold text-text truncate" title="${esc(r.material)}">${esc(r.material)}</div>
-                                        <div class="text-xs text-text-muted">${esc(r.category)} · ${esc(r.company || '—')}</div>
+                                        <div class="flex items-center gap-1.5 flex-wrap mt-0.5">${categoryChip(r.category)}<span class="text-xs text-text-muted">${esc(r.company || '—')}</span></div>
                                     </div>
                                     <div class="text-right shrink-0">
                                         <div class="font-mono font-semibold text-brand-dark">${r.price_current != null ? Number(r.price_current).toFixed(3) : '—'}</div>
@@ -3233,7 +3305,13 @@
                                     </div>
                                     <div class="shrink-0">${syncChip(f.sync_status)}</div>
                                     ${backendMode === 'api' ? `
-                                    <button data-file-advance="${f.id}" data-current="${esc(f.sync_status)}" class="shrink-0 px-2 py-1 rounded-lg text-xs bg-warm-gray hover:bg-warm-gray-dark/60 transition">Avanzar</button>
+                                    <div class="flex gap-1 shrink-0">
+                                        <button onclick="openEdaModal(${f.id},'${esc(f.filename)}')" title="Análisis EDA + Descargar CSV" class="px-2 py-1 rounded-lg text-xs bg-accent/10 text-accent hover:bg-accent/20 transition flex items-center gap-1">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                                            EDA
+                                        </button>
+                                        <button data-file-advance="${f.id}" data-current="${esc(f.sync_status)}" class="px-2 py-1 rounded-lg text-xs bg-warm-gray hover:bg-warm-gray-dark/60 transition">Avanzar</button>
+                                    </div>
                                     ` : ''}
                                 </div>
                             `).join('')}
@@ -3247,7 +3325,9 @@
                     try {
                         const qs = new URLSearchParams({
                             action: 'peony_materials',
-                            filter: s.filter, date: s.date, category: s.category,
+                            filter: s.filter, date: s.date,
+                            date_from: s.dateFrom, date_to: s.dateTo,
+                            category: s.category,
                             q: s.search, sort: s.matSort || 'latest',
                             offset: s.offset, limit: s.limit,
                         });
@@ -3302,46 +3382,88 @@
                     };
                 }
 
-                async function loadMaterialDetail(material) {
+                async function loadMaterialDetail(material, interval = 'daily', dateFrom = '', dateTo = '') {
                     if (backendMode === 'api') {
                         try {
-                            const r = await jsonGet(`${API}?action=peony_material_detail&material=${encodeURIComponent(material)}`);
+                            let url = `${API}?action=peony_material_detail&material=${encodeURIComponent(material)}&interval=${interval}`;
+                            if (dateFrom) url += `&date_from=${encodeURIComponent(dateFrom)}`;
+                            if (dateTo)   url += `&date_to=${encodeURIComponent(dateTo)}`;
+                            const r = await jsonGet(url);
                             if (r?.ok) return r;
                         } catch {}
                     }
-                    return materialDetailFromBootstrap(material);
+                    return materialDetailFromBootstrap(material, interval, dateFrom, dateTo);
                 }
-                async function materialDetailFromBootstrap(material) {
+                async function materialDetailFromBootstrap(material, interval = 'daily', dateFrom = '', dateTo = '') {
                     const d = await getBootstrap();
-                    const rows = d.rows.filter(r => r.material === material);
-                    if (!rows.length) return { ok: false, error: 'not_found' };
-                    const nums = rows.map(r => parseFloat(r.price_raw)).filter(n => isFinite(n));
-                    const dates = [...new Set(rows.map(r => r.date))].sort();
-                    const byDate = new Map();
+                    const allRows = d.rows.filter(r => r.material === material);
+                    if (!allRows.length) return { ok: false, error: 'not_found' };
+                    // Filtro de rango para el timeline
+                    let rows = allRows;
+                    if (dateFrom) rows = rows.filter(r => r.date >= dateFrom);
+                    if (dateTo)   rows = rows.filter(r => r.date <= dateTo);
+                    // Calcular period_key según intervalo
+                    const getPeriodKey = (dateStr) => {
+                        switch (interval) {
+                            case 'weekly': {
+                                const dt = new Date(dateStr + 'T00:00:00');
+                                const y = dt.getFullYear();
+                                const d0 = new Date(y, 0, 1);
+                                const w = Math.ceil(((dt - d0) / 86400000 + d0.getDay() + 1) / 7);
+                                return `${y}-W${String(w).padStart(2,'0')}`;
+                            }
+                            case 'biweekly': {
+                                const [y,m,dd] = dateStr.split('-');
+                                return `${y}-${m}-${parseInt(dd)<=15?'H1':'H2'}`;
+                            }
+                            case 'monthly': return dateStr.slice(0,7);
+                            case 'annual':  return dateStr.slice(0,4);
+                            default:        return dateStr;
+                        }
+                    };
+                    const getPeriodLabel = (key) => {
+                        const ms=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+                        switch (interval) {
+                            case 'weekly': { const m=key.match(/^(\d{4})-W(\d{1,2})$/); return m?`S${parseInt(m[2])} ${m[1]}`:key; }
+                            case 'biweekly': { const m=key.match(/^(\d{4})-(\d{2})-(H[12])$/); return m?`${m[3]==='H1'?'1-15':'16+'} ${ms[parseInt(m[2])-1]} ${m[1]}`:key; }
+                            case 'monthly': { const m=key.match(/^(\d{4})-(\d{2})$/); return m?`${ms[parseInt(m[2])-1]} ${m[1]}`:key; }
+                            case 'annual': return key;
+                            default: return key;
+                        }
+                    };
+                    const byPeriod = new Map();
                     for (const r of rows) {
                         const n = parseFloat(r.price_raw);
-                        if (!byDate.has(r.date)) byDate.set(r.date, { nums: [], cnt: 0 });
-                        const x = byDate.get(r.date);
+                        const key = getPeriodKey(r.date);
+                        if (!byPeriod.has(key)) byPeriod.set(key, { minDate: r.date, nums: [], cnt: 0 });
+                        const x = byPeriod.get(key);
+                        if (r.date < x.minDate) x.minDate = r.date;
                         if (isFinite(n)) x.nums.push(n);
                         x.cnt++;
                     }
-                    const timeline = [...byDate.entries()].sort((a,b) => b[0].localeCompare(a[0])).slice(0, 60).map(([date, v]) => ({
-                        file_date: date,
-                        avg_price: v.nums.length ? v.nums.reduce((s,x)=>s+x,0)/v.nums.length : null,
-                        min_price: v.nums.length ? Math.min(...v.nums) : null,
-                        max_price: v.nums.length ? Math.max(...v.nums) : null,
-                        cnt: v.cnt,
-                    }));
+                    const timeline = [...byPeriod.entries()].sort((a,b)=>b[0].localeCompare(a[0])).slice(0,365)
+                        .map(([key,v]) => ({
+                            file_date:    v.minDate,
+                            period_key:   key,
+                            period_label: getPeriodLabel(key),
+                            avg_price: v.nums.length ? v.nums.reduce((s,x)=>s+x,0)/v.nums.length : null,
+                            min_price: v.nums.length ? Math.min(...v.nums) : null,
+                            max_price: v.nums.length ? Math.max(...v.nums) : null,
+                            cnt: v.cnt,
+                        }));
+                    // Stats siempre sobre todos los datos (no filtrados por rango)
+                    const nums = allRows.map(r => parseFloat(r.price_raw)).filter(n => isFinite(n));
+                    const dates = [...new Set(allRows.map(r => r.date))].sort();
                     return {
-                        ok: true,
+                        ok: true, interval,
                         stats: {
-                            material, category: rows[0].category,
-                            price_count: rows.length,
-                            contact_count: new Set(rows.map(r => r.phone).filter(Boolean)).size,
+                            material, category: allRows[0].category,
+                            price_count: allRows.length,
+                            contact_count: new Set(allRows.map(r => r.phone).filter(Boolean)).size,
                             min_price: nums.length ? Math.min(...nums) : null,
                             max_price: nums.length ? Math.max(...nums) : null,
                             avg_price: nums.length ? nums.reduce((s,x)=>s+x,0)/nums.length : null,
-                            first_date: dates[0], latest_date: dates[dates.length - 1],
+                            first_date: dates[0], latest_date: dates[dates.length-1],
                         },
                         timeline,
                     };
@@ -3467,7 +3589,7 @@
                 let _matEsc = null;
                 function openMaterialModal(material) {
                     closeMaterialModal();
-                    s._matModal = { material, detail: null, contacts: [], contactSort: 'best', loading: true };
+                    s._matModal = { material, detail: null, contacts: [], contactSort: 'best', loading: true, chartInterval: 'daily', chartFrom: '', chartTo: '', chartLoading: false };
                     renderMaterialModal();
                     _matEsc = (e) => { if (e.key === 'Escape') closeMaterialModal(); };
                     document.addEventListener('keydown', _matEsc);
@@ -3492,6 +3614,135 @@
                     s._matModal = null;
                     document.getElementById('peony-mat-modal')?.remove();
                     if (_matEsc) { document.removeEventListener('keydown', _matEsc); _matEsc = null; }
+                }
+                // Sparkline legacy (se mantiene por si hay otros usos)
+                function renderSparkline(timeline) { return renderTrendChart(timeline, 'daily'); }
+
+                function renderTrendChart(timeline, interval) {
+                    if (!timeline?.length) return '<div class="text-sm text-center text-text-muted py-6">Sin datos para el período seleccionado.</div>';
+                    const pts = [...timeline].reverse(); // orden cronológico (izquierda=antiguo)
+                    const avgs = pts.map(p => p.avg_price != null ? parseFloat(p.avg_price) : null);
+                    const valid = avgs.filter(n => n != null && isFinite(n));
+                    if (!valid.length) return '<div class="text-sm text-center text-text-muted py-6">Sin precios numéricos.</div>';
+
+                    const W=560, H=178, padL=54, padR=14, padT=10, padB=46;
+                    const cW=W-padL-padR, cH=H-padT-padB;
+
+                    const allV=[...valid,
+                        ...pts.map(p=>p.min_price).filter(v=>v!=null&&isFinite(parseFloat(v))).map(parseFloat),
+                        ...pts.map(p=>p.max_price).filter(v=>v!=null&&isFinite(parseFloat(v))).map(parseFloat)];
+                    const rawMin=Math.min(...allV), rawMax=Math.max(...allV);
+                    const pad2=(rawMax-rawMin)*0.12||rawMax*0.06||0.1;
+                    const minV=rawMin-pad2, maxV=rawMax+pad2, rng=maxV-minV;
+
+                    const xOf=i=>padL+(pts.length>1?(i/(pts.length-1))*cW:cW/2);
+                    const yOf=v=>padT+cH-((v-minV)/rng)*cH;
+
+                    // Gridlines Y (5)
+                    let yLines='';
+                    for(let t=0;t<=4;t++){
+                        const v=minV+(rng*t/4), y=yOf(v).toFixed(1);
+                        yLines+=`<line x1='${padL}' y1='${y}' x2='${W-padR}' y2='${y}' stroke='${t===0?'#d1d5db':'#f3f4f6'}' stroke-width='1'/>`;
+                        yLines+=`<text x='${padL-5}' y='${(yOf(v)+3.5).toFixed(1)}' text-anchor='end' font-size='8' fill='#9ca3af'>${v.toFixed(2)}</text>`;
+                    }
+
+                    // Banda min-max (solo intervalos agregados con varianza)
+                    let band='';
+                    const hasRng=interval!=='daily'&&pts.some(p=>p.min_price!=null&&p.max_price!=null&&p.cnt>1);
+                    if(hasRng){
+                        const top=pts.map((p,i)=>`${xOf(i).toFixed(1)},${yOf(parseFloat(p.max_price??p.avg_price)).toFixed(1)}`);
+                        const bot=[...pts].reverse().map((p,ri)=>{const i=pts.length-1-ri;return`${xOf(i).toFixed(1)},${yOf(parseFloat(p.min_price??p.avg_price)).toFixed(1)}`;});
+                        band=`<path d='M${top.join('L')}L${bot.join('L')}Z' fill='rgba(99,102,241,0.07)' stroke='none'/>`;
+                    }
+
+                    // Línea principal
+                    let lineParts=[], prevOk=false;
+                    pts.forEach((p,i)=>{const v=p.avg_price!=null?parseFloat(p.avg_price):null;if(v==null||!isFinite(v)){prevOk=false;return;}lineParts.push(`${prevOk?'L':'M'}${xOf(i).toFixed(1)},${yOf(v).toFixed(1)}`);prevOk=true;});
+                    const lineD=lineParts.join(' ');
+                    const fi=pts.findIndex(p=>p.avg_price!=null&&isFinite(parseFloat(p.avg_price)));
+                    const li=pts.length-1-[...pts].reverse().findIndex(p=>p.avg_price!=null&&isFinite(parseFloat(p.avg_price)));
+                    const areaD=lineD+` L${xOf(li).toFixed(1)},${(padT+cH).toFixed(1)} L${xOf(fi).toFixed(1)},${(padT+cH).toFixed(1)} Z`;
+                    const fv=parseFloat(pts[fi]?.avg_price), lv=parseFloat(pts[li]?.avg_price);
+                    const up=lv>=fv, stroke=up?'#059669':'#dc2626';
+                    const fillC=up?'rgba(5,150,105,0.08)':'rgba(220,38,38,0.08)';
+
+                    // Etiqueta del último precio
+                    const lx=xOf(li), ly=yOf(lv);
+                    const lblX=lx>W-padR-50?(lx-52).toFixed(1):(lx+5).toFixed(1);
+                    const priceLbl=`<text x='${lblX}' y='${(ly+4).toFixed(1)}' font-size='9' fill='${stroke}' font-weight='bold' font-family='ui-monospace,monospace'>${lv.toFixed(3)}</text>`;
+
+                    // Etiquetas X (máx 9 distribuidas uniformemente)
+                    const maxLbls=Math.min(9,pts.length);
+                    const idxs=pts.length<=maxLbls?pts.map((_,i)=>i):Array.from({length:maxLbls},(_,k)=>Math.round(k*(pts.length-1)/(maxLbls-1)));
+                    const xLbls=idxs.map(i=>{
+                        const raw=pts[i].period_label||pts[i].file_date||'';
+                        const lbl=raw.length>10?raw.slice(0,9)+'…':raw;
+                        const x=xOf(i).toFixed(1), y=padT+cH+13;
+                        return `<text x='${x}' y='${y}' text-anchor='end' font-size='7.5' fill='#9ca3af' transform='rotate(-38,${x},${y})'>${lbl}</text>`;
+                    }).join('');
+
+                    const dpct=fv?((lv-fv)/Math.abs(fv)*100).toFixed(1):'—';
+                    const lblFirst=pts[fi]?.period_label||pts[fi]?.file_date||'';
+                    const lblLast=pts[li]?.period_label||pts[li]?.file_date||'';
+
+                    return `<div class="rounded-xl border border-warm-gray-dark/20 bg-white overflow-hidden">
+                        <svg viewBox='0 0 ${W} ${H}' width='100%' style='display:block' xmlns='http://www.w3.org/2000/svg'>
+                            ${yLines}${band}
+                            <path d='${areaD}' fill='${fillC}' stroke='none'/>
+                            <path d='${lineD}' fill='none' stroke='${stroke}' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/>
+                            <circle cx='${xOf(fi).toFixed(1)}' cy='${yOf(fv).toFixed(1)}' r='3' fill='${stroke}' opacity='0.4'/>
+                            <circle cx='${lx.toFixed(1)}' cy='${ly.toFixed(1)}' r='4' fill='${stroke}'/>
+                            ${priceLbl}${xLbls}
+                        </svg>
+                        <div class='flex justify-between items-center px-3 py-1.5 border-t border-warm-gray-dark/10 bg-warm-gray/20 text-[10px] font-mono'>
+                            <span class='text-text-muted'>${lblFirst}</span>
+                            <span style='color:${stroke};font-weight:700'>${up?'↑':'↓'} ${lv.toFixed(3)} (${dpct}%)</span>
+                            <span class='text-text-muted'>${lblLast}</span>
+                        </div>
+                    </div>`;
+                }
+
+                function renderChartControls(m) {
+                    const INTERVALS=[{key:'daily',lbl:'Diario'},{key:'weekly',lbl:'Semanal'},{key:'biweekly',lbl:'Quincenal'},{key:'monthly',lbl:'Mensual'},{key:'annual',lbl:'Anual'}];
+                    const curInterval=m.chartInterval||'daily';
+                    const chips=INTERVALS.map(iv=>{
+                        const act=curInterval===iv.key;
+                        return `<button data-interval='${iv.key}' class='px-2.5 py-1 rounded-full text-[11px] font-medium border transition-colors ${act?'bg-brand text-white border-brand':'bg-white border-warm-gray-dark/40 text-text-light hover:border-brand/40 hover:text-brand'}'>${iv.lbl}</button>`;
+                    }).join('');
+                    const ptCount=m.detail?.timeline?.length||0;
+                    const chartHtml=m.chartLoading
+                        ?`<div class='h-[140px] flex items-center justify-center text-text-muted text-sm animate-pulse'>Actualizando gráfico...</div>`
+                        :renderTrendChart(m.detail?.timeline, curInterval);
+                    return `<div class='space-y-2'>
+                        <div class='flex items-center justify-between'>
+                            <span class='text-[10px] uppercase tracking-wide text-text-muted font-medium'>Tendencia de precio</span>
+                            ${ptCount?`<span class='text-[10px] text-text-muted'>${ptCount} ${ptCount===1?'punto':'puntos'}</span>`:''}
+                        </div>
+                        <div class='flex gap-1.5 flex-wrap'>${chips}</div>
+                        <div class='flex items-center gap-2 flex-wrap'>
+                            <span class='text-[11px] text-text-muted'>Desde</span>
+                            <input type='date' id='chart-from' value='${m.chartFrom||''}' class='text-[11px] border border-warm-gray-dark/40 rounded-lg px-2 py-1 bg-white focus:outline-none focus:border-brand/60 font-mono'>
+                            <span class='text-[11px] text-text-muted'>Hasta</span>
+                            <input type='date' id='chart-to' value='${m.chartTo||''}' class='text-[11px] border border-warm-gray-dark/40 rounded-lg px-2 py-1 bg-white focus:outline-none focus:border-brand/60 font-mono'>
+                            <button id='chart-apply' class='px-3 py-1 rounded-lg bg-brand/10 hover:bg-brand/20 text-brand text-[11px] font-medium transition-colors'>Aplicar</button>
+                            ${m.chartFrom||m.chartTo?`<button id='chart-clear' class='px-2 py-1 rounded-lg text-[11px] text-text-muted hover:text-red-500 transition-colors'>✕</button>`:''}
+                        </div>
+                        ${chartHtml}
+                    </div>`;
+                }
+
+                async function refreshMaterialChart() {
+                    const m=s._matModal;
+                    if(!m||m.loading) return;
+                    m.chartLoading=true;
+                    renderMaterialModal();
+                    try {
+                        const det=await loadMaterialDetail(m.material, m.chartInterval||'daily', m.chartFrom||'', m.chartTo||'');
+                        if(!s._matModal||s._matModal.material!==m.material) return;
+                        if(det?.ok) m.detail={...m.detail, timeline: det.timeline};
+                    } catch(_){}
+                    m.chartLoading=false;
+                    renderMaterialModal();
                 }
                 function renderMaterialModal() {
                     let modal = document.getElementById('peony-mat-modal');
@@ -3549,6 +3800,8 @@
                                         ${st.price_count || 0} cotizaciones · ${st.contact_count || 0} contactos ·
                                         desde ${esc(st.first_date || '')} hasta ${esc(st.latest_date || '')}
                                     </div>
+
+                                    ${renderChartControls(m)}
 
                                     <!-- Contactos -->
                                     <div>
@@ -3625,6 +3878,27 @@
                                 alert('Modal de cliente no disponible. Recarga la página.');
                             }
                         });
+                    });
+                    // ── Controles del gráfico de tendencia ──────────────────────────
+                    modal.querySelectorAll('[data-interval]').forEach(btn => {
+                        btn.addEventListener('click', async () => {
+                            if (!s._matModal || s._matModal.chartLoading) return;
+                            if (s._matModal.chartInterval === btn.dataset.interval) return;
+                            s._matModal.chartInterval = btn.dataset.interval;
+                            await refreshMaterialChart();
+                        });
+                    });
+                    modal.querySelector('#chart-apply')?.addEventListener('click', async () => {
+                        if (!s._matModal) return;
+                        s._matModal.chartFrom = modal.querySelector('#chart-from')?.value || '';
+                        s._matModal.chartTo   = modal.querySelector('#chart-to')?.value   || '';
+                        await refreshMaterialChart();
+                    });
+                    modal.querySelector('#chart-clear')?.addEventListener('click', async () => {
+                        if (!s._matModal) return;
+                        s._matModal.chartFrom = '';
+                        s._matModal.chartTo   = '';
+                        await refreshMaterialChart();
                     });
                 }
 
@@ -3730,7 +4004,7 @@
                         const isFetchFail = healthErrMsg === 'Failed to fetch' || /NetworkError|network/i.test(healthErrMsg);
                         let msg;
                         if (onFile) {
-                            msg = 'La app está abierta con file:// y no tiene servidor PHP corriendo. Abre la URL vía HTTP/HTTPS (ej: https://valkamsync.nautiservint.com/).';
+                            msg = 'La app está abierta con file:// y no tiene servidor PHP corriendo. Abre la URL vía HTTP/HTTPS (ej: https://petit.valkamgm.com/).';
                         } else if (isFetchFail) {
                             msg = 'No se pudo conectar con api.php. Verifica:\n• api.php existe en la raíz del deploy (prueba /api.php?action=health en una pestaña nueva).\n• PHP ≥ 8.1 está habilitado en el hosting.\n• El .htaccess no bloquea peticiones a .php.';
                         } else {
@@ -3951,13 +4225,24 @@
 
                 function bindFilterHandlers() {
                     document.querySelectorAll('[data-filter]').forEach(b => {
-                        b.addEventListener('click', () => { s.filter = b.dataset.filter; s.offset = 0; init(); });
+                        b.addEventListener('click', () => {
+                            const prev = s.filter;
+                            s.filter = b.dataset.filter;
+                            s.offset = 0;
+                            // Cuando se entra o sale de 'range' los inputs cambian: re-render completo
+                            if (prev === 'range' || s.filter === 'range') { init(); } else { init(); }
+                        });
                     });
                     bindTabs();
                     $('#peony-date')?.addEventListener('change', e => { s.date = e.target.value; s.offset = 0; refreshContent(); });
+                    $('#peony-date-from')?.addEventListener('change', e => { s.dateFrom = e.target.value; s.offset = 0; refreshContent(); });
+                    $('#peony-date-to')?.addEventListener('change', e => { s.dateTo = e.target.value; s.offset = 0; refreshContent(); });
                     $('#peony-cat')?.addEventListener('change', e => { s.category = e.target.value; s.offset = 0; refreshContent(); });
+                    // Forzar valor vacío por si el browser autocomplete inyectó algo antes de los listeners
+                    const qInput = $('#peony-q');
+                    if (qInput) { qInput.value = ''; s.search = ''; }
                     let searchTimer;
-                    $('#peony-q')?.addEventListener('input', e => {
+                    qInput?.addEventListener('input', e => {
                         clearTimeout(searchTimer);
                         searchTimer = setTimeout(() => { s.search = e.target.value; s.offset = 0; refreshContent(); }, 300);
                     });
@@ -4111,7 +4396,607 @@
                 window.valkamsync?.openCalculator?.();
             });
         });
+
+        // ── Auth: validación server-side al arrancar ────────────────────────
+        (async () => {
+            try {
+                const r = await fetch('/api/auth_check');
+                const d = await r.json();
+                if (!d.ok) {
+                    localStorage.removeItem('vsync_auth');
+                    sessionStorage.removeItem('vsync_auth');
+                    location.replace('/login.html');
+                } else {
+                    document.documentElement.style.visibility = '';
+                }
+            } catch {
+                // Sin conexión — dejar la app abierta con datos en caché
+                document.documentElement.style.visibility = '';
+            }
+        })();
+
+        // Interceptar 401 en cualquier fetch nativo (sesión expirada)
+        const _origFetch = window.fetch;
+        window.fetch = async function (...args) {
+            const res = await _origFetch.apply(this, args);
+            if (res.status === 401) {
+                localStorage.removeItem('vsync_auth');
+                sessionStorage.removeItem('vsync_auth');
+                location.replace('/login.html');
+            }
+            return res;
+        };
+
+        // ── Settings dropdown ──────────────────────────────────────────────
+        window.addEventListener('DOMContentLoaded', () => {
+            const btn  = document.getElementById('btn-settings');
+            const menu = document.getElementById('settings-menu');
+            btn?.addEventListener('click', e => {
+                e.stopPropagation();
+                menu.classList.toggle('hidden');
+            });
+            document.addEventListener('click', () => menu?.classList.add('hidden'));
+        });
+
+        // ── Logout ────────────────────────────────────────────────────────
+        window.doLogout = async function () {
+            try { await fetch('/api/auth_logout'); } catch {}
+            localStorage.removeItem('vsync_auth');
+            sessionStorage.removeItem('vsync_auth');
+            location.replace('/login.html');
+        };
+
+        // ── Modal cambiar PIN ──────────────────────────────────────────────
+        window.openPinModal = function () {
+            document.getElementById('settings-menu')?.classList.add('hidden');
+            document.getElementById('pin-modal')?.classList.remove('hidden');
+            document.getElementById('pin-new')?.focus();
+        };
+
+        window.closePinModal = function () {
+            document.getElementById('pin-modal')?.classList.add('hidden');
+            document.getElementById('pin-new').value    = '';
+            document.getElementById('pin-confirm').value = '';
+            document.getElementById('pin-modal-err').textContent = '';
+        };
+
+        window.savePinChange = async function () {
+            const newPin = document.getElementById('pin-new').value.trim();
+            const conf   = document.getElementById('pin-confirm').value.trim();
+            const errEl  = document.getElementById('pin-modal-err');
+            errEl.textContent = '';
+
+            if (!/^\d{4,8}$/.test(newPin)) {
+                errEl.textContent = 'El PIN debe tener entre 4 y 8 dígitos.'; return;
+            }
+            if (newPin !== conf) {
+                errEl.textContent = 'Los PINs no coinciden.'; return;
+            }
+            const btn = document.getElementById('btn-save-pin');
+            btn.disabled = true; btn.textContent = 'Guardando…';
+            try {
+                const res  = await fetch('/api/auth_pin_change', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pin: newPin }),
+                });
+                const data = await res.json();
+                if (data.ok) {
+                    window.closePinModal();
+                    // Toast ligero de éxito
+                    const t = document.createElement('div');
+                    t.textContent = '✓ PIN actualizado';
+                    t.style.cssText = 'position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:#1B4D3E;color:#fff;padding:.6rem 1.25rem;border-radius:.75rem;font-size:.85rem;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.2);';
+                    document.body.appendChild(t);
+                    setTimeout(() => t.remove(), 2800);
+                } else {
+                    errEl.textContent = 'No se pudo cambiar el PIN. Intenta de nuevo.';
+                }
+            } catch {
+                errEl.textContent = 'Error de conexión.';
+            } finally {
+                btn.disabled = false; btn.textContent = 'Guardar PIN';
+            }
+        };
     })();
     </script>
+
+    <!-- ── Modal: Cambiar PIN ── -->
+    <div id="pin-modal"
+         class="hidden fixed inset-0 z-50 flex items-center justify-center p-4"
+         style="background:rgba(15,46,37,.6);backdrop-filter:blur(4px)">
+        <div class="bg-warm-white rounded-2xl shadow-2xl w-full max-w-sm p-6"
+             onclick="event.stopPropagation()">
+            <div class="flex items-center justify-between mb-5">
+                <h2 class="text-base font-bold text-text">Cambiar PIN</h2>
+                <button onclick="closePinModal()"
+                        class="w-8 h-8 rounded-full hover:bg-warm-gray flex items-center justify-center text-text-muted text-lg leading-none">
+                    &times;
+                </button>
+            </div>
+
+            <p class="text-xs text-text-muted mb-4">
+                El PIN debe tener entre 4 y 8 dígitos numéricos.
+            </p>
+
+            <div class="mb-3">
+                <label class="block text-xs font-bold text-text-light uppercase tracking-widest mb-1.5"
+                       for="pin-new">Nuevo PIN</label>
+                <input id="pin-new" type="password" inputmode="numeric" pattern="[0-9]*"
+                       maxlength="8" placeholder="••••••••"
+                       class="w-full px-4 py-2.5 border-2 border-warm-gray-dark rounded-xl text-sm text-text bg-white outline-none focus:border-brand"
+                       style="transition:border-color .15s">
+            </div>
+            <div class="mb-4">
+                <label class="block text-xs font-bold text-text-light uppercase tracking-widest mb-1.5"
+                       for="pin-confirm">Confirmar PIN</label>
+                <input id="pin-confirm" type="password" inputmode="numeric" pattern="[0-9]*"
+                       maxlength="8" placeholder="••••••••"
+                       class="w-full px-4 py-2.5 border-2 border-warm-gray-dark rounded-xl text-sm text-text bg-white outline-none focus:border-brand"
+                       style="transition:border-color .15s"
+                       onkeydown="if(event.key==='Enter') savePinChange()">
+            </div>
+
+            <p id="pin-modal-err" class="text-xs text-red-600 mb-3 min-h-[1.1rem]"></p>
+
+            <button id="btn-save-pin" onclick="savePinChange()"
+                    class="w-full py-3 bg-brand text-white rounded-xl text-sm font-bold hover:bg-brand-dark"
+                    style="transition:background .15s">
+                Guardar PIN
+            </button>
+        </div>
+    </div>
+
+    <!-- ── Modal: EDA + Descarga CSV ── -->
+    <div id="eda-modal"
+         class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
+         style="background:rgba(15,46,37,.6);backdrop-filter:blur(4px)"
+         onclick="if(event.target===this)closeEdaModal()">
+        <div class="bg-warm-white rounded-t-2xl sm:rounded-2xl shadow-2xl w-full sm:max-w-2xl max-h-[92vh] flex flex-col"
+             onclick="event.stopPropagation()">
+            <!-- Header -->
+            <div class="flex items-center justify-between px-5 pt-5 pb-3 border-b border-warm-gray-dark/20 shrink-0">
+                <div>
+                    <h2 class="text-base font-bold text-text" id="eda-title">Análisis de Datos</h2>
+                    <p class="text-xs text-text-muted" id="eda-subtitle"></p>
+                </div>
+                <button onclick="closeEdaModal()"
+                        class="w-8 h-8 rounded-full hover:bg-warm-gray flex items-center justify-center text-text-muted text-xl leading-none shrink-0">&times;</button>
+            </div>
+            <!-- Content scrollable -->
+            <div id="eda-body" class="overflow-y-auto flex-1 p-5 space-y-5">
+                <div class="flex items-center justify-center py-10 text-text-muted text-sm">
+                    <svg class="animate-spin w-5 h-5 mr-2 text-accent" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg>
+                    Analizando datos…
+                </div>
+            </div>
+            <!-- Footer -->
+            <div class="px-5 pb-5 pt-3 border-t border-warm-gray-dark/20 flex gap-3 shrink-0">
+                <button id="eda-download-btn" onclick="triggerCsvDownload()"
+                        class="flex-1 py-2.5 bg-brand text-white rounded-xl text-sm font-bold hover:bg-brand-dark transition flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    Descargar CSV
+                </button>
+                <!-- Compartir dropdown -->
+                <div class="relative shrink-0" id="eda-share-wrap">
+                    <button onclick="toggleEdaShareMenu()"
+                            class="px-4 py-2.5 bg-warm-gray rounded-xl text-sm font-semibold text-text hover:bg-warm-gray-dark/60 transition flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+                        Compartir
+                    </button>
+                    <div id="eda-share-menu" class="hidden absolute bottom-full right-0 mb-2 bg-white rounded-xl shadow-xl border border-warm-gray-dark/20 overflow-hidden z-10 min-w-[160px]">
+                        <button onclick="shareEdaAsPdf()" class="w-full px-4 py-2.5 text-left text-sm text-text hover:bg-warm-gray flex items-center gap-2">
+                            <svg class="w-4 h-4 text-red-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                            Imprimir / PDF
+                        </button>
+                        <button onclick="shareEdaAsImage()" class="w-full px-4 py-2.5 text-left text-sm text-text hover:bg-warm-gray flex items-center gap-2">
+                            <svg class="w-4 h-4 text-blue-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            Imagen PNG
+                        </button>
+                    </div>
+                </div>
+                <button onclick="closeEdaModal()"
+                        class="px-5 py-2.5 bg-warm-gray rounded-xl text-sm font-semibold text-text hover:bg-warm-gray-dark/60 transition">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ── EDA Modal ──────────────────────────────────────────────────────────
+    (function () {
+        let _edaFileId = null;
+        let _edaData   = null;
+
+        window.openEdaModal = async function (fileId, filename) {
+            _edaFileId = fileId;
+            const modal = document.getElementById('eda-modal');
+            const body  = document.getElementById('eda-body');
+            const title = document.getElementById('eda-title');
+            const sub   = document.getElementById('eda-subtitle');
+            title.textContent = 'Análisis EDA';
+            sub.textContent   = filename || '';
+            body.innerHTML = `<div class="flex items-center justify-center py-10 text-text-muted text-sm">
+                <svg class="animate-spin w-5 h-5 mr-2 text-accent" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg>
+                Analizando datos…</div>`;
+            modal.classList.remove('hidden');
+
+            try {
+                const r = await fetch(`/api/peony_eda?file_id=${fileId}`);
+                const d = await r.json();
+                if (!d.ok) { body.innerHTML = `<p class="text-red-600 text-sm">Error: ${d.error || 'desconocido'}</p>`; return; }
+                renderEda(d);
+            } catch(e) {
+                body.innerHTML = `<p class="text-red-600 text-sm">Error de conexión.</p>`;
+            }
+        };
+
+        window.closeEdaModal = function () {
+            document.getElementById('eda-modal').classList.add('hidden');
+        };
+
+        window.triggerCsvDownload = function () {
+            if (!_edaFileId) return;
+            window.location.href = `/api/peony_export_csv?file_id=${_edaFileId}`;
+        };
+
+        function levelColor(level) {
+            return level === 'error' ? 'text-red-600' : 'text-amber-600';
+        }
+        function levelBg(level) {
+            return level === 'error' ? 'bg-red-50 border-red-200' : 'bg-amber-50 border-amber-200';
+        }
+        function scoreColor(score) {
+            if (score >= 90) return 'text-emerald-700';
+            if (score >= 70) return 'text-amber-600';
+            return 'text-red-600';
+        }
+
+        function renderEda(d) {
+            _edaData = d;
+            const s  = d.summary;
+            const st = d.price_stats;
+            const au = d.audit;
+            const title = document.getElementById('eda-title');
+            title.textContent = d.filename;
+
+            // ── Resumen ──
+            const catHtml = Object.entries(s.categories || {})
+                .map(([k,v]) => `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-brand/10 text-brand-dark font-medium">${k}: ${v}</span>`)
+                .join(' ');
+
+            const scoreVal = au.quality_score;
+            const scoreHtml = `<span class="text-2xl font-bold ${scoreColor(scoreVal)}">${scoreVal}%</span>`;
+
+            // ── Estadísticas ──
+            let statsHtml = '<p class="text-xs text-text-muted italic">Sin precios numéricos para calcular estadísticas.</p>';
+            if (st) {
+                statsHtml = `
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    ${[['Mínimo', st.min],['Máximo', st.max],['Promedio', st.mean],['Mediana', st.median],
+                       ['Desv. Est.', st.std_dev],['Q1', st.q1],['Q3', st.q3],['IQR', st.iqr]]
+                        .map(([l,v]) => `<div class="bg-white rounded-xl border border-warm-gray-dark/30 p-3 text-center">
+                            <div class="text-[10px] text-text-muted uppercase tracking-wide mb-1">${l}</div>
+                            <div class="font-mono font-semibold text-sm text-text">${v}</div>
+                        </div>`).join('')}
+                </div>
+                <div class="text-xs text-text-muted mt-1">
+                    Rango normal IQR: <span class="font-mono font-semibold">[${st.lower_fence} – ${st.upper_fence}]</span>
+                    — valores fuera de este rango se marcan como outliers.
+                </div>`;
+            }
+
+            // ── Outliers ──
+            let outliersHtml = '<p class="text-xs text-emerald-700 font-medium">✓ No se detectaron anomalías en este archivo.</p>';
+            if (d.outliers?.length) {
+                outliersHtml = d.outliers.map(o => {
+                    const maxLevel = o.issues.some(i => i.level === 'error') ? 'error' : 'warning';
+                    const issueList = o.issues.map(i =>
+                        `<li class="${levelColor(i.level)} text-xs">• ${i.detail}</li>`
+                    ).join('');
+                    return `
+                    <div class="rounded-xl border p-3 ${levelBg(maxLevel)}">
+                        <div class="flex items-start gap-2">
+                            <div class="flex-1 min-w-0">
+                                <div class="font-semibold text-sm text-text truncate">${o.material}</div>
+                                <div class="text-xs text-text-muted">${o.category} · raw: <span class="font-mono">${o.price_raw}</span>${o.price_num != null ? ` · num: <span class="font-mono">${o.price_num}</span>` : ''}</div>
+                            </div>
+                        </div>
+                        <ul class="mt-2 space-y-0.5">${issueList}</ul>
+                    </div>`;
+                }).join('');
+            }
+
+            document.getElementById('eda-body').innerHTML = `
+            <!-- Score + resumen -->
+            <div class="bg-white rounded-2xl border border-warm-gray-dark/30 p-4">
+                <div class="flex items-center justify-between gap-4 mb-3">
+                    <div>
+                        <div class="text-xs text-text-muted uppercase tracking-wide mb-0.5">Calidad del archivo</div>
+                        ${scoreHtml}
+                        <div class="text-xs text-text-muted mt-0.5">${au.total_issues} problema${au.total_issues !== 1?'s':''} en ${s.total_rows} filas</div>
+                    </div>
+                    <div class="text-right text-sm space-y-0.5">
+                        <div class="text-text-muted"><span class="font-semibold text-text">${s.rows_with_price}</span> / ${s.total_rows} con precio numérico</div>
+                        ${s.null_price_count > 0 ? `<div class="text-amber-600 text-xs">${s.null_price_count} sin valor numérico (${s.null_price_rate}%)</div>` : ''}
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-1.5">${catHtml}</div>
+                <div class="mt-3 grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs text-center">
+                    <div class="${au.formula_prices>0?'text-amber-600':'text-text-muted'}">⚠ Fórmula/% <span class="font-bold">${au.formula_prices}</span></div>
+                    <div class="${(au.lme_resolved||0)>0?'text-blue-600 font-semibold':'text-text-muted'}">🔗 LME resueltos <span class="font-bold">${au.lme_resolved||0}</span></div>
+                    <div class="${au.iqr_outliers>0?'text-red-600':'text-text-muted'}">📊 Outlier IQR <span class="font-bold">${au.iqr_outliers}</span></div>
+                    <div class="${au.historical_outliers>0?'text-red-600':'text-text-muted'}">📈 Outlier hist. <span class="font-bold">${au.historical_outliers}</span></div>
+                    <div class="${au.zero_or_negative>0?'text-red-600':'text-text-muted'}">⛔ Cero/neg. <span class="font-bold">${au.zero_or_negative}</span></div>
+                </div>
+            </div>
+
+            <!-- Estadísticas descriptivas -->
+            <div>
+                <h3 class="text-xs font-bold text-text-muted uppercase tracking-wide mb-2">Estadísticas de precios (USD/lb)</h3>
+                ${statsHtml}
+            </div>
+
+            <!-- Outliers / Anomalías -->
+            <div>
+                <h3 class="text-xs font-bold text-text-muted uppercase tracking-wide mb-2">Anomalías detectadas (${d.outliers?.length || 0})</h3>
+                <div class="space-y-2">${outliersHtml}</div>
+            </div>`;
+        }
+        // ── Compartir ──────────────────────────────────────────────────────
+        window.toggleEdaShareMenu = function () {
+            document.getElementById('eda-share-menu').classList.toggle('hidden');
+        };
+
+        document.addEventListener('click', function (e) {
+            const wrap = document.getElementById('eda-share-wrap');
+            if (wrap && !wrap.contains(e.target)) {
+                document.getElementById('eda-share-menu')?.classList.add('hidden');
+            }
+        });
+
+        window.shareEdaAsPdf = function () {
+            document.getElementById('eda-share-menu').classList.add('hidden');
+            if (!_edaData) return;
+            const w = window.open('', '_blank');
+            if (!w) { alert('Permite ventanas emergentes para exportar el reporte.'); return; }
+            w.document.open();
+            w.document.write(_buildEdaPrintHtml(_edaData));
+            w.document.close();
+        };
+
+        window.shareEdaAsImage = function () {
+            document.getElementById('eda-share-menu').classList.add('hidden');
+            if (!_edaData) return;
+            _downloadEdaCanvas(_edaData);
+        };
+
+        function _buildEdaPrintHtml(d) {
+            const s  = d.summary;
+            const st = d.price_stats;
+            const au = d.audit;
+            const scoreColor = au.quality_score >= 90 ? '#059669' : au.quality_score >= 70 ? '#d97706' : '#dc2626';
+            const cats = Object.entries(s.categories || {})
+                .map(([k, v]) => `<span class="badge">${k}: ${v}</span>`).join('');
+            const statsBlock = st ? `
+                <table class="stats"><tr>
+                ${[['Mínimo',st.min],['Máximo',st.max],['Promedio',st.mean],['Mediana',st.median]]
+                    .map(([l,v]) => `<td><span class="lbl">${l}</span><span class="val">${v}</span></td>`).join('')}
+                </tr><tr>
+                ${[['Desv. Est.',st.std_dev],['Q1',st.q1],['Q3',st.q3],['IQR',st.iqr]]
+                    .map(([l,v]) => `<td><span class="lbl">${l}</span><span class="val">${v}</span></td>`).join('')}
+                </tr></table>
+                <p class="note">Rango normal IQR: [${st.lower_fence} – ${st.upper_fence}]</p>`
+                : '<p class="note">Sin precios numéricos para estadísticas.</p>';
+            const outliersBlock = d.outliers?.length ? d.outliers.map(o => {
+                const isErr = o.issues.some(i => i.level === 'error');
+                return `<div class="outlier ${isErr ? 'err' : 'warn'}">
+                    <strong>${o.material}</strong> <span class="cat">${o.category}</span>
+                    <span class="raw"> · raw: ${o.price_raw}${o.price_num != null ? ' · num: ' + o.price_num : ''}</span>
+                    <ul>${o.issues.map(i => `<li class="${i.level}">${i.detail}</li>`).join('')}</ul>
+                </div>`;
+            }).join('') : '<p class="ok">✓ No se detectaron anomalías en este archivo.</p>';
+
+            return `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<title>EDA · ${d.filename}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f7f5f0;padding:32px;color:#2d2b25;font-size:14px}
+.card{background:#fff;border-radius:14px;border:1px solid #e0ddd5;padding:22px;margin-bottom:18px}
+.brand{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9b9890}
+.filename{font-size:20px;font-weight:800;color:#1a1916;margin:4px 0 2px}
+.header{display:flex;justify-content:space-between;align-items:flex-start}
+.score-block{text-align:right}
+.score{font-size:52px;font-weight:800;color:${scoreColor};line-height:1}
+.score-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#9b9890;margin-bottom:2px}
+.meta{font-size:12px;color:#6b6860;margin-top:4px}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;background:#e8f4ed;color:#2d7a50;font-size:11px;font-weight:600;margin:2px}
+.audit{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px;text-align:center;font-size:12px}
+.audit div{padding:6px 4px;background:#f7f5f0;border-radius:6px}
+.sec-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#9b9890;margin-bottom:12px}
+.stats{width:100%;border-collapse:separate;border-spacing:4px}
+.stats td{background:#f7f5f0;border-radius:8px;padding:8px;text-align:center}
+.stats .lbl{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:#9b9890;margin-bottom:3px}
+.stats .val{display:block;font-family:'Courier New',monospace;font-weight:700;font-size:13px}
+.note{font-size:11px;color:#9b9890;margin-top:8px}
+.outlier{border-radius:8px;padding:10px 12px;margin-bottom:8px;border:1px solid}
+.outlier.err{background:#fff5f5;border-color:#fecaca}
+.outlier.warn{background:#fffbeb;border-color:#fde68a}
+.outlier strong{font-size:14px}
+.cat{font-size:12px;color:#6b6860}
+.raw{font-size:12px;font-family:monospace;color:#6b6860}
+.outlier ul{margin-top:6px;padding-left:14px}
+.outlier li{font-size:12px;margin-bottom:2px}
+.outlier li.error{color:#dc2626} .outlier li.warning{color:#d97706}
+.ok{color:#059669;font-weight:600}
+footer{text-align:center;font-size:11px;color:#c0bdb5;margin-top:24px}
+@media print{body{background:#fff;padding:16px}.card{border:1px solid #ddd}}
+</style></head><body>
+<div class="card">
+  <div class="header">
+    <div>
+      <div class="brand">ValkamSync · Reporte EDA</div>
+      <div class="filename">${d.filename}</div>
+      <div class="meta">${s.total_rows} filas · ${s.rows_with_price} con precio numérico · ${Object.keys(s.categories||{}).length} categorías</div>
+      <div style="margin-top:8px">${cats}</div>
+    </div>
+    <div class="score-block">
+      <div class="score-lbl">Calidad</div>
+      <div class="score">${au.quality_score}%</div>
+      <div class="meta">${au.total_issues} problema${au.total_issues !== 1 ? 's' : ''} detectado${au.total_issues !== 1 ? 's' : ''}</div>
+    </div>
+  </div>
+  <div class="audit">
+    <div style="color:${au.formula_prices>0?'#d97706':'#9b9890'}">⚠ Fórmula/%<br><strong>${au.formula_prices}</strong></div>
+    <div style="color:${(au.lme_resolved||0)>0?'#2563eb':'#9b9890'}">🔗 LME resueltos<br><strong>${au.lme_resolved||0}</strong></div>
+    <div style="color:${au.iqr_outliers>0?'#dc2626':'#9b9890'}">📊 Outlier IQR<br><strong>${au.iqr_outliers}</strong></div>
+    <div style="color:${au.historical_outliers>0?'#dc2626':'#9b9890'}">📈 Outlier hist.<br><strong>${au.historical_outliers}</strong></div>
+    <div style="color:${au.zero_or_negative>0?'#dc2626':'#9b9890'}">⛔ Cero/neg.<br><strong>${au.zero_or_negative}</strong></div>
+  </div>
+</div>
+<div class="card"><div class="sec-title">Estadísticas de precios (USD/lb)</div>${statsBlock}</div>
+<div class="card"><div class="sec-title">Anomalías detectadas (${d.outliers?.length || 0})</div>${outliersBlock}</div>
+<footer>ValkamSync · petit.valkamgm.com · ${new Date().toLocaleString('es')}</footer>
+<script>setTimeout(function(){window.print();},400);<\/script>
+</body></html>`;
+        }
+
+        function _downloadEdaCanvas(d) {
+            const s  = d.summary;
+            const st = d.price_stats;
+            const au = d.audit;
+            const W  = 800, PAD = 36, IW = W - PAD * 2;
+            const FONT = "'Segoe UI', Arial, sans-serif";
+
+            // Calculate required height
+            let H = PAD + 64 + 24 + 80 + 16; // top pad + header + meta + score card + gap
+            if (st) H += 110 + 16;            // stats grid
+            const anomCount = d.outliers?.length || 0;
+            H += 24 + (anomCount > 0 ? anomCount * 56 : 30) + 40 + PAD;
+
+            const canvas = document.createElement('canvas');
+            canvas.width  = W * 2; canvas.height = H * 2;
+            const ctx = canvas.getContext('2d');
+            ctx.scale(2, 2);
+
+            // Background
+            ctx.fillStyle = '#F7F5F0';
+            ctx.fillRect(0, 0, W, H);
+
+            // Dark header bar
+            ctx.fillStyle = '#1a1916';
+            _rrect(ctx, 0, 0, W, 64, 0); ctx.fill();
+            ctx.fillStyle = '#6ee7b7';
+            ctx.font = `bold 10px ${FONT}`; ctx.letterSpacing = '0.1em';
+            ctx.fillText('VALKAMSYNC · REPORTE EDA', PAD, 22);
+            ctx.fillStyle = '#ffffff';
+            ctx.font = `bold 16px ${FONT}`; ctx.letterSpacing = '0';
+            ctx.fillText(d.filename, PAD, 46);
+
+            let y = 64 + 16;
+
+            // Meta row
+            ctx.fillStyle = '#6b6860';
+            ctx.font = `12px ${FONT}`;
+            ctx.fillText(`${s.total_rows} filas · ${s.rows_with_price} con precio · ${Object.keys(s.categories||{}).length} categorías`, PAD, y);
+            y += 24;
+
+            // Score card
+            const scoreColor = au.quality_score >= 90 ? '#059669' : au.quality_score >= 70 ? '#d97706' : '#dc2626';
+            _card(ctx, PAD, y, IW, 72);
+            ctx.fillStyle = '#9b9890'; ctx.font = `10px ${FONT}`;
+            ctx.fillText('CALIDAD DEL ARCHIVO', PAD + 16, y + 20);
+            ctx.fillStyle = scoreColor; ctx.font = `bold 40px ${FONT}`;
+            ctx.fillText(au.quality_score + '%', PAD + 16, y + 58);
+            ctx.textAlign = 'right';
+            ctx.fillStyle = '#2d2b25'; ctx.font = `bold 13px ${FONT}`;
+            ctx.fillText(`${au.total_issues} problemas detectados`, PAD + IW - 16, y + 24);
+            ctx.fillStyle = '#6b6860'; ctx.font = `11px ${FONT}`;
+            ctx.fillText(`Fórmula: ${au.formula_prices}  ·  LME: ${au.lme_resolved||0}  ·  IQR: ${au.iqr_outliers}  ·  Hist: ${au.historical_outliers}  ·  Cero/neg: ${au.zero_or_negative}`, PAD + IW - 16, y + 44);
+            ctx.textAlign = 'left';
+            y += 72 + 16;
+
+            // Stats grid (2 rows × 4 cols)
+            if (st) {
+                const items = [['MIN',st.min],['MÁX',st.max],['PROM',st.mean],['MED',st.median],
+                               ['STD',st.std_dev],['Q1',st.q1],['Q3',st.q3],['IQR',st.iqr]];
+                const cW = IW / 4, cH = 44;
+                items.forEach(([lbl, val], i) => {
+                    const cx = PAD + (i % 4) * cW;
+                    const cy = y + Math.floor(i / 4) * (cH + 6);
+                    _card(ctx, cx, cy, cW - 6, cH, '#fff', '#e0ddd5', 8);
+                    ctx.fillStyle = '#9b9890'; ctx.font = `9px ${FONT}`;
+                    ctx.textAlign = 'center';
+                    ctx.fillText(lbl, cx + (cW-6)/2, cy + 14);
+                    ctx.fillStyle = '#1a1916'; ctx.font = `bold 13px 'Courier New', monospace`;
+                    ctx.fillText(String(val), cx + (cW-6)/2, cy + 32);
+                    ctx.textAlign = 'left';
+                });
+                y += 2 * (cH + 6) + 16;
+            }
+
+            // Anomalies header
+            ctx.fillStyle = '#9b9890'; ctx.font = `bold 10px ${FONT}`;
+            ctx.fillText(`ANOMALÍAS DETECTADAS (${anomCount})`, PAD, y + 12);
+            y += 24;
+
+            if (anomCount === 0) {
+                ctx.fillStyle = '#059669'; ctx.font = `bold 13px ${FONT}`;
+                ctx.fillText('✓ No se detectaron anomalías en este archivo.', PAD, y + 16);
+                y += 30;
+            } else {
+                d.outliers.forEach(o => {
+                    const isErr = o.issues.some(i => i.level === 'error');
+                    _card(ctx, PAD, y, IW, 48, isErr ? '#fff5f5' : '#fffbeb', isErr ? '#fecaca' : '#fde68a', 10);
+                    ctx.fillStyle = '#2d2b25'; ctx.font = `bold 13px ${FONT}`;
+                    ctx.fillText(o.material, PAD + 12, y + 18);
+                    ctx.fillStyle = '#6b6860'; ctx.font = `11px ${FONT}`;
+                    ctx.fillText(`${o.category} · raw: ${o.price_raw}`, PAD + 12, y + 34);
+                    const issueText = o.issues.map(i => i.detail).join(' · ');
+                    ctx.fillStyle = isErr ? '#dc2626' : '#d97706'; ctx.font = `11px ${FONT}`;
+                    ctx.textAlign = 'right';
+                    ctx.fillText(issueText.length > 65 ? issueText.slice(0, 62) + '…' : issueText, PAD + IW - 12, y + 34);
+                    ctx.textAlign = 'left';
+                    y += 56;
+                });
+            }
+
+            // Footer
+            y += 10;
+            ctx.fillStyle = '#c0bdb5'; ctx.font = `11px ${FONT}`;
+            ctx.textAlign = 'center';
+            ctx.fillText(`ValkamSync · petit.valkamgm.com · ${new Date().toLocaleString('es')}`, W / 2, y);
+            ctx.textAlign = 'left';
+
+            const link = document.createElement('a');
+            link.download = `EDA_${d.filename.replace(/[^a-zA-Z0-9._-]/g, '_')}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        function _rrect(ctx, x, y, w, h, r) {
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.lineTo(x + w - r, y);
+            ctx.arcTo(x + w, y, x + w, y + r, r);
+            ctx.lineTo(x + w, y + h - r);
+            ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+            ctx.lineTo(x + r, y + h);
+            ctx.arcTo(x, y + h, x, y + h - r, r);
+            ctx.lineTo(x, y + r);
+            ctx.arcTo(x, y, x + r, y, r);
+            ctx.closePath();
+        }
+
+        function _card(ctx, x, y, w, h, bg='#fff', border='#e0ddd5', r=12) {
+            ctx.fillStyle = bg;    _rrect(ctx, x, y, w, h, r); ctx.fill();
+            ctx.strokeStyle = border; ctx.lineWidth = 1;
+            _rrect(ctx, x, y, w, h, r); ctx.stroke();
+        }
+
+    })();
+    </script>
+
 </body>
 </html>

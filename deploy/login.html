@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#1B4D3E">
+    <title>ValkamSync · Acceso</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #1B4D3E;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.25rem;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* ── Card ── */
+        .card {
+            background: #FAF8F5;
+            border-radius: 1.375rem;
+            box-shadow: 0 24px 56px rgba(0,0,0,.35), 0 4px 12px rgba(0,0,0,.18);
+            width: 100%;
+            max-width: 368px;
+            padding: 2.125rem 2rem 1.75rem;
+        }
+
+        /* ── Logo badge ── */
+        .logo-wrap { text-align: center; margin-bottom: 1.25rem; }
+        .logo-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 3.5rem; height: 3.5rem;
+            background: #1B4D3E;
+            border-radius: 0.875rem;
+            margin-bottom: 0.85rem;
+        }
+        .logo-badge svg { width: 2rem; height: 2rem; }
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #2D2A26;
+            letter-spacing: -.02em;
+            margin-bottom: .2rem;
+        }
+        .card-sub {
+            font-size: .76rem;
+            color: #8C857D;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+        }
+
+        /* ── Tabs ── */
+        .tabs {
+            display: flex;
+            background: #F0ECE6;
+            border-radius: .625rem;
+            padding: 3px;
+            gap: 3px;
+            margin: 1.5rem 0 1.375rem;
+        }
+        .tab-btn {
+            flex: 1;
+            border: none;
+            background: transparent;
+            border-radius: .5rem;
+            padding: .55rem .5rem;
+            font-size: .85rem;
+            font-weight: 500;
+            color: #5C5650;
+            cursor: pointer;
+            transition: background .15s, color .15s;
+            letter-spacing: -.01em;
+        }
+        .tab-btn.active {
+            background: #1B4D3E;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        /* ── Error banner ── */
+        .error-msg {
+            display: none;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+            border-radius: .5rem;
+            padding: .6rem .75rem;
+            font-size: .82rem;
+            line-height: 1.4;
+            margin-bottom: 1rem;
+        }
+        .error-msg.show { display: block; }
+
+        /* ── Fields ── */
+        .field { margin-bottom: 1rem; }
+        .field label {
+            display: block;
+            font-size: .75rem;
+            font-weight: 700;
+            color: #5C5650;
+            letter-spacing: .055em;
+            text-transform: uppercase;
+            margin-bottom: .35rem;
+        }
+        .field input {
+            width: 100%;
+            padding: .72rem .9rem;
+            border: 1.5px solid #D4CFC7;
+            border-radius: .625rem;
+            font-size: .95rem;
+            color: #2D2A26;
+            background: #fff;
+            outline: none;
+            transition: border-color .15s, box-shadow .15s;
+            -webkit-appearance: none;
+        }
+        .field input:focus {
+            border-color: #1B4D3E;
+            box-shadow: 0 0 0 3px rgba(27,77,62,.14);
+        }
+
+        /* ── PIN display ── */
+        .pin-display {
+            display: flex;
+            gap: .45rem;
+            justify-content: center;
+            margin-bottom: 1.25rem;
+        }
+        .pin-dot {
+            width: 1.625rem; height: 1.625rem;
+            border: 2px solid #D4CFC7;
+            border-radius: 50%;
+            background: #fff;
+            transition: background .1s, border-color .1s, transform .08s;
+        }
+        .pin-dot.filled {
+            background: #1B4D3E;
+            border-color: #1B4D3E;
+            transform: scale(1.08);
+        }
+
+        /* ── Keypad ── */
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: .5rem;
+            margin-bottom: 1.25rem;
+        }
+        .key-btn {
+            border: 1.5px solid #D4CFC7;
+            border-radius: .7rem;
+            background: #fff;
+            padding: .875rem .5rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2D2A26;
+            cursor: pointer;
+            text-align: center;
+            transition: background .1s, transform .08s, border-color .1s;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+        .key-btn:hover  { background: #F0ECE6; border-color: #1B4D3E; }
+        .key-btn:active { background: #E8E3DC; transform: scale(.93); }
+        .key-btn.del    { font-size: 1.05rem; color: #5C5650; }
+        .key-btn.empty  { visibility: hidden; pointer-events: none; border-color: transparent; background: transparent; }
+
+        /* ── Remember ── */
+        .remember {
+            display: flex;
+            align-items: flex-start;
+            gap: .6rem;
+            margin-bottom: 1.25rem;
+        }
+        .remember input[type="checkbox"] {
+            accent-color: #1B4D3E;
+            width: 1.05rem; height: 1.05rem;
+            margin-top: .15rem;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+        .remember-label { cursor: pointer; }
+        .remember-label span:first-child {
+            display: block;
+            font-size: .83rem;
+            font-weight: 600;
+            color: #2D2A26;
+        }
+        .remember-label span.hint {
+            font-size: .73rem;
+            color: #8C857D;
+            line-height: 1.4;
+        }
+
+        /* ── Submit button ── */
+        .btn-submit {
+            width: 100%;
+            padding: .875rem;
+            background: #1B4D3E;
+            color: #fff;
+            border: none;
+            border-radius: .7rem;
+            font-size: 1rem;
+            font-weight: 800;
+            letter-spacing: .02em;
+            cursor: pointer;
+            transition: background .15s, transform .1s, opacity .15s;
+        }
+        .btn-submit:hover   { background: #163d31; }
+        .btn-submit:active  { transform: scale(.98); }
+        .btn-submit:disabled { background: #8C857D; cursor: not-allowed; opacity: .7; }
+
+        /* ── Footer ── */
+        .card-footer {
+            text-align: center;
+            font-size: .72rem;
+            color: #8C857D;
+            margin-top: 1.375rem;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+
+    <!-- Logo -->
+    <div class="logo-wrap">
+        <div class="logo-badge">
+            <!-- VS monogram -->
+            <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <text x="3" y="24" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+                      font-size="18" font-weight="800" fill="white" letter-spacing="-1">VS</text>
+            </svg>
+        </div>
+        <h1 class="card-title">ValkamSync</h1>
+        <p class="card-sub">PeonyInc · Precio &amp; Mercado</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs" role="tablist">
+        <button class="tab-btn active" id="tab-pass"
+                onclick="switchTab('password')" role="tab" aria-selected="true">
+            🔑 Contraseña
+        </button>
+        <button class="tab-btn" id="tab-pin"
+                onclick="switchTab('pin')" role="tab" aria-selected="false">
+            # PIN
+        </button>
+    </div>
+
+    <!-- Error -->
+    <div class="error-msg" id="error-msg" role="alert"></div>
+
+    <!-- ── Password form ── -->
+    <div id="form-password">
+        <div class="field">
+            <label for="inp-user">Usuario</label>
+            <input type="text" id="inp-user" value="admin"
+                   autocomplete="username" autocapitalize="none" spellcheck="false">
+        </div>
+        <div class="field">
+            <label for="inp-pass">Contraseña</label>
+            <input type="password" id="inp-pass"
+                   autocomplete="current-password" placeholder="••••••••">
+        </div>
+    </div>
+
+    <!-- ── PIN form ── -->
+    <div id="form-pin" style="display:none">
+        <div class="pin-display" id="pin-display"></div>
+        <div class="keypad" id="keypad"></div>
+    </div>
+
+    <!-- Remember -->
+    <div class="remember">
+        <input type="checkbox" id="chk-remember">
+        <label class="remember-label" for="chk-remember">
+            <span>Recordar este dispositivo</span>
+            <span class="hint">Sin marcar, se cerrará la sesión al cerrar el navegador.</span>
+        </label>
+    </div>
+
+    <!-- Submit (solo visible en modo contraseña) -->
+    <button class="btn-submit" id="btn-submit" onclick="doLogin()">
+        Ingresar
+    </button>
+
+    <p class="card-footer">VALKAM CAPITAL LLC &middot; Acceso Seguro</p>
+
+</div>
+
+<script>
+(function () {
+    const MAX_PIN = 8;
+    let pin = '';
+    let mode = 'password';
+
+    /* ── Tab switch ── */
+    function switchTab(newMode) {
+        mode = newMode;
+        const isPass = mode === 'password';
+        document.getElementById('tab-pass').classList.toggle('active', isPass);
+        document.getElementById('tab-pin').classList.toggle('active', !isPass);
+        document.getElementById('form-password').style.display = isPass ? '' : 'none';
+        document.getElementById('form-pin').style.display      = isPass ? 'none' : '';
+        document.getElementById('btn-submit').style.display    = isPass ? '' : 'none';
+        clearError();
+        if (!isPass) { pin = ''; renderDots(); }
+        else          { setTimeout(() => document.getElementById('inp-pass').focus(), 50); }
+    }
+    window.switchTab = switchTab;
+
+    /* ── PIN dots ── */
+    function renderDots() {
+        const el = document.getElementById('pin-display');
+        el.innerHTML = '';
+        for (let i = 0; i < MAX_PIN; i++) {
+            const d = document.createElement('div');
+            d.className = 'pin-dot' + (i < pin.length ? ' filled' : '');
+            el.appendChild(d);
+        }
+    }
+
+    /* ── Keypad ── */
+    function buildKeypad() {
+        const kp   = document.getElementById('keypad');
+        // Layout: 1-9, then ⌫ · 0 · (empty)
+        const keys = ['1','2','3','4','5','6','7','8','9','⌫','0',''];
+        kp.innerHTML = '';
+        keys.forEach(k => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            if (k === '') {
+                btn.className = 'key-btn empty';
+                btn.disabled  = true;
+            } else if (k === '⌫') {
+                btn.className   = 'key-btn del';
+                btn.textContent = '⌫';
+                btn.setAttribute('aria-label', 'Borrar');
+                btn.onclick = () => { pin = pin.slice(0, -1); renderDots(); clearError(); };
+            } else {
+                btn.className   = 'key-btn';
+                btn.textContent = k;
+                btn.onclick     = () => {
+                    if (pin.length < MAX_PIN) {
+                        pin += k;
+                        renderDots();
+                        clearError();
+                        if (pin.length === MAX_PIN) setTimeout(doPinLogin, 90);
+                    }
+                };
+            }
+            kp.appendChild(btn);
+        });
+    }
+
+    /* ── Error helpers ── */
+    function showError(msg) {
+        const el = document.getElementById('error-msg');
+        el.textContent = msg;
+        el.classList.add('show');
+    }
+    function clearError() {
+        document.getElementById('error-msg').classList.remove('show');
+    }
+
+    /* ── Loading state ── */
+    function setLoading(on) {
+        const btn = document.getElementById('btn-submit');
+        if (btn) { btn.disabled = on; btn.textContent = on ? 'Verificando…' : 'Ingresar'; }
+        document.querySelectorAll('.key-btn:not(.empty)').forEach(b => b.disabled = on);
+    }
+
+    /* ── Login handlers ── */
+    window.doLogin = async function () {
+        clearError();
+        const username = document.getElementById('inp-user').value.trim() || 'admin';
+        const password = document.getElementById('inp-pass').value;
+        if (!password) { showError('Ingresa tu contraseña.'); return; }
+        await submit({ mode: 'password', username, password });
+    };
+
+    async function doPinLogin() {
+        if (pin.length < 4) { showError('PIN muy corto (mínimo 4 dígitos).'); return; }
+        await submit({ mode: 'pin', pin });
+    }
+
+    async function submit(payload) {
+        const remember = document.getElementById('chk-remember').checked;
+        setLoading(true);
+        try {
+            const res  = await fetch('/api/auth_login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify({ ...payload, remember }),
+            });
+            const data = await res.json();
+
+            if (data.ok) {
+                // Guardar señal en storage para el guard de index.html
+                const store = remember ? localStorage : sessionStorage;
+                store.setItem('vsync_auth', '1');
+                // Limpiar el storage contrario por si quedó algo
+                (remember ? sessionStorage : localStorage).removeItem('vsync_auth');
+                window.location.replace('/');
+            } else {
+                const MSGS = {
+                    invalid_credentials: 'Usuario, contraseña o PIN incorrectos.',
+                    missing_fields:      'Completa todos los campos.',
+                    invalid_pin_format:  'Formato de PIN inválido.',
+                    invalid_mode:        'Modo de acceso inválido.',
+                    rate_limited:        'Demasiados intentos. Espera un momento.',
+                };
+                showError(MSGS[data.error] || 'Error de acceso. Intenta de nuevo.');
+                pin = '';
+                renderDots();
+            }
+        } catch {
+            showError('No se pudo conectar con el servidor.');
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    /* ── Init ── */
+    document.addEventListener('DOMContentLoaded', () => {
+        renderDots();
+        buildKeypad();
+
+        // Enter en campo contraseña
+        document.getElementById('inp-pass').addEventListener('keydown', e => {
+            if (e.key === 'Enter') window.doLogin();
+        });
+
+        // Teclado físico para PIN
+        document.addEventListener('keydown', e => {
+            if (mode !== 'pin') return;
+            if (e.key >= '0' && e.key <= '9') {
+                if (pin.length < MAX_PIN) {
+                    pin += e.key;
+                    renderDots();
+                    clearError();
+                    if (pin.length === MAX_PIN) setTimeout(doPinLogin, 90);
+                }
+            } else if (e.key === 'Backspace') {
+                pin = pin.slice(0, -1);
+                renderDots();
+                clearError();
+            }
+        });
+
+        // Foco automático en contraseña
+        setTimeout(() => document.getElementById('inp-pass').focus(), 100);
+    });
+})();
+</script>
+
+</body>
+</html>

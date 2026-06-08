@@ -12,9 +12,11 @@ final class GeminiClient
 {
     private string $apiKey;
     private string $model;
-    private int $timeout;
+    private int    $timeout;
+    /** @var string[]  Cadena de API keys: primaria + fallback (GEMINI_API_KEY_2) */
+    private array  $apiKeys = [];
 
-    // Cadena de fallback: si el modelo principal no existe/no soporta generateContent,
+    // Cadena de fallback de modelos: si el modelo principal no existe/no soporta generateContent,
     // intenta automáticamente el siguiente. gemini-1.5-* fue deprecado por Google en 2025.
     private const MODEL_FALLBACKS = [
         'gemini-2.5-flash',
@@ -25,57 +27,86 @@ final class GeminiClient
 
     public function __construct(?string $apiKey = null, ?string $model = null, int $timeout = 90)
     {
-        $this->apiKey  = $apiKey  ?? (defined('GEMINI_API_KEY') ? GEMINI_API_KEY : '');
-        $this->model   = $model   ?? (defined('GEMINI_MODEL')   ? GEMINI_MODEL   : 'gemini-2.5-flash');
+        $k1 = $apiKey ?? (defined('GEMINI_API_KEY')   ? (string) GEMINI_API_KEY   : '');
+        $k2 =            defined('GEMINI_API_KEY_2')  ? (string) GEMINI_API_KEY_2 : '';
+        // Deduplica y filtra vacíos — mantiene el orden: primaria → fallback
+        $this->apiKeys = array_values(array_filter(array_unique([$k1, $k2])));
+        $this->apiKey  = $this->apiKeys[0] ?? '';
+        $this->model   = $model ?? (defined('GEMINI_MODEL') ? GEMINI_MODEL : 'gemini-2.5-flash');
         // Timeout 90s total — permite que HostGator devuelva respuesta antes de 504 del gateway (~120s)
         $this->timeout = $timeout;
     }
 
     public function isAvailable(): bool { return $this->apiKey !== ''; }
 
+    /** Error de sobrecarga/cuota que justifica intentar la siguiente key */
+    private function isOverloaded(string $msg): bool
+    {
+        return stripos($msg, 'gemini_http_503') !== false
+            || stripos($msg, 'gemini_http_429') !== false
+            || stripos($msg, 'gemini_http_500') !== false;
+    }
+
+    /** Error de modelo deprecado/no disponible que justifica intentar el siguiente modelo */
+    private function isDeprecatedModel(string $msg): bool
+    {
+        return stripos($msg, 'not found')       !== false
+            || stripos($msg, 'not supported')   !== false
+            || stripos($msg, 'gemini_http_404') !== false
+            || (stripos($msg, 'gemini_http_400') !== false && stripos($msg, 'model') !== false);
+    }
+
     /**
      * Extrae campos de cliente desde imagen (base64) + mime.
-     * Intenta el modelo configurado; si Google responde "not found/not supported",
-     * cae automáticamente al siguiente de la cadena de fallback.
+     *
+     * Estrategia de reintentos en dos niveles:
+     *   1. Modelo deprecado (404/400) → siguiente modelo, misma key.
+     *   2. Sobrecarga/cuota (503/429/500) → misma posición de modelo, siguiente key.
+     *
      * @return array{phone:?string, company:?string, buyer:?string, material:?string, price_raw:?string, scan_date:?string, notes:?string, confidence:?string}
      */
     public function extractClientFields(string $imageBase64, string $mime): array
     {
         if (!$this->isAvailable()) throw new RuntimeException('gemini_unavailable');
 
-        // Ordena modelos: configurado primero, luego los fallbacks que no sean duplicados
         $models = [$this->model];
         foreach (self::MODEL_FALLBACKS as $m) {
             if ($m !== $this->model) $models[] = $m;
         }
 
         $lastError = null;
-        foreach ($models as $model) {
-            try {
-                return $this->callModel($model, $imageBase64, $mime);
-            } catch (RuntimeException $e) {
-                $lastError = $e;
-                $msg = $e->getMessage();
-                // Si es "modelo no existe/no soporta generateContent", intenta el siguiente
-                $looksDeprecated = stripos($msg, 'not found') !== false
-                    || stripos($msg, 'not supported') !== false
-                    || stripos($msg, 'gemini_http_404') !== false
-                    || stripos($msg, 'gemini_http_400') !== false && stripos($msg, 'model') !== false;
-                if ($looksDeprecated && $model !== end($models)) {
-                    if (function_exists('vs_log')) vs_log('[gemini] model "' . $model . '" no disponible → probando siguiente');
-                    continue;
+        foreach ($this->apiKeys as $kIdx => $key) {
+            foreach ($models as $model) {
+                try {
+                    return $this->callModel($model, $key, $imageBase64, $mime);
+                } catch (RuntimeException $e) {
+                    $lastError = $e;
+                    $msg       = $e->getMessage();
+
+                    if ($this->isDeprecatedModel($msg) && $model !== end($models)) {
+                        if (function_exists('vs_log')) vs_log('[gemini] model "' . $model . '" no disponible → siguiente modelo');
+                        continue;
+                    }
+                    if ($this->isOverloaded($msg) && isset($this->apiKeys[$kIdx + 1])) {
+                        if (function_exists('vs_log')) vs_log('[gemini] 503/429 key#' . ($kIdx + 1) . ' → fallback key#' . ($kIdx + 2));
+                        break; // abandona modelos, salta a siguiente key
+                    }
+                    throw $e;
                 }
-                // Otros errores (auth, quota, red): no reintentes
-                throw $e;
             }
         }
-        throw $lastError ?: new RuntimeException('gemini_all_models_failed');
+        throw $lastError ?: new RuntimeException('gemini_all_keys_exhausted');
     }
 
     /**
      * Extrae TODAS las filas de precios de un PDF de PeonyInc (fallback de pdftotext).
      * Se usa cuando el servidor no tiene pdftotext ni poppler instalados (Hostgator shared).
      * Gemini 2.5 acepta PDFs nativamente vía inline_data.
+     *
+     * Estrategia de reintentos en dos niveles:
+     *   1. Modelo deprecado (404) → siguiente modelo, misma key.
+     *   2. Sobrecarga/cuota (503/429/500) → misma posición de modelo, siguiente key.
+     *
      * @return array{rows: array<int,array<string,?string>>, backend: string, warnings: array}
      */
     public function extractPeonyPdf(string $pdfBase64): array
@@ -88,26 +119,30 @@ final class GeminiClient
         }
 
         $lastError = null;
-        foreach ($models as $model) {
-            try {
-                return $this->callPdfModel($model, $pdfBase64);
-            } catch (RuntimeException $e) {
-                $lastError = $e;
-                $msg = $e->getMessage();
-                $looksDeprecated = stripos($msg, 'not found') !== false
-                    || stripos($msg, 'not supported') !== false
-                    || stripos($msg, 'gemini_http_404') !== false;
-                if ($looksDeprecated && $model !== end($models)) {
-                    if (function_exists('vs_log')) vs_log('[gemini-pdf] model "' . $model . '" fallback → siguiente');
-                    continue;
+        foreach ($this->apiKeys as $kIdx => $key) {
+            foreach ($models as $model) {
+                try {
+                    return $this->callPdfModel($model, $key, $pdfBase64);
+                } catch (RuntimeException $e) {
+                    $lastError = $e;
+                    $msg       = $e->getMessage();
+
+                    if ($this->isDeprecatedModel($msg) && $model !== end($models)) {
+                        if (function_exists('vs_log')) vs_log('[gemini-pdf] model "' . $model . '" no disponible → siguiente modelo');
+                        continue;
+                    }
+                    if ($this->isOverloaded($msg) && isset($this->apiKeys[$kIdx + 1])) {
+                        if (function_exists('vs_log')) vs_log('[gemini-pdf] 503/429 key#' . ($kIdx + 1) . ' → fallback key#' . ($kIdx + 2));
+                        break; // abandona modelos, salta a siguiente key
+                    }
+                    throw $e;
                 }
-                throw $e;
             }
         }
-        throw $lastError ?: new RuntimeException('gemini_all_models_failed');
+        throw $lastError ?: new RuntimeException('gemini_all_keys_exhausted');
     }
 
-    private function callPdfModel(string $model, string $pdfBase64): array
+    private function callPdfModel(string $model, string $key, string $pdfBase64): array
     {
         $prompt = "Este PDF es una lista de precios de compra de chatarra metálica de PeonyInc. "
             . "Tiene 3 secciones: ALUMINUM, COPPER/BRASS, SS/HITEMP/OTHER. "
@@ -143,7 +178,7 @@ final class GeminiClient
 
         $url = sprintf(
             'https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s',
-            rawurlencode($model), rawurlencode($this->apiKey)
+            rawurlencode($model), rawurlencode($key)
         );
 
         $ch = curl_init($url);
@@ -213,7 +248,7 @@ final class GeminiClient
         return ['rows' => $rows, 'backend' => 'gemini-pdf', 'warnings' => []];
     }
 
-    private function callModel(string $model, string $imageBase64, string $mime): array
+    private function callModel(string $model, string $key, string $imageBase64, string $mime): array
     {
         $prompt = "Eres un asistente de OCR para ValkamSync, analizando fotos de tarjetas de presentación, "
             . "agendas físicas o notas de clientes del sector de reciclaje de metales.\n\n"
@@ -253,7 +288,7 @@ final class GeminiClient
         $url = sprintf(
             'https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s',
             rawurlencode($model),
-            rawurlencode($this->apiKey)
+            rawurlencode($key)
         );
 
         $ch = curl_init($url);

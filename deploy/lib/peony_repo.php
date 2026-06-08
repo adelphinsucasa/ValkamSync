@@ -50,12 +50,14 @@ function peony_dashboard(PDO $pdo): array
  */
 function peony_files(PDO $pdo, array $q): array
 {
-    $filter = trim((string) ($q['filter'] ?? 'all'));   // 'day' | 'week' | 'month' | 'all'
-    $date   = trim((string) ($q['date']   ?? ''));
+    $filter   = trim((string) ($q['filter']    ?? 'all'));
+    $date     = trim((string) ($q['date']      ?? ''));
+    $dateFrom = trim((string) ($q['date_from'] ?? ''));
+    $dateTo   = trim((string) ($q['date_to']   ?? ''));
     $limit  = min(200, max(1, (int) ($q['limit']  ?? 100)));
     $offset = max(0, (int) ($q['offset'] ?? 0));
 
-    [$whereSql, $params] = peony_build_date_where('f.file_date', $filter, $date);
+    [$whereSql, $params] = peony_build_date_where('f.file_date', $filter, $date, true, $dateFrom, $dateTo);
 
     $sql = "
         SELECT f.id, f.filename, f.file_date, f.row_count, f.parser_version,
@@ -80,10 +82,12 @@ function peony_files(PDO $pdo, array $q): array
 function peony_prices(PDO $pdo, array $q): array
 {
     $fileId   = isset($q['file_id']) ? (int) $q['file_id'] : null;
-    $category = trim((string) ($q['category'] ?? ''));
-    $filter   = trim((string) ($q['filter']   ?? 'all'));
-    $date     = trim((string) ($q['date']     ?? ''));
-    $search   = trim((string) ($q['q']        ?? ''));
+    $category = trim((string) ($q['category']  ?? ''));
+    $filter   = trim((string) ($q['filter']    ?? 'all'));
+    $date     = trim((string) ($q['date']      ?? ''));
+    $dateFrom = trim((string) ($q['date_from'] ?? ''));
+    $dateTo   = trim((string) ($q['date_to']   ?? ''));
+    $search   = trim((string) ($q['q']         ?? ''));
     $limit    = min(500, max(1, (int) ($q['limit']  ?? 200)));
     $offset   = max(0, (int) ($q['offset'] ?? 0));
 
@@ -94,7 +98,7 @@ function peony_prices(PDO $pdo, array $q): array
         $where[] = 'p.file_id = :file_id';
         $params[':file_id'] = $fileId;
     } else {
-        [$dateSql, $dateParams] = peony_build_date_where('p.file_date', $filter, $date, false);
+        [$dateSql, $dateParams] = peony_build_date_where('p.file_date', $filter, $date, false, $dateFrom, $dateTo);
         if ($dateSql !== '') {
             $where[] = ltrim($dateSql, 'WHERE ');
             $params = array_merge($params, $dateParams);
@@ -807,10 +811,16 @@ function peony_import_files(PDO $pdo, array $body): array
 
             $pdo->commit();
             $totalRows += count($rows);
+
+            // Resolución LME best-effort (fuera de transacción; no afecta import si falla)
+            $lmeResult = lme_resolve_formula_prices($pdo, $fileId, $fileDate);
+
             $results[] = [
-                'filename' => $fn, 'ok' => true,
-                'file_date' => $fileDate, 'rows' => count($rows),
-                'replaced' => $replaced,
+                'filename'     => $fn, 'ok' => true,
+                'file_date'    => $fileDate, 'rows' => count($rows),
+                'replaced'     => $replaced,
+                'lme_resolved' => $lmeResult['resolved'],
+                'lme_skipped'  => $lmeResult['skipped'],
             ];
         } catch (Throwable $e) {
             $pdo->rollBack();
@@ -838,15 +848,17 @@ function peony_import_files(PDO $pdo, array $body): array
  */
 function peony_materials(PDO $pdo, array $q): array
 {
-    $search   = trim((string) ($q['q']        ?? ''));
-    $category = trim((string) ($q['category'] ?? ''));
-    $filter   = trim((string) ($q['filter']   ?? 'all'));
-    $date     = trim((string) ($q['date']     ?? ''));
-    $sort     = trim((string) ($q['sort']     ?? 'latest'));
+    $search   = trim((string) ($q['q']         ?? ''));
+    $category = trim((string) ($q['category']  ?? ''));
+    $filter   = trim((string) ($q['filter']    ?? 'all'));
+    $date     = trim((string) ($q['date']      ?? ''));
+    $dateFrom = trim((string) ($q['date_from'] ?? ''));
+    $dateTo   = trim((string) ($q['date_to']   ?? ''));
+    $sort     = trim((string) ($q['sort']      ?? 'latest'));
     $limit    = min(500, max(1, (int) ($q['limit'] ?? 200)));
     $offset   = max(0, (int) ($q['offset'] ?? 0));
 
-    [$dateWhere, $dateParams] = peony_build_date_where('p.file_date', $filter, $date, false);
+    [$dateWhere, $dateParams] = peony_build_date_where('p.file_date', $filter, $date, false, $dateFrom, $dateTo);
 
     $where = [];
     $params = [];
@@ -920,6 +932,14 @@ function peony_material_detail(PDO $pdo, array $q): array
     $material = trim((string) ($q['material'] ?? ''));
     if ($material === '') return ['ok' => false, 'error' => 'material_required'];
 
+    $validIntervals = ['daily', 'weekly', 'biweekly', 'monthly', 'annual'];
+    $interval = in_array($q['interval'] ?? '', $validIntervals, true) ? (string) $q['interval'] : 'daily';
+    $dateFrom = trim((string) ($q['date_from'] ?? ''));
+    $dateTo   = trim((string) ($q['date_to']   ?? ''));
+    if ($dateFrom !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateFrom)) $dateFrom = '';
+    if ($dateTo   !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateTo))   $dateTo   = '';
+
+    // ── Stats: siempre sobre todos los datos (sin filtro de fecha) ──────────
     $stmt = $pdo->prepare("
         SELECT material,
                MAX(category)         AS category,
@@ -938,16 +958,113 @@ function peony_material_detail(PDO $pdo, array $q): array
     $stats = $stmt->fetch();
     if (!$stats) return ['ok' => false, 'error' => 'not_found'];
 
-    $stmt = $pdo->prepare("
-        SELECT file_date, AVG(price_num) AS avg_price, MIN(price_num) AS min_price, MAX(price_num) AS max_price, COUNT(*) AS cnt
+    // ── Timeline: agrupado por intervalo + rango opcional ───────────────────
+    $driver = db_driver();
+
+    // Expresión de agrupación temporal por driver
+    switch ($interval) {
+        case 'weekly':
+            $periodExpr = $driver === 'sqlite'
+                ? "strftime('%Y', file_date) || '-W' || printf('%02d', strftime('%W', file_date))"
+                : "DATE_FORMAT(file_date, '%x-W%v')";
+            break;
+        case 'biweekly':
+            $periodExpr = $driver === 'sqlite'
+                ? "strftime('%Y-%m', file_date) || CASE WHEN CAST(strftime('%d', file_date) AS INTEGER) <= 15 THEN '-H1' ELSE '-H2' END"
+                : "CONCAT(DATE_FORMAT(file_date, '%Y-%m'), IF(DAY(file_date) <= 15, '-H1', '-H2'))";
+            break;
+        case 'monthly':
+            $periodExpr = $driver === 'sqlite'
+                ? "strftime('%Y-%m', file_date)"
+                : "DATE_FORMAT(file_date, '%Y-%m')";
+            break;
+        case 'annual':
+            $periodExpr = $driver === 'sqlite'
+                ? "strftime('%Y', file_date)"
+                : "CAST(YEAR(file_date) AS CHAR)";
+            break;
+        default: // daily
+            $periodExpr = 'file_date';
+    }
+
+    // Filtro de rango de fechas
+    $dateWhere  = '';
+    $dateParams = [];
+    if ($dateFrom !== '' && $dateTo !== '') {
+        $dateWhere = 'AND file_date BETWEEN :df AND :dt';
+        $dateParams[':df'] = $dateFrom; $dateParams[':dt'] = $dateTo;
+    } elseif ($dateFrom !== '') {
+        $dateWhere = 'AND file_date >= :df';
+        $dateParams[':df'] = $dateFrom;
+    } elseif ($dateTo !== '') {
+        $dateWhere = 'AND file_date <= :dt';
+        $dateParams[':dt'] = $dateTo;
+    }
+
+    $limit = match ($interval) {
+        'weekly'   => 156,
+        'biweekly' => 120,
+        'monthly'  => 120,
+        'annual'   => 50,
+        default    => 365,
+    };
+
+    $tlStmt = $pdo->prepare("
+        SELECT
+            MIN(file_date)   AS file_date,
+            $periodExpr      AS period_key,
+            AVG(price_num)   AS avg_price,
+            MIN(price_num)   AS min_price,
+            MAX(price_num)   AS max_price,
+            COUNT(*)         AS cnt
         FROM vsync_peony_prices
         WHERE material = :m AND price_num IS NOT NULL
-        GROUP BY file_date
-        ORDER BY file_date DESC
-        LIMIT 60
+        $dateWhere
+        GROUP BY $periodExpr
+        ORDER BY $periodExpr DESC
+        LIMIT :lim
     ");
-    $stmt->execute([':m' => $material]);
-    $timeline = $stmt->fetchAll();
+    $tlStmt->bindValue(':m', $material);
+    foreach ($dateParams as $k => $v) $tlStmt->bindValue($k, $v);
+    $tlStmt->bindValue(':lim', $limit, PDO::PARAM_INT);
+    $tlStmt->execute();
+    $tlRows = $tlStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Etiquetas legibles por intervalo
+    $meses = [1=>'Ene',2=>'Feb',3=>'Mar',4=>'Abr',5=>'May',6=>'Jun',
+              7=>'Jul',8=>'Ago',9=>'Sep',10=>'Oct',11=>'Nov',12=>'Dic'];
+    $timeline = [];
+    foreach ($tlRows as $r) {
+        $pk = (string) $r['period_key'];
+        switch ($interval) {
+            case 'weekly':
+                $label = preg_match('/^(\d{4})-W(\d{1,2})$/', $pk, $m)
+                    ? 'S' . (int)$m[2] . ' ' . $m[1] : $pk;
+                break;
+            case 'biweekly':
+                $label = preg_match('/^(\d{4})-(\d{2})-(H[12])$/', $pk, $m)
+                    ? ($m[3]==='H1' ? '1-15 ' : '16+ ') . ($meses[(int)$m[2]] ?? $m[2]) . ' ' . $m[1] : $pk;
+                break;
+            case 'monthly':
+                $label = preg_match('/^(\d{4})-(\d{2})$/', $pk, $m)
+                    ? ($meses[(int)$m[2]] ?? $m[2]) . ' ' . $m[1] : $pk;
+                break;
+            case 'annual':
+                $label = $pk;
+                break;
+            default:
+                $label = $r['file_date'];
+        }
+        $timeline[] = [
+            'file_date'    => $r['file_date'],
+            'period_key'   => $pk,
+            'period_label' => $label,
+            'avg_price'    => $r['avg_price'] !== null ? (float) $r['avg_price'] : null,
+            'min_price'    => $r['min_price'] !== null ? (float) $r['min_price'] : null,
+            'max_price'    => $r['max_price'] !== null ? (float) $r['max_price'] : null,
+            'cnt'          => (int) $r['cnt'],
+        ];
+    }
 
     foreach (['min_price','max_price','avg_price'] as $k) {
         $stats[$k] = $stats[$k] !== null ? (float) $stats[$k] : null;
@@ -955,7 +1072,7 @@ function peony_material_detail(PDO $pdo, array $q): array
     $stats['price_count']   = (int) $stats['price_count'];
     $stats['contact_count'] = (int) $stats['contact_count'];
 
-    return ['ok' => true, 'stats' => $stats, 'timeline' => $timeline];
+    return ['ok' => true, 'interval' => $interval, 'stats' => $stats, 'timeline' => $timeline];
 }
 
 /**
@@ -1302,42 +1419,268 @@ function scan_save(PDO $pdo, array $body): array
 }
 
 // ======================================================================
+// EDA — Exploratory Data Analysis por archivo
+// ======================================================================
+
+function peony_eda(PDO $pdo, array $params): array
+{
+    $fileId = (int) ($params['file_id'] ?? 0);
+    if ($fileId <= 0) return ['ok' => false, 'error' => 'missing_file_id'];
+
+    $stmt = $pdo->prepare("SELECT * FROM vsync_peony_files WHERE id = ?");
+    $stmt->execute([$fileId]);
+    $file = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$file) return ['ok' => false, 'error' => 'file_not_found'];
+
+    $stmt = $pdo->prepare("SELECT * FROM vsync_peony_prices WHERE file_id = ? ORDER BY category, material");
+    $stmt->execute([$fileId]);
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $total  = count($rows);
+    $nums   = [];
+    $categories = [];
+    foreach ($rows as $r) {
+        $cat = $r['category'] ?? 'OTHER';
+        $categories[$cat] = ($categories[$cat] ?? 0) + 1;
+        $pn = ($r['price_num'] !== null && $r['price_num'] !== '') ? (float) $r['price_num'] : null;
+        if ($pn !== null && $pn > 0) $nums[] = $pn;
+    }
+    sort($nums);
+    $n = count($nums);
+
+    // Estadísticas descriptivas
+    $stats = null;
+    $lower = null; $upper = null;
+    if ($n > 0) {
+        $mean   = array_sum($nums) / $n;
+        $median = $n % 2 === 0 ? ($nums[$n/2-1] + $nums[$n/2]) / 2 : $nums[(int)($n/2)];
+        $q1     = $nums[(int)($n/4)];
+        $q3     = $nums[(int)(3*$n/4)];
+        $iqr    = $q3 - $q1;
+        $lower  = $q1 - 1.5 * $iqr;
+        $upper  = $q3 + 1.5 * $iqr;
+        $variance = array_sum(array_map(fn($x) => ($x - $mean) ** 2, $nums)) / $n;
+        $stats = [
+            'min'         => round($nums[0], 4),
+            'max'         => round($nums[$n-1], 4),
+            'mean'        => round($mean, 4),
+            'median'      => round($median, 4),
+            'std_dev'     => round(sqrt($variance), 4),
+            'q1'          => round($q1, 4),
+            'q3'          => round($q3, 4),
+            'iqr'         => round($iqr, 4),
+            'lower_fence' => round($lower, 4),
+            'upper_fence' => round($upper, 4),
+        ];
+    }
+
+    // Promedios históricos por material (archivos anteriores al actual)
+    $histStmt = $pdo->prepare(
+        "SELECT material, AVG(price_num) as h_avg, MIN(price_num) as h_min, MAX(price_num) as h_max
+         FROM vsync_peony_prices
+         WHERE file_id != ? AND price_num IS NOT NULL AND price_num > 0
+         GROUP BY material"
+    );
+    $histStmt->execute([$fileId]);
+    $hist = [];
+    while ($hr = $histStmt->fetch(PDO::FETCH_ASSOC)) {
+        $hist[$hr['material']] = $hr;
+    }
+
+    // Keywords que indican precio fórmula/relativo (no spot directo)
+    $formulaKw = ['%', 'lme', 'spot', 'basis', 'cwt', 'comex', 'shfe', 'formula'];
+
+    // Detección de outliers y problemas
+    $outliers = [];
+    $formulaCount = 0; $iqrCount = 0; $histCount = 0; $zeroCount = 0; $lmeResolvedCount = 0;
+
+    foreach ($rows as $r) {
+        $issues = [];
+        $rawLower = strtolower((string) $r['price_raw']);
+        $pn = $r['price_num'] !== null ? (float) $r['price_num'] : null;
+        $isLmeResolved = !empty($r['lme_resolved']);
+
+        // 1. Precio fórmula: price_raw tiene keywords no-spot
+        // Si ya fue resuelto por LME, contar aparte y no marcar como anomalía
+        if ($isLmeResolved) {
+            $lmeResolvedCount++;
+        } else {
+            foreach ($formulaKw as $kw) {
+                if (str_contains($rawLower, $kw)) {
+                    $issues[] = [
+                        'type'   => 'formula_price',
+                        'detail' => "price_raw contiene «{$kw}» — precio porcentual/fórmula, no spot directo",
+                        'level'  => 'warning',
+                    ];
+                    $formulaCount++;
+                    break;
+                }
+            }
+        }
+
+        // 2. Outlier IQR
+        if ($pn !== null && $n >= 4 && $lower !== null && ($pn < $lower || $pn > $upper)) {
+            $issues[] = [
+                'type'   => 'iqr_outlier',
+                'detail' => "Fuera del rango IQR [" . round($lower, 4) . "–" . round($upper, 4) . "] — valor: {$pn}",
+                'level'  => 'error',
+            ];
+            $iqrCount++;
+        }
+
+        // 3. Cero o negativo
+        if ($pn !== null && $pn <= 0) {
+            $issues[] = ['type' => 'zero_or_negative', 'detail' => "Precio ≤ 0: {$pn}", 'level' => 'error'];
+            $zeroCount++;
+        }
+
+        // 4. Outlier histórico: desviación > 60% del promedio histórico conocido
+        $mat = $r['material'];
+        if ($pn !== null && isset($hist[$mat])) {
+            $hAvg = (float) $hist[$mat]['h_avg'];
+            if ($hAvg > 0) {
+                $pct = abs($pn - $hAvg) / $hAvg * 100;
+                if ($pct > 60) {
+                    $issues[] = [
+                        'type'   => 'historical_outlier',
+                        'detail' => sprintf("Desviación %.0f%% del promedio histórico (hist_avg=%.4f, actual=%.4f)", $pct, $hAvg, $pn),
+                        'level'  => 'error',
+                    ];
+                    $histCount++;
+                }
+            }
+        }
+
+        if (!empty($issues)) {
+            $outliers[] = [
+                'id'        => (int) $r['id'],
+                'material'  => $r['material'],
+                'category'  => $r['category'],
+                'price_raw' => $r['price_raw'],
+                'price_num' => $pn,
+                'issues'    => $issues,
+            ];
+        }
+    }
+
+    $totalIssues = count($outliers);
+    return [
+        'ok'          => true,
+        'file_id'     => $fileId,
+        'filename'    => $file['filename'],
+        'file_date'   => $file['file_date'],
+        'summary'     => [
+            'total_rows'      => $total,
+            'rows_with_price' => $n,
+            'null_price_count'=> $total - $n,
+            'null_price_rate' => $total > 0 ? round(($total - $n) / $total * 100, 1) : 0.0,
+            'categories'      => $categories,
+        ],
+        'price_stats' => $stats,
+        'outliers'    => $outliers,
+        'audit'       => [
+            'formula_prices'     => $formulaCount,
+            'lme_resolved'       => $lmeResolvedCount,
+            'iqr_outliers'       => $iqrCount,
+            'historical_outliers'=> $histCount,
+            'zero_or_negative'   => $zeroCount,
+            'total_issues'       => $totalIssues,
+            'quality_score'      => $total > 0 ? round((1 - $totalIssues / $total) * 100, 1) : 100.0,
+        ],
+    ];
+}
+
+// ======================================================================
+// Export CSV por archivo
+// ======================================================================
+
+function peony_export_csv(PDO $pdo, array $params): void
+{
+    $fileId = (int) ($params['file_id'] ?? 0);
+    if ($fileId <= 0) {
+        http_response_code(400);
+        header('Content-Type: application/json');
+        echo json_encode(['ok' => false, 'error' => 'missing_file_id']);
+        return;
+    }
+
+    $stmt = $pdo->prepare("SELECT filename, file_date FROM vsync_peony_files WHERE id = ?");
+    $stmt->execute([$fileId]);
+    $file = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$file) {
+        http_response_code(404);
+        header('Content-Type: application/json');
+        echo json_encode(['ok' => false, 'error' => 'file_not_found']);
+        return;
+    }
+
+    $stmt = $pdo->prepare(
+        "SELECT file_date, category, material, price_raw, price_num, price_unit,
+                delivery_basis, company, buyer, phone, row_status
+         FROM vsync_peony_prices WHERE file_id = ? ORDER BY category, material"
+    );
+    $stmt->execute([$fileId]);
+
+    $safeName = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $file['filename']);
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename="' . $safeName . '.csv"');
+    header('Cache-Control: no-store');
+
+    $out = fopen('php://output', 'w');
+    fputcsv($out, ['file_date','category','material','price_raw','price_num','price_unit',
+                   'delivery_basis','company','buyer','phone','row_status']);
+    while ($r = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        fputcsv($out, [
+            $r['file_date'], $r['category'], $r['material'], $r['price_raw'],
+            $r['price_num'], $r['price_unit'], $r['delivery_basis'],
+            $r['company'], $r['buyer'], $r['phone'], $r['row_status'],
+        ]);
+    }
+    fclose($out);
+}
+
+// ======================================================================
 // Helpers internos
 // ======================================================================
 
-function peony_build_date_where(string $col, string $filter, string $date, bool $prefix = true): array
+function peony_build_date_where(string $col, string $filter, string $date, bool $prefix = true, string $dateFrom = '', string $dateTo = ''): array
 {
     $params = [];
     $driver = db_driver();
 
     if ($filter === 'day') {
-        $d = $date !== '' ? $date : date('Y-m-d');
+        $d = $date !== '' ? $date : gmdate('Y-m-d');
         $where = "$col = :d";
         $params[':d'] = $d;
     } elseif ($filter === 'week') {
-        if ($date !== '') {
-            $base = $date;
-        } else {
-            $base = date('Y-m-d');
-        }
-        $startExpr = $driver === 'sqlite'
-            ? "date(:base, 'weekday 0', '-6 days')"
-            : "DATE_SUB(:base, INTERVAL WEEKDAY(:base) DAY)";
+        $base = $date !== '' ? $date : gmdate('Y-m-d');
         if ($driver === 'mysql') {
+            $startExpr = "DATE_SUB(:base, INTERVAL WEEKDAY(:base) DAY)";
             $where = "$col BETWEEN $startExpr AND DATE_ADD($startExpr, INTERVAL 6 DAY)";
-            $params[':base'] = $base;
         } else {
             $where = "$col BETWEEN date(:base, 'weekday 0', '-6 days') AND date(:base, 'weekday 0')";
-            $params[':base'] = $base;
         }
+        $params[':base'] = $base;
     } elseif ($filter === 'month') {
-        $base = $date !== '' ? $date : date('Y-m-d');
+        $base = $date !== '' ? $date : gmdate('Y-m-d');
         if ($driver === 'mysql') {
             $where = "DATE_FORMAT($col, '%Y-%m') = DATE_FORMAT(:base, '%Y-%m')";
         } else {
             $where = "strftime('%Y-%m', $col) = strftime('%Y-%m', :base)";
         }
         $params[':base'] = $base;
+    } elseif ($filter === 'range' && ($dateFrom !== '' || $dateTo !== '')) {
+        if ($dateFrom !== '' && $dateTo !== '') {
+            $where = "$col BETWEEN :df AND :dt";
+            $params[':df'] = $dateFrom;
+            $params[':dt'] = $dateTo;
+        } elseif ($dateFrom !== '') {
+            $where = "$col >= :df";
+            $params[':df'] = $dateFrom;
+        } else {
+            $where = "$col <= :dt";
+            $params[':dt'] = $dateTo;
+        }
     } else {
         return ['', []];
     }

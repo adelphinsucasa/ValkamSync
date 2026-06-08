@@ -37,9 +37,11 @@ if (!$configLoaded) {
 // ---------- Libs ----------
 require_once __DIR__ . '/lib/db.php';
 require_once __DIR__ . '/lib/schema.php';
+require_once __DIR__ . '/lib/auth.php';
 require_once __DIR__ . '/lib/peony_parser.php';
 require_once __DIR__ . '/lib/gemini_client.php';
 require_once __DIR__ . '/lib/peony_repo.php';
+require_once __DIR__ . '/lib/lme_client.php';
 
 // ---------- Global exception handler (innegociable, master prompt §9) ----------
 set_exception_handler(function (\Throwable $e): void {
@@ -78,9 +80,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $pdo = db();
 initDB($pdo);
 
-// ---------- Routing ----------
+// ---------- Auth guard ----------
+// Acciones que NO requieren sesión activa
+$_AUTH_OPEN = ['auth_login', 'auth_check', 'auth_logout', 'health'];
 $action = isset($_GET['action']) ? (string) $_GET['action'] : '';
+if (!in_array($action, $_AUTH_OPEN, true) && !auth_check_session($pdo)) {
+    http_response_code(401);
+    echo json_encode(['ok' => false, 'error' => 'unauthenticated']);
+    exit;
+}
 
+// ---------- Routing ----------
 switch ($action) {
     case 'peony_dashboard':
         require_get();
@@ -214,6 +224,48 @@ switch ($action) {
         }
         $body = json_decode($raw, true) ?: [];
         echo json_encode(peony_validate($pdo, $body), JSON_UNESCAPED_UNICODE);
+        break;
+
+    // ---- Auth ----
+    case 'auth_login':
+        require_post();
+        $raw = file_get_contents('php://input') ?: '';
+        if (strlen($raw) > 512) { http_response_code(413); echo json_encode(['ok'=>false,'error'=>'payload_too_large']); exit; }
+        echo json_encode(auth_login($pdo, json_decode($raw, true) ?: []), JSON_UNESCAPED_UNICODE);
+        break;
+
+    case 'auth_check':
+        require_get();
+        echo json_encode(['ok' => auth_check_session($pdo)]);
+        break;
+
+    case 'auth_logout':
+        // GET o POST — SameSite=Strict ya previene CSRF
+        echo json_encode(auth_logout($pdo), JSON_UNESCAPED_UNICODE);
+        break;
+
+    case 'auth_pin_change':
+        require_post();
+        if (!auth_check_session($pdo)) { http_response_code(401); echo json_encode(['ok'=>false,'error'=>'unauthenticated']); exit; }
+        $raw = file_get_contents('php://input') ?: '';
+        if (strlen($raw) > 256) { http_response_code(413); echo json_encode(['ok'=>false,'error'=>'payload_too_large']); exit; }
+        echo json_encode(auth_pin_change($pdo, json_decode($raw, true) ?: []), JSON_UNESCAPED_UNICODE);
+        break;
+
+    case 'peony_eda':
+        require_get();
+        echo json_encode(peony_eda($pdo, $_GET), JSON_UNESCAPED_UNICODE);
+        break;
+
+    case 'peony_export_csv':
+        require_get();
+        peony_export_csv($pdo, $_GET);
+        break;
+
+    case 'peony_lme_resolve_all':
+        require_post();
+        @set_time_limit(300);
+        echo json_encode(array_merge(['ok' => true], lme_resolve_all_pending($pdo)), JSON_UNESCAPED_UNICODE);
         break;
 
     case 'health':

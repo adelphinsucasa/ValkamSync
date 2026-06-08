@@ -122,7 +122,75 @@ function initDB(PDO $pdo): void
         ) $ENG
     ");
 
+    // =========================================================
+    // AUTH — credenciales y sesiones
+    // =========================================================
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS vsync_auth (
+            id             $PK,
+            username       VARCHAR(50)  NOT NULL,
+            password_hash  VARCHAR(255) NOT NULL,
+            pin_hash       VARCHAR(255) NOT NULL,
+            updated_at     $TS
+        ) $ENG
+    ");
+
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS vsync_sessions (
+            id          $PK,
+            token       VARCHAR(64)  NOT NULL,
+            remember    TINYINT(1)   DEFAULT 0,
+            expires_at  $TSN,
+            created_at  $TS
+        ) $ENG
+    ");
+
+    // Seed default admin (solo si la tabla está vacía)
+    try {
+        $count = (int) $pdo->query("SELECT COUNT(*) FROM vsync_auth")->fetchColumn();
+        if ($count === 0) {
+            $stmt = $pdo->prepare(
+                "INSERT INTO vsync_auth (username, password_hash, pin_hash) VALUES (?, ?, ?)"
+            );
+            $stmt->execute([
+                'admin',
+                password_hash('Valkam2026!',  PASSWORD_DEFAULT),
+                password_hash('11223344',     PASSWORD_DEFAULT),
+            ]);
+        }
+    } catch (Throwable $e) {}
+
+    // Limpiar sesiones expiradas (housekeeping ligero en cada request)
+    try {
+        $expSql = $driver === 'sqlite'
+            ? "DELETE FROM vsync_sessions WHERE expires_at < datetime('now')"
+            : "DELETE FROM vsync_sessions WHERE expires_at < NOW()";
+        $pdo->exec($expSql);
+    } catch (Throwable $e) {}
+
+    // =========================================================
+    // LME Cache — precios spot LME por metal y fecha
+    // =========================================================
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS vsync_lme_cache (
+            id          $PK,
+            metal       VARCHAR(10) NOT NULL,
+            price_date  DATE NOT NULL,
+            cash_usd    DECIMAL(14,4) NOT NULL,
+            source      VARCHAR(20) DEFAULT 'metalradar',
+            fetched_at  $TS
+        ) $ENG
+    ");
+
+    // Migración idempotente: columnas LME en vsync_peony_prices
+    try { $pdo->exec("ALTER TABLE vsync_peony_prices ADD COLUMN lme_resolved TINYINT(1) NOT NULL DEFAULT 0"); } catch (Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE vsync_peony_prices ADD COLUMN lme_price DECIMAL(14,4) DEFAULT NULL"); }     catch (Throwable $e) {}
+
     // Idempotent unique + indexes
+    try { $pdo->exec("CREATE UNIQUE INDEX IF NOT EXISTS ux_vsync_auth_user    ON vsync_auth(username)"); }     catch (Throwable $e) {}
+    try { $pdo->exec("CREATE UNIQUE INDEX IF NOT EXISTS ux_vsync_sessions_tok ON vsync_sessions(token)"); }    catch (Throwable $e) {}
+    try { $pdo->exec("CREATE INDEX        IF NOT EXISTS ix_vsync_sessions_exp ON vsync_sessions(expires_at)"); } catch (Throwable $e) {}
+
     try { $pdo->exec("CREATE UNIQUE INDEX IF NOT EXISTS ux_peony_files_sha ON vsync_peony_files(sha256)"); } catch (Throwable $e) {}
     try { $pdo->exec("CREATE INDEX IF NOT EXISTS ix_peony_prices_date_cat ON vsync_peony_prices(file_date, category)"); } catch (Throwable $e) {}
     try { $pdo->exec("CREATE INDEX IF NOT EXISTS ix_peony_prices_material ON vsync_peony_prices(material)"); } catch (Throwable $e) {}
@@ -136,4 +204,6 @@ function initDB(PDO $pdo): void
     try { $pdo->exec("CREATE UNIQUE INDEX IF NOT EXISTS ux_clients_manual_phone ON vsync_clients_manual(phone)"); } catch (Throwable $e) {}
     try { $pdo->exec("CREATE INDEX IF NOT EXISTS ix_client_scans_phone ON vsync_client_scans(phone)"); } catch (Throwable $e) {}
     try { $pdo->exec("CREATE INDEX IF NOT EXISTS ix_client_scans_date  ON vsync_client_scans(scan_date)"); } catch (Throwable $e) {}
+    try { $pdo->exec("CREATE UNIQUE INDEX IF NOT EXISTS ux_lme_cache_metal_date ON vsync_lme_cache(metal, price_date)"); } catch (Throwable $e) {}
+    try { $pdo->exec("CREATE INDEX IF NOT EXISTS ix_lme_cache_date ON vsync_lme_cache(price_date)"); }       catch (Throwable $e) {}
 }
