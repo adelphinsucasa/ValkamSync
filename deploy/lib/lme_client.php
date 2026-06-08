@@ -87,6 +87,14 @@ const LME_MATRIX_LABELS = [
     'THREE_MONTHS_SELLER' => '3 Months Seller',
 ];
 
+/**
+ * Factor de conversión USD/MT → USD/lb (libra troy ≈ libra avoirdupois para metales base).
+ * Todas las APIs LME (AV, NASDAQ, MetalRadar) devuelven precios en USD/MT.
+ * Los precios de chatarra en PeonyInc son en USD/lb.
+ * price_num SIEMPRE se almacena en USD/lb; lme_base_price_used se almacena en USD/MT (auditoría).
+ */
+const LME_LB_PER_MT = 2204.62;
+
 // ─────────────────────────────────────────────────────────────────────────────
 // PARSEO DE FÓRMULA
 // ─────────────────────────────────────────────────────────────────────────────
@@ -733,12 +741,15 @@ function lme_resolve_formula_prices(PDO $pdo, int $fileId, string $fileDate): ar
         }
 
         $min        = lme_find_minimum_point($matrix);
-        $calculated = round(($formula['pct'] / 100.0) * $min['value'], 4);
+        // lme_base_price_used se guarda en USD/MT (auditoría).
+        // price_num se convierte a USD/lb: precio_base_lb × pct% = precio_final_lb.
+        $pricePerLb = $min['value'] / LME_LB_PER_MT;
+        $calculated = round(($formula['pct'] / 100.0) * $pricePerLb, 4);
 
         try {
             $updOk->execute([
-                $calculated,                         // price_num — precio final
-                $min['value'],                       // lme_price — backward compat
+                $calculated,                         // price_num — precio final en USD/lb
+                $min['value'],                       // lme_price — backward compat (USD/MT)
                 $matrix['cash_buyer'],               // lme_cash_buyer
                 $matrix['cash_seller'],              // lme_cash_seller
                 $matrix['three_months_buyer'],       // lme_3_months_buyer
@@ -838,7 +849,8 @@ function lme_resolve_all_pending(PDO $pdo): array
         }
 
         $min        = lme_find_minimum_point($matrix);
-        $calculated = round(($formula['pct'] / 100.0) * $min['value'], 4);
+        $pricePerLb = $min['value'] / LME_LB_PER_MT;
+        $calculated = round(($formula['pct'] / 100.0) * $pricePerLb, 4);
 
         try {
             $updOk->execute([
@@ -871,4 +883,43 @@ function lme_resolve_all_pending(PDO $pdo): array
         'skipped'  => $skipped,
         'errors'   => $errors,
     ];
+}
+
+/**
+ * Migración one-shot: corrige filas donde price_num fue almacenado en USD/MT en lugar de USD/lb.
+ * Afecta solo filas con lme_resolved=1 y lme_base_price_used > 100 (escala USD/MT inequívoca).
+ * Usa lme_base_price_used (USD/MT) y lme_percentage_applied (%) ya auditados para recalcular.
+ *
+ * @return array{fixed: int, skipped: int}
+ */
+function lme_fix_unit_prices(PDO $pdo): array
+{
+    try {
+        // Contar filas afectadas antes de corregir
+        $count = (int) $pdo->query(
+            "SELECT COUNT(*) FROM vsync_peony_prices
+             WHERE lme_resolved = 1
+               AND lme_base_price_used IS NOT NULL
+               AND lme_base_price_used > 100"
+        )->fetchColumn();
+
+        if ($count === 0) {
+            return ['fixed' => 0, 'skipped' => 0];
+        }
+
+        // Recalcula price_num = pct% × (base_usd_mt / 2204.62)
+        $pdo->exec(
+            "UPDATE vsync_peony_prices
+             SET price_num = ROUND(lme_percentage_applied / 100.0 * lme_base_price_used / " . LME_LB_PER_MT . ", 4)
+             WHERE lme_resolved = 1
+               AND lme_base_price_used IS NOT NULL
+               AND lme_base_price_used > 100"
+        );
+
+        error_log("LME fix_unit_prices: corregidas $count filas (USD/MT → USD/lb)");
+        return ['fixed' => $count, 'skipped' => 0];
+    } catch (Throwable $e) {
+        error_log('LME fix_unit_prices: ' . $e->getMessage());
+        return ['fixed' => 0, 'skipped' => -1];
+    }
 }

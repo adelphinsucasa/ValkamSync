@@ -1100,6 +1100,8 @@ function peony_material_contacts(PDO $pdo, array $q): array
         SELECT
             p.phone, p.company, p.buyer, p.price_raw, p.price_num,
             p.file_date AS latest_date, p.delivery_basis,
+            p.lme_resolved, p.lme_percentage_applied, p.lme_base_price_used, p.lme_type_used,
+            p.lme_cash_buyer, p.lme_cash_seller, p.lme_3_months_buyer, p.lme_3_months_seller,
             (SELECT COUNT(*) FROM vsync_peony_prices WHERE phone = p.phone AND material = :m2) AS quote_count,
             (SELECT COUNT(*) FROM vsync_client_notes  WHERE phone = p.phone) AS notes_count,
             COALESCE((SELECT status FROM vsync_client_status WHERE phone = p.phone), 'pending') AS status,

@@ -268,6 +268,13 @@ switch ($action) {
         echo json_encode(array_merge(['ok' => true], lme_resolve_all_pending($pdo)), JSON_UNESCAPED_UNICODE);
         break;
 
+    case 'peony_lme_fix_units':
+        // Migración one-shot: corrige price_num almacenado en USD/MT en lugar de USD/lb.
+        // Ejecutar una sola vez tras el deploy que introdujo LME_LB_PER_MT.
+        require_post();
+        echo json_encode(array_merge(['ok' => true], lme_fix_unit_prices($pdo)), JSON_UNESCAPED_UNICODE);
+        break;
+
     case 'health':
         echo json_encode([
             'ok'             => true,
