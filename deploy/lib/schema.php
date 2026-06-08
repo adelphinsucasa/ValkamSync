@@ -182,9 +182,36 @@ function initDB(PDO $pdo): void
         ) $ENG
     ");
 
-    // Migración idempotente: columnas LME en vsync_peony_prices
+    // =========================================================
+    // LME — Migraciones idempotentes (ALTER TABLE ignorado si columna ya existe)
+    // =========================================================
+
+    // Columnas originales F7 (retrocompatibles)
     try { $pdo->exec("ALTER TABLE vsync_peony_prices ADD COLUMN lme_resolved TINYINT(1) NOT NULL DEFAULT 0"); } catch (Throwable $e) {}
-    try { $pdo->exec("ALTER TABLE vsync_peony_prices ADD COLUMN lme_price DECIMAL(14,4) DEFAULT NULL"); }     catch (Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE vsync_peony_prices ADD COLUMN lme_price    DECIMAL(14,4) DEFAULT NULL"); }    catch (Throwable $e) {}
+
+    // Matriz completa de 4 puntos LME (valores crudos de la API — auditoría)
+    try { $pdo->exec("ALTER TABLE vsync_peony_prices ADD COLUMN lme_cash_buyer         DECIMAL(14,4) DEFAULT NULL"); } catch (Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE vsync_peony_prices ADD COLUMN lme_cash_seller        DECIMAL(14,4) DEFAULT NULL"); } catch (Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE vsync_peony_prices ADD COLUMN lme_3_months_buyer     DECIMAL(14,4) DEFAULT NULL"); } catch (Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE vsync_peony_prices ADD COLUMN lme_3_months_seller    DECIMAL(14,4) DEFAULT NULL"); } catch (Throwable $e) {}
+
+    // Campos de decisión del cálculo (trazabilidad)
+    try { $pdo->exec("ALTER TABLE vsync_peony_prices ADD COLUMN lme_percentage_applied DECIMAL(7,4)  DEFAULT NULL"); } catch (Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE vsync_peony_prices ADD COLUMN lme_base_price_used    DECIMAL(14,4) DEFAULT NULL"); } catch (Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE vsync_peony_prices ADD COLUMN lme_type_used          VARCHAR(20)   DEFAULT NULL"); } catch (Throwable $e) {}
+
+    // Registro de error cuando la resolución LME falló (sin detener el import)
+    // lme_resolved = -1 indica fallo permanente; lme_error describe la causa.
+    try { $pdo->exec("ALTER TABLE vsync_peony_prices ADD COLUMN lme_error              TEXT          DEFAULT NULL"); } catch (Throwable $e) {}
+
+    // Columnas de la matriz 4 puntos en vsync_lme_cache (extiende el formato legacy cash_usd)
+    try { $pdo->exec("ALTER TABLE vsync_lme_cache ADD COLUMN cash_buyer          DECIMAL(14,4) DEFAULT NULL"); } catch (Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE vsync_lme_cache ADD COLUMN cash_seller         DECIMAL(14,4) DEFAULT NULL"); } catch (Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE vsync_lme_cache ADD COLUMN three_months_buyer  DECIMAL(14,4) DEFAULT NULL"); } catch (Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE vsync_lme_cache ADD COLUMN three_months_seller DECIMAL(14,4) DEFAULT NULL"); } catch (Throwable $e) {}
+    // trade_date: fecha real de cotización LME usada (puede diferir de price_date en fines de semana)
+    try { $pdo->exec("ALTER TABLE vsync_lme_cache ADD COLUMN trade_date          DATE          DEFAULT NULL"); } catch (Throwable $e) {}
 
     // Idempotent unique + indexes
     try { $pdo->exec("CREATE UNIQUE INDEX IF NOT EXISTS ux_vsync_auth_user    ON vsync_auth(username)"); }     catch (Throwable $e) {}

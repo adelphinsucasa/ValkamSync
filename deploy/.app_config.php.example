@@ -39,10 +39,19 @@ define('GEMINI_MODEL',     'gemini-2.5-flash');
 define('MAIL_ROOT', dirname(__DIR__) . '/mail/valkamgm.com/info');
 define('PEONY_FROM', 'info@peonyinc.com');
 
-// ---------- Alpha Vantage (LME Spot Prices — F7) ----------
-// Fuente: IMF Primary Commodity Prices vía Alpha Vantage (datos LME oficiales, USD/MT).
-// Obtener clave gratuita (25 req/día) en: https://www.alphavantage.co/support/#api-key
-// Sin clave, la resolución LME se omite (precios fórmula quedan en EDA como formula_price).
+// ---------- LME Prices — Matriz de 4 puntos (F7+) ----------
+//
+// FUENTE PRIMARIA: NASDAQ Data Link (data.nasdaq.com)
+//   Datos diarios LME: Cash Buyer, Cash Seller, 3 Months Buyer, 3 Months Seller.
+//   Obtener clave gratuita en: https://data.nasdaq.com/sign-up
+//   Limite: 50 req/día gratis. Dataset: LME/PR_CU y LME/PR_AL.
+//   Si está configurado, tiene prioridad sobre Alpha Vantage.
+define('NASDAQ_API_KEY', '');  // pegar la API key de data.nasdaq.com
+
+// FUENTE FALLBACK: Alpha Vantage (alphavantage.co)
+//   Promedio mensual LME (IMF Primary Commodity Prices). Menos preciso que NASDAQ
+//   pero útil cuando NASDAQ no está configurado o falla. 25 req/día gratis.
+//   Con NASDAQ activo, Alpha Vantage solo se usa si NASDAQ falla completamente.
 define('ALPHAVANTAGE_API_KEY', '');  // pegar la API key de alphavantage.co
 
 // ---------- Seguridad ----------

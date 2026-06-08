@@ -124,7 +124,12 @@ function peony_prices(PDO $pdo, array $q): array
     $sql = "
         SELECT p.id, p.file_id, p.file_date, p.category, p.material,
                p.price_raw, p.price_num, p.price_unit,
-               p.delivery_basis, p.company, p.buyer, p.phone, p.row_status
+               p.delivery_basis, p.company, p.buyer, p.phone, p.row_status,
+               p.lme_resolved, p.lme_price,
+               p.lme_cash_buyer, p.lme_cash_seller,
+               p.lme_3_months_buyer, p.lme_3_months_seller,
+               p.lme_percentage_applied, p.lme_base_price_used, p.lme_type_used,
+               p.lme_error
         FROM vsync_peony_prices p
         $whereSql
         ORDER BY p.file_date DESC, p.category ASC, p.id ASC
@@ -1492,18 +1497,30 @@ function peony_eda(PDO $pdo, array $params): array
 
     // Detección de outliers y problemas
     $outliers = [];
-    $formulaCount = 0; $iqrCount = 0; $histCount = 0; $zeroCount = 0; $lmeResolvedCount = 0;
+    $formulaCount = 0; $iqrCount = 0; $histCount = 0; $zeroCount = 0;
+    $lmeResolvedCount = 0; $lmeErrorCount = 0;
 
     foreach ($rows as $r) {
         $issues = [];
-        $rawLower = strtolower((string) $r['price_raw']);
-        $pn = $r['price_num'] !== null ? (float) $r['price_num'] : null;
-        $isLmeResolved = !empty($r['lme_resolved']);
+        $rawLower    = strtolower((string) $r['price_raw']);
+        $pn          = $r['price_num'] !== null ? (float) $r['price_num'] : null;
+        $lmeStatus   = isset($r['lme_resolved']) ? (int) $r['lme_resolved'] : 0;
+        $isLmeResolved = $lmeStatus === 1;
+        $isLmeError    = $lmeStatus === -1;
 
         // 1. Precio fórmula: price_raw tiene keywords no-spot
-        // Si ya fue resuelto por LME, contar aparte y no marcar como anomalía
         if ($isLmeResolved) {
+            // Resuelto exitosamente con la matriz LME → no es anomalía
             $lmeResolvedCount++;
+        } elseif ($isLmeError) {
+            // Intentó resolverse pero falló (API no disponible, día no hábil, etc.)
+            $lmeErrorCount++;
+            $errDetail = !empty($r['lme_error']) ? (string) $r['lme_error'] : 'Error desconocido al resolver fórmula LME';
+            $issues[] = [
+                'type'   => 'lme_error',
+                'detail' => "Fórmula LME sin resolver: {$errDetail}",
+                'level'  => 'error',
+            ];
         } else {
             foreach ($formulaKw as $kw) {
                 if (str_contains($rawLower, $kw)) {
@@ -1581,6 +1598,7 @@ function peony_eda(PDO $pdo, array $params): array
         'audit'       => [
             'formula_prices'     => $formulaCount,
             'lme_resolved'       => $lmeResolvedCount,
+            'lme_errors'         => $lmeErrorCount,
             'iqr_outliers'       => $iqrCount,
             'historical_outliers'=> $histCount,
             'zero_or_negative'   => $zeroCount,
