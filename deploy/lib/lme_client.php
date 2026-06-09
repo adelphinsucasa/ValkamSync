@@ -134,6 +134,37 @@ function lme_parse_formula(string $priceRaw): ?array
     return null;
 }
 
+/**
+ * Detecta fórmulas LME-like que NO son resolubles con las fuentes configuradas
+ * y devuelve un mensaje de error descriptivo para almacenar en lme_error.
+ * Devuelve null si el string no parece una fórmula LME problemática.
+ *
+ * Casos cubiertos:
+ *   "70%LMENi+Co"   → Níquel+Cobalto (no tenemos fuente LME-NI)
+ *   "3M+50/-pr"     → spread a plazo con prima/descuento (no resoluble con precio spot)
+ *   "May-85"        → diferencial COMEX mes-N (no resoluble sin datos de futuros)
+ *   "Jul-85"        → ídem
+ *   "Cmx May-85"    → ídem con prefijo "Cmx"
+ */
+function lme_detect_unresolvable(string $priceRaw): ?string
+{
+    $r = trim($priceRaw);
+    // Fórmulas LME para metales sin fuente (Ni, Pb, Zn, Sn…)
+    if (preg_match('/^\d+(?:\.\d+)?\s*%\s*LME\s*[A-Z]/i', $r)
+        && !preg_match('/^(\d+(?:\.\d+)?)\s*%\s*(?:de\s+)?LME(?:\s*Spot)?\s*$/i', $r)) {
+        return "Fórmula LME con metal no soportado ($r) — solo Copper/Aluminum disponibles";
+    }
+    // Spread 3M+N/-pr
+    if (preg_match('/3M[+\-]/i', $r)) {
+        return "Fórmula spread LME 3M+N/-pr ($r) — requiere datos de prima/descuento no disponibles";
+    }
+    // COMEX/LME diferencial por mes (May-85, Jul-85, Cmx May-85…)
+    if (preg_match('/^(?:Cmx\s+)?(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[-\s]\d+/i', $r)) {
+        return "Diferencial COMEX por mes ($r) — requiere datos de futuros no disponibles";
+    }
+    return null;
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // FUENTE PRIMARIA: NASDAQ DATA LINK (4 puntos diarios)
 // ─────────────────────────────────────────────────────────────────────────────
@@ -729,7 +760,17 @@ function lme_resolve_formula_prices(PDO $pdo, int $fileId, string $fileDate): ar
 
     foreach ($rows as $r) {
         $formula = lme_parse_formula((string) $r['price_raw']);
-        if (!$formula) continue;   // no es fórmula LME → dejar intacto (row_status lo clasifica)
+        if (!$formula) {
+            // Detectar fórmulas LME irresolubles para marcarlas con error explicativo
+            $unresolv = lme_detect_unresolvable((string) $r['price_raw']);
+            if ($unresolv !== null) {
+                try { $updErr->execute([$unresolv, (int) $r['id']]); } catch (Throwable $e) {}
+                $errors++;
+            } else {
+                $skipped++;
+            }
+            continue;
+        }
 
         $cat = strtoupper((string) ($r['category'] ?? ''));
         if (!isset(LME_METAL_MAP[$cat])) { $skipped++; continue; }
@@ -836,7 +877,16 @@ function lme_resolve_all_pending(PDO $pdo): array
 
     foreach ($rows as $r) {
         $formula = lme_parse_formula((string) $r['price_raw']);
-        if (!$formula) continue;
+        if (!$formula) {
+            $unresolv = lme_detect_unresolvable((string) $r['price_raw']);
+            if ($unresolv !== null) {
+                try { $updErr->execute([$unresolv, (int) $r['id']]); } catch (Throwable $e) {}
+                $errors++;
+            } else {
+                $skipped++;
+            }
+            continue;
+        }
 
         $cat  = strtoupper((string) ($r['category'] ?? ''));
         $date = (string) $r['file_date'];

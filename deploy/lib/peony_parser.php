@@ -326,33 +326,84 @@ final class PeonyParser
     // Helpers públicos
     // ======================================================================
     /**
-     * Detecta si price_raw es un rango numérico (ej. "0.28-5.00").
-     * @return array{min:float, max:float, mid:float}|null
+     * Detecta si price_raw es un rango numérico puro (ej. "0.28-5.00", "270-330/MT").
+     * Convierte a USD/lb cuando hay sufijo /MT o /GT.
+     * Requiere fin de cadena tras el rango (evita match en "7-1400/PC" → no es rango, es precio por pieza).
+     *
+     * @return array{min:float, max:float, mid:float}|null  valores en USD/lb
      */
     public static function parsePriceRange(string $raw): ?array
     {
         $raw = trim($raw);
         if ($raw === '') return null;
-        // Acepta "0.28-5.00", "0.28 - 5.00", "0.28–5.00" (guión largo)
-        if (preg_match('/^([\d.]+)\s*[-–]\s*([\d.]+)/', $raw, $m)) {
-            $lo = (float) $m[1];
-            $hi = (float) $m[2];
+
+        // Detectar sufijo de unidad convertible (/MT, /GT) — cyrillic /мт incluido
+        $unit = null;
+        $numPart = $raw;
+        if (preg_match('/^(.*?)\s*\/\s*(MT|GT|мт)\s*$/iu', $raw, $um)) {
+            $numPart = trim($um[1]);
+            $unit = strtoupper(str_replace('МТ', 'MT', $um[2]));
+        }
+
+        // Rango puro: requiere $ para no confundir "7-1400" en "7-1400/PC"
+        if (preg_match('/^([\d,]+(?:\.\d+)?)\s*[-–]\s*([\d,]+(?:\.\d+)?)\s*$/u', $numPart, $m)) {
+            $lo = (float) str_replace(',', '', $m[1]);
+            $hi = (float) str_replace(',', '', $m[2]);
             if ($hi > $lo && $lo >= 0) {
-                return ['min' => $lo, 'max' => $hi, 'mid' => round(($lo + $hi) / 2, 4)];
+                $factor = match ($unit) {
+                    'MT' => 1.0 / 2204.62,
+                    'GT' => 1.0 / 2240.0,
+                    default => 1.0,
+                };
+                return [
+                    'min' => round($lo * $factor, 6),
+                    'max' => round($hi * $factor, 6),
+                    'mid' => round(($lo + $hi) / 2.0 * $factor, 6),
+                ];
             }
         }
         return null;
     }
 
+    /**
+     * Extrae el precio numérico canónico en USD/lb.
+     *
+     * Conversiones automáticas:
+     *   N/MT  → N ÷ 2204.62  (1 MT = 2204.62 lb)
+     *   N/GT  → N ÷ 2240     (1 gross ton = 2240 lb)
+     *   N/мт  → igual que /MT (OCR cirílico)
+     *
+     * Rangos (ej. "0.28-5.00", "270-330/MT"): devuelve el punto medio.
+     * Resto (/Cu, /Al, /PC, NetCash, etc.): extrae el primer número tal cual.
+     */
     public static function parsePriceNum(string $raw): ?float
     {
         $raw = trim($raw);
         if ($raw === '') return null;
-        // Para rangos devuelve el punto medio (más representativo que el piso).
+
+        // Rango (con o sin /MT, /GT): parsePriceRange maneja la conversión internamente
         $range = self::parsePriceRange($raw);
         if ($range !== null) return $range['mid'];
-        if (preg_match('/^([\d.]+)/', $raw, $m)) return (float) $m[1];
-        return null;
+
+        // Número único — detectar sufijo convertible (/MT, /GT, /мт)
+        $unit = null;
+        $numPart = $raw;
+        if (preg_match('/^(.*?)\s*\/\s*(MT|GT|мт)\s*$/iu', $raw, $um)) {
+            $numPart = trim($um[1]);
+            $unit = strtoupper(str_replace('МТ', 'MT', $um[2]));
+        }
+
+        // Extraer número (puede tener coma: "2,500")
+        $clean = str_replace(',', '', $numPart);
+        if (!preg_match('/^([\d.]+)/', $clean, $m)) return null;
+        $val = (float) $m[1];
+        if ($val <= 0) return null;
+
+        return match ($unit) {
+            'MT' => round($val / 2204.62, 6),
+            'GT' => round($val / 2240.0,  6),
+            default => $val,
+        };
     }
 
     public static function parsePriceUnit(string $raw): ?string
