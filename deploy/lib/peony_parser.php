@@ -325,10 +325,32 @@ final class PeonyParser
     // ======================================================================
     // Helpers públicos
     // ======================================================================
+    /**
+     * Detecta si price_raw es un rango numérico (ej. "0.28-5.00").
+     * @return array{min:float, max:float, mid:float}|null
+     */
+    public static function parsePriceRange(string $raw): ?array
+    {
+        $raw = trim($raw);
+        if ($raw === '') return null;
+        // Acepta "0.28-5.00", "0.28 - 5.00", "0.28–5.00" (guión largo)
+        if (preg_match('/^([\d.]+)\s*[-–]\s*([\d.]+)/', $raw, $m)) {
+            $lo = (float) $m[1];
+            $hi = (float) $m[2];
+            if ($hi > $lo && $lo >= 0) {
+                return ['min' => $lo, 'max' => $hi, 'mid' => round(($lo + $hi) / 2, 4)];
+            }
+        }
+        return null;
+    }
+
     public static function parsePriceNum(string $raw): ?float
     {
         $raw = trim($raw);
         if ($raw === '') return null;
+        // Para rangos devuelve el punto medio (más representativo que el piso).
+        $range = self::parsePriceRange($raw);
+        if ($range !== null) return $range['mid'];
         if (preg_match('/^([\d.]+)/', $raw, $m)) return (float) $m[1];
         return null;
     }

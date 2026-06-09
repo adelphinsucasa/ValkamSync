@@ -794,23 +794,26 @@ function peony_import_files(PDO $pdo, array $body): array
             // Inserta filas — teléfonos normalizados
             $ins = $pdo->prepare("
                 INSERT INTO vsync_peony_prices
-                    (file_id, file_date, category, material, price_raw, price_num, price_unit,
-                     delivery_basis, company, buyer, phone, row_status)
+                    (file_id, file_date, category, material, price_raw, price_num, price_num_min, price_num_max,
+                     price_unit, delivery_basis, company, buyer, phone, row_status)
                 VALUES
-                    (:fid, :d, :cat, :m, :pr, :pn, :pu, :db, :co, :by, :ph, :rs)
+                    (:fid, :d, :cat, :m, :pr, :pn, :pn_min, :pn_max, :pu, :db, :co, :by, :ph, :rs)
             ");
             foreach ($rows as $r) {
+                $priceRange = PeonyParser::parsePriceRange($r['price_raw']);
                 $ins->execute([
-                    ':fid' => $fileId, ':d' => $fileDate,
-                    ':cat' => $r['section'], ':m' => $r['material'],
-                    ':pr'  => $r['price_raw'],
-                    ':pn'  => PeonyParser::parsePriceNum($r['price_raw']),
-                    ':pu'  => PeonyParser::parsePriceUnit($r['price_raw']),
-                    ':db'  => $r['delivery_basis'] ?? null,
-                    ':co'  => $r['company'] ?? null,
-                    ':by'  => $r['buyer']   ?? null,
-                    ':ph'  => phone_normalize($r['phone'] ?? ''),
-                    ':rs'  => $r['row_status'] ?? 'ok',
+                    ':fid'    => $fileId, ':d' => $fileDate,
+                    ':cat'    => $r['section'], ':m' => $r['material'],
+                    ':pr'     => $r['price_raw'],
+                    ':pn'     => PeonyParser::parsePriceNum($r['price_raw']),
+                    ':pn_min' => $priceRange ? $priceRange['min'] : null,
+                    ':pn_max' => $priceRange ? $priceRange['max'] : null,
+                    ':pu'     => PeonyParser::parsePriceUnit($r['price_raw']),
+                    ':db'     => $r['delivery_basis'] ?? null,
+                    ':co'     => $r['company'] ?? null,
+                    ':by'     => $r['buyer']   ?? null,
+                    ':ph'     => phone_normalize($r['phone'] ?? ''),
+                    ':rs'     => $r['row_status'] ?? 'ok',
                 ]);
             }
 
@@ -1098,7 +1101,7 @@ function peony_material_contacts(PDO $pdo, array $q): array
 
     $sql = "
         SELECT
-            p.phone, p.company, p.buyer, p.price_raw, p.price_num,
+            p.phone, p.company, p.buyer, p.price_raw, p.price_num, p.price_num_min, p.price_num_max,
             p.file_date AS latest_date, p.delivery_basis,
             p.lme_resolved, p.lme_percentage_applied, p.lme_base_price_used, p.lme_type_used,
             p.lme_cash_buyer, p.lme_cash_seller, p.lme_3_months_buyer, p.lme_3_months_seller,

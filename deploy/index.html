@@ -3834,7 +3834,10 @@
                                                         ${c.lme_resolved == 1 && c.price_num != null
                                                             ? `<div class="font-mono font-bold text-brand-dark">${parseFloat(c.price_num).toFixed(4)}<span class="text-[9px] font-normal ml-0.5">/lb</span></div>
                                                                <div class="text-[10px] text-text-muted">${esc(c.lme_percentage_applied)}%LME · ${esc(c.lme_type_used||'spot').replace('_',' ').toLowerCase()}</div>`
-                                                            : `<div class="font-mono font-bold text-brand-dark">${esc(c.price_raw || '—')}</div>`}
+                                                            : c.price_num_min != null && c.price_num_max != null
+                                                                ? `<div class="font-mono font-bold text-brand-dark">${parseFloat(c.price_num).toFixed(2)}<span class="text-[9px] font-normal ml-0.5">/lb</span></div>
+                                                                   <div class="text-[10px] text-text-muted">${parseFloat(c.price_num_min).toFixed(2)} – ${parseFloat(c.price_num_max).toFixed(2)} · rango</div>`
+                                                                : `<div class="font-mono font-bold text-brand-dark">${esc(c.price_raw || '—')}</div>`}
                                                         <div class="text-[10px] text-text-muted">${esc(c.latest_date || '')}${!c.is_recent ? ' · antiguo' : ''}</div>
                                                     </div>
                                                 </button>`;

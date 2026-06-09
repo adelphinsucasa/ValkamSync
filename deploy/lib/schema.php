@@ -205,6 +205,11 @@ function initDB(PDO $pdo): void
     // lme_resolved = -1 indica fallo permanente; lme_error describe la causa.
     try { $pdo->exec("ALTER TABLE vsync_peony_prices ADD COLUMN lme_error              TEXT          DEFAULT NULL"); } catch (Throwable $e) {}
 
+    // Rango de precio: min y max para price_raw con formato "0.28-5.00".
+    // price_num almacena el punto medio; price_num_min/max guardan los extremos para auditoría y UI.
+    try { $pdo->exec("ALTER TABLE vsync_peony_prices ADD COLUMN price_num_min DECIMAL(12,4) DEFAULT NULL"); } catch (Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE vsync_peony_prices ADD COLUMN price_num_max DECIMAL(12,4) DEFAULT NULL"); } catch (Throwable $e) {}
+
     // Columnas de la matriz 4 puntos en vsync_lme_cache (extiende el formato legacy cash_usd)
     try { $pdo->exec("ALTER TABLE vsync_lme_cache ADD COLUMN cash_buyer          DECIMAL(14,4) DEFAULT NULL"); } catch (Throwable $e) {}
     try { $pdo->exec("ALTER TABLE vsync_lme_cache ADD COLUMN cash_seller         DECIMAL(14,4) DEFAULT NULL"); } catch (Throwable $e) {}
