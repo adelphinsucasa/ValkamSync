@@ -109,20 +109,28 @@ const LME_LB_PER_MT = 2204.62;
  * Rechaza (devuelve null):
  *   "70%LMENi+Co"   (tiene sufijo distinto a "Spot")
  *   "LME 3M+46/-pr" (no inicia con porcentaje)
- *   "LLMEx60%"      (formato inválido)
+ *
+ * Acepta también la notación multiplicativa:
+ *   "LLMEx60%"  "LLMEX60%"  "LMEx60%"
+ *   (L[L]ME × N% = N% de LME — notación usada por algunos buyers US)
  *
  * @return array{pct: float}|null
  */
 function lme_parse_formula(string $priceRaw): ?array
 {
-    // Patrón: {número}[espacio]%[espacio][de ][espacio]LME[Spot|fin]
-    if (preg_match(
-        '/^(\d+(?:\.\d+)?)\s*%\s*(?:de\s+)?LME(?:\s*Spot)?\s*$/i',
-        trim($priceRaw),
-        $m
-    )) {
+    $raw = trim($priceRaw);
+
+    // Patrón 1: {número}%LME[Spot]  — "75%LMESpot", "80%LME", "75% de LME"
+    if (preg_match('/^(\d+(?:\.\d+)?)\s*%\s*(?:de\s+)?LME(?:\s*Spot)?\s*$/i', $raw, $m)) {
         return ['pct' => (float) $m[1]];
     }
+
+    // Patrón 2: L[L]MEx{número}%  — "LLMEx60%", "LLMEX60%", "LMEx60%"
+    // Semánticamente idéntico a "{número}%LMESpot"
+    if (preg_match('/^L+ME[xX]\s*(\d+(?:\.\d+)?)\s*%\s*$/i', $raw, $m)) {
+        return ['pct' => (float) $m[1]];
+    }
+
     return null;
 }
 
@@ -894,32 +902,50 @@ function lme_resolve_all_pending(PDO $pdo): array
  */
 function lme_fix_unit_prices(PDO $pdo): array
 {
+    $fixed = 0;
     try {
-        // Contar filas afectadas antes de corregir
-        $count = (int) $pdo->query(
+        // Caso A: lme_base_price_used conocido — recalcula desde el valor auditado
+        $countA = (int) $pdo->query(
             "SELECT COUNT(*) FROM vsync_peony_prices
              WHERE lme_resolved = 1
                AND lme_base_price_used IS NOT NULL
                AND lme_base_price_used > 100"
         )->fetchColumn();
-
-        if ($count === 0) {
-            return ['fixed' => 0, 'skipped' => 0];
+        if ($countA > 0) {
+            $pdo->exec(
+                "UPDATE vsync_peony_prices
+                 SET price_num = ROUND(lme_percentage_applied / 100.0 * lme_base_price_used / " . LME_LB_PER_MT . ", 4)
+                 WHERE lme_resolved = 1
+                   AND lme_base_price_used IS NOT NULL
+                   AND lme_base_price_used > 100"
+            );
+            error_log("LME fix_unit_prices (A): $countA filas corregidas (base conocida)");
+            $fixed += $countA;
         }
 
-        // Recalcula price_num = pct% × (base_usd_mt / 2204.62)
-        $pdo->exec(
-            "UPDATE vsync_peony_prices
-             SET price_num = ROUND(lme_percentage_applied / 100.0 * lme_base_price_used / " . LME_LB_PER_MT . ", 4)
+        // Caso B: lme_base_price_used NULL — código pre-F10 que no guardaba ese campo.
+        // price_num fue almacenado como pct%×lme_mt; corrección: dividir por 2204.62.
+        $countB = (int) $pdo->query(
+            "SELECT COUNT(*) FROM vsync_peony_prices
              WHERE lme_resolved = 1
-               AND lme_base_price_used IS NOT NULL
-               AND lme_base_price_used > 100"
-        );
+               AND (lme_base_price_used IS NULL OR lme_base_price_used = 0)
+               AND price_num > 100"
+        )->fetchColumn();
+        if ($countB > 0) {
+            $pdo->exec(
+                "UPDATE vsync_peony_prices
+                 SET price_num = ROUND(price_num / " . LME_LB_PER_MT . ", 4)
+                 WHERE lme_resolved = 1
+                   AND (lme_base_price_used IS NULL OR lme_base_price_used = 0)
+                   AND price_num > 100"
+            );
+            error_log("LME fix_unit_prices (B): $countB filas corregidas (base legacy sin auditoría)");
+            $fixed += $countB;
+        }
 
-        error_log("LME fix_unit_prices: corregidas $count filas (USD/MT → USD/lb)");
-        return ['fixed' => $count, 'skipped' => 0];
+        return ['fixed' => $fixed, 'skipped' => 0];
     } catch (Throwable $e) {
         error_log('LME fix_unit_prices: ' . $e->getMessage());
-        return ['fixed' => 0, 'skipped' => -1];
+        return ['fixed' => $fixed, 'skipped' => -1];
     }
 }
